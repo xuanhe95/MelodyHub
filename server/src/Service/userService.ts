@@ -1,6 +1,6 @@
 import { Pool, QueryResult } from 'pg';
 import { Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import {User} from '../Model/user';
 const config = require('../config.json')
 
 
@@ -14,7 +14,7 @@ class UserService{
   }
   
  // 用户注册
- async registerUser(req: Request, res: Response) : Promise<void>{
+ async registerUser(req: Request, res: Response) : Promise<boolean>{
   try{
     const currentDate = new Date();
     const now = currentDate.toISOString();
@@ -22,48 +22,64 @@ class UserService{
     const sql = "INSERT INTO users (username, password, created_at, last_login_at) VALUES ($1, $2, $3, $4)"
     const result: QueryResult = await this.pool.query(sql, [username, password, now, now]);
     const user = result.rows[0];
-    res.json(user);
+    return true;
   } catch(err){
     console.error(err);
     res.status(500).json({message: 'Internal Server Error'});
+    return false;
   }
 }
 
 // 获取用户信息
-async getUserById(req: Request, res: Response) : Promise<void>{
+async getUserById(req: Request, res: Response) : Promise<User | null>{
   try{
-    //const pool = (req as any).pool;
-    const userId: number =parseInt(req.params.userId, 10);
-    const result: QueryResult = await this.pool.query('SELECT * FROM users WHERE id = $1', [userId]);
+    const id: number =parseInt(req.params.id, 10);
+    const result: QueryResult = await this.pool.query('SELECT * FROM users WHERE id = $1', [id]);
 
     if(result.rows.length === 0){
-      res.status(404).json({message: 'User not found'});
+      return null;
     } else{
       const user = result.rows[0];
-      res.json(user);
+      const userObj: User = {
+        id: user.id,
+        username: user.username,
+        password: user.password,
+        created_at: user.created_at,
+        last_login_at: user.last_login_at
+      }
+      return userObj;
     }
   } catch(err){
     console.error(err);
     res.status(500).json({message: 'Internal Server Error'});
+    return null;
   }
 }
 
-async getUserByName(req: Request, res: Response) : Promise<void>{
+// 通过用户名获取用户信息
+async getUserByName(req: Request, res: Response) : Promise<User | null>{
   try{
     const sql = "SELECT password FROM users WHERE username=$1";
     //const pool = (req as any).pool;
     const name: string = req.params.name;
     const result: QueryResult = await this.pool.query(sql, [name]);
-
     if(result.rows.length === 0){
-      res.status(404).json({message: 'User not found'});
+      return null;
     } else{
       const user = result.rows[0];
-      res.json(user);
+      const userObj: User = {
+        id: user.id,
+        username: user.username,
+        password: user.password,
+        created_at: user.created_at,
+        last_login_at: user.last_login_at
+      }
+      return userObj;
     }
   } catch(err){
     console.error(err);
     res.status(500).json({message: 'Internal Server Error'});
+    return null;
   }
 }
   

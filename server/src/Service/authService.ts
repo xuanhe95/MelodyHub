@@ -1,10 +1,10 @@
 import { Pool, QueryResult } from 'pg';
 import { Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 const config = require('../config.json')
 
 
-const privateKey = config.privateKey;
+const privateKey = 'private'
 
 
 class AuthService{
@@ -13,14 +13,35 @@ class AuthService{
     this.pool = pool;
   }
 
+  login = async(user: any, req: Request, res: Response) => {
+    
+  }
+
   // 用户登录
-  loginUser = (req: Request, res: Response) => {
+  loginUser = async (req: Request, res: Response): Promise<string | null> => {
     const { username, password } = req.body;
-    if (username === "admin" && password === "admin") {
-      const token = this.generateToken({ username });
-      res.json({ token });
-    } else {
-      res.status(401).json({ message: "用户名或密码错误" });
+    const sql = "SELECT * FROM users WHERE username = $1";
+    const result: QueryResult = await this.pool.query(sql, [username]);
+    const user = result.rows[0];
+    if (!user) {
+      res.status(401).json({ message: "用户名不存在" });
+      return null;
+    }
+
+    if(user.password !== password){
+      res.status(401).json({message: "用户名或密码错误"});
+      return null;
+    } else{
+      const token = this.generateToken({username});
+      return token;
+    }
+  }
+
+  verifyToken = (token: string): (JwtPayload | null) => {
+    try {
+      return jwt.verify(token, privateKey) as JwtPayload;
+    } catch (err) {
+      return null;
     }
   }
 
