@@ -1,9 +1,11 @@
 {
-  "rds_host": "database-550.cneeuqu2cte6.us-east-1.rds.amazonaws.com",
-  "rds_port": "3306",
-  "rds_user": "xuanhe",
-  "rds_password": "Zhangxuanhe1995",
-  "rds_db": "SWIFTIFY",
+  "rds_host": "localhost",
+  "rds_port": "5432",
+  "rds_user": "postgres",
+  "rds_password": "123456",
+  "rds_db": "postgres",
   "server_host": "localhost",
-  "server_port": "8080"
+  "server_port": "8080",
+
+  "private_key": "private"
 }
