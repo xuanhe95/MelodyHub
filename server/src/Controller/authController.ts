@@ -1,56 +1,44 @@
-
 import { Request, Response } from "express";
-import AuthService from '../Service/authService';
-import UserService from '../Service/userService';
-import { JwtPayload } from "jsonwebtoken";
+import AuthService from "../Service/authService";
+import UserService from "../Service/userService";
 
-
-
-
-
-class AuthController{
+class AuthController {
     private auth: AuthService;
     private user: UserService;
 
-    constructor(userService: UserService, authService: AuthService){
+    constructor(userService: UserService, authService: AuthService) {
         this.auth = authService;
         this.user = userService;
-        
     }
 
     // 用户登录
-    async loginUser(req: Request, res: Response): Promise<void>{
+    async loginUser(req: Request, res: Response): Promise<void> {
         const token = this.auth.loginUser(req, res);
-        if(token){
-        token.then((result) => {
-            if(result){
-                res.json({token: result});
-            } else{
-                res.status(401).json({message: "用户名或密码错误"});
-            }
-        });
-        } else{
-            res.status(401).json({message: "用户名不存在"});
+        if (token) {
+            token.then((result) => {
+                if (result) {
+                    res.json({ token: result });
+                }
+            });
+        } else {
+            res.status(401).json({ message: "用户名不存在" });
         }
     }
 
     // 用户验证
-    async verifyUser(req: Request, res: Response): Promise<void>{
+    async verifyUser(req: Request, res: Response): Promise<void> {
         const token = req.headers.authorization;
-        if(!token){
-            res.status(401).json({message: "Token缺失"});
+        if (!token) {
+            res.status(401).json({ message: "Token缺失" });
             return;
         }
         const result = this.auth.verifyToken(token);
-        if(result){
+        if (result) {
             res.json(result);
-        } else{
-            res.status(401).json({message: "Token无效"});
+        } else {
+            res.status(401).json({ message: "Token无效" });
         }
     }
-    
-
-
 }
 
 export default AuthController;

@@ -12,6 +12,9 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import config from './config.json';
+
+import { useNavigate } from 'react-router-dom';
 
 function Copyright(props: any) {
   return (
@@ -30,13 +33,38 @@ function Copyright(props: any) {
 const defaultTheme = createTheme();
 
 export default function SignInSide() {
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  // 登录跳转
+  const navigate = useNavigate();
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
+
+    // 发送登录请求
+
+
+    try{
+      const response = await fetch(`http://${config.server_host}:${config.server_port}/api/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: data.get('email'),
+          password: data.get('password')
+        }),
+
+      })
+      if(response.ok){
+        const token = await response.json();
+        console.log('Login success', token)
+        localStorage.setItem('token', token);
+        navigate('/home');
+      } else{
+        console.log('Login failed:', response.statusText);
+      }
+    } catch (error: any){
+      console.error('Error during login:', error.message);
+    }
   };
 
   return (
