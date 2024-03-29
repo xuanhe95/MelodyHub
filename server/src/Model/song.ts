@@ -12,15 +12,7 @@ export interface Song {
     deleted_at: Date | null;
   }
   
-  // album.model.ts
-  export interface Album {
-    id: string;
-    title: string;
-    cover_art: string | null;
-    created_at: Date;
-    updated_at: Date;
-    deleted_at: Date | null;
-  }
+
   
   // songAlbum.model.ts
   export interface SongAlbumMapping {
