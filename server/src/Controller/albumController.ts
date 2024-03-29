@@ -38,3 +38,5 @@ class AlbumController {
     }
 
 }
+
+export default AlbumController;

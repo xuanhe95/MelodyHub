@@ -4,6 +4,10 @@ import AuthService from "./Service/authService";
 import UserService from "./Service/userService";
 import AuthController from "./Controller/authController";
 import UserController from "./Controller/userController";
+import AlbumService from "./Service/albumService";
+import TrackService from "./Service/trackService";
+import AlbumController from "./Controller/albumController";
+import TrackController from "./Controller/trackController";
 import {test} from "./Utils/musicBrainz";
 
 const express = require("express");
@@ -23,10 +27,14 @@ const pool = new Pool({
 // 创建服务
 const authService = new AuthService(pool);
 const userService = new UserService(pool);
+const albumService = new AlbumService(pool);
+const trackService = new TrackService(pool);
 
 // 创建控制器
 const auth = new AuthController(userService, authService);
 const user = new UserController(userService);
+const album = new AlbumController(albumService);
+const track = new TrackController(trackService);
 
 const app = express();
 

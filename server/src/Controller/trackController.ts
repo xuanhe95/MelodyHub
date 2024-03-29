@@ -55,3 +55,5 @@ class TrackController {
 
     
 }
+
+export default TrackController;
