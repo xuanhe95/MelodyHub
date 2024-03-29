@@ -44,7 +44,7 @@ const router = express.Router();
 // router.get('/test', user.test);
 // router.post('/login', auth.loginUser);
 
-// 调用实例方法
+// 用户登录逻辑
 router.get("/user/:id", (req: any, res: any) => user.getUserById(req, res));
 router.get("/user/byName/:name", (req: any, res: any) =>
     user.getUserByName(req, res)
@@ -54,10 +54,12 @@ router.get("/test", (req: any, res: any) => user.test(req, res));
 
 router.post("/login", (req: any, res: any) => auth.loginUser(req, res));
 
-// app.use((req: any, res: any, next: () => void) => {
-//   (req as any).pool = pool;
-//   next();
-// });
+// 专辑查询
+router.get("/album/:id", (req: any, res: any) => user.getUserById(req, res));
+// 歌曲查询
+router.get("/track/:id", (req: any, res: any) => user.getUserByName(req, res));
+
+
 app.use(express.json());
 app.use("/api", router);
 
