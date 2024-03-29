@@ -4,6 +4,7 @@ import AuthService from "./Service/authService";
 import UserService from "./Service/userService";
 import AuthController from "./Controller/authController";
 import UserController from "./Controller/userController";
+import {test} from "./Utils/musicBrainz";
 
 const express = require("express");
 const cors = require("cors");
@@ -59,6 +60,9 @@ router.post("/login", (req: any, res: any) => auth.loginUser(req, res));
 // });
 app.use(express.json());
 app.use("/api", router);
+
+
+test();
 
 app.listen(config.server_port, () => {
     console.log(
