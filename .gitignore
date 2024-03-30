@@ -3,4 +3,4 @@ old_client/node_modules/
 client/node_modules/
 server/node_modules/
 client/OLD
-berry-free-react-admin-template/node_modules
+client/web/node_modules
