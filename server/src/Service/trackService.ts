@@ -1,6 +1,6 @@
 import { Pool, QueryResult } from "pg";
 import { Request, Response } from "express";
-import {Track} from "../Model/Track";
+import {Track} from "../Model/track";
 
 class TrackService {
     private pool: Pool;

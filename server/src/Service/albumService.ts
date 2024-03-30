@@ -1,9 +1,49 @@
 import { Pool, QueryResult } from "pg";
 import {Album} from "../Model/album";
+import {Track} from "../Model/track";
 class AlbumService {
     private pool: Pool;
     constructor(pool: Pool) {
         this.pool = pool;
+    }
+
+    async getTracks(id: string): Promise<Album | null> {
+        try {
+            const sql = `
+            SELECT *
+            FROM tracks t
+            JOIN tracks_albums_mapping tam ON t.id = tam.track_id
+            JOIN albums a ON tam.album_id = a.id
+            WHERE a.id = $1`;
+
+
+            const result: QueryResult = await this.pool.query(sql, [id]);
+            let tracks: Track[] = [];
+
+            for (let i = 0; i < result.rows.length; i++) {
+                const track = result.rows[i];
+                const trackObj: Track = {
+                    id: track.id,
+                    title: track.title,
+                    tempo: track.tempo,
+                    danceability: track.danceability,
+                    release_date: track.release_date,
+                    energy: track.energy,
+                    duration: track.duration,
+                };
+                tracks.push(trackObj);
+            }
+
+            let album: Album = {
+                id: id,
+                title: result.rows[0].album_title,
+                tracks: tracks,
+            };
+            return album;
+        } catch (err) {
+            console.error(err);
+            return null;
+        }
     }
 
     // 获取所有专辑
@@ -18,10 +58,6 @@ class AlbumService {
                 const albumObj: Album = {
                     id: album.id,
                     title: album.title,
-                    cover_art: album.cover_art,
-                    created_at: album.created_at,
-                    updated_at: album.updated_at,
-                    deleted_at: album.deleted_at,
                 };
                 albums.push(albumObj);
             }
@@ -46,10 +82,6 @@ class AlbumService {
                 const albumObj: Album = {
                     id: album.id,
                     title: album.title,
-                    cover_art: album.cover_art,
-                    created_at: album.created_at,
-                    updated_at: album.updated_at,
-                    deleted_at: album.deleted_at,
                 };
                 return albumObj;
             }

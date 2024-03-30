@@ -9,6 +9,23 @@ class AlbumController {
         this.albumService = albumService;
     }
 
+    // 获取专辑的所有歌曲
+    async getTracks(req: Request, res: Response): Promise<void> {
+        try {
+            const albumId: string = req.params.id; // 假设 ID 存在于请求的参数中，这里假设参数名为 id
+            console.log("albumId:", albumId);
+            const tracks = await this.albumService.getTracks(albumId);
+            if (tracks) {
+                res.json(tracks);
+            } else {
+                res.status(404).json({ message: "Album not found" });
+            }
+        } catch (error) {
+            console.error("Error occurred while fetching album songs:", error);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    }
+
     // 通过id获取专辑信息
     async getAlbumById(req: Request, res: Response): Promise<void> {
         try {

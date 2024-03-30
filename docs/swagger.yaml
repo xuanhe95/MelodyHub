@@ -17,9 +17,7 @@ security:
   - password:
       - read
       - write
-      
 
-  
 paths:
   /login:
     post:
@@ -41,94 +39,131 @@ paths:
                 - username
                 - password
       responses:
-        '200':
+        "200":
           description: OK
-          
+
   /user:
     get:
       summary: Find a user
-      
+
       responses:
-        '200':
+        "200":
           description: OK
     post:
       summary: Create new user
       description: >-
         Create a new user.
       responses:
-        '200':
-         description: OK
-         
+        "200":
+          description: OK
+
     put:
       summary: Update user
       responses:
-        '200':
+        "200":
           description: OK
-          
+
     delete:
       summary: Delete user
       responses:
-        '200':
+        "200":
           description: OK
 
-  /songs:
-    post:
-      summary: Get songs by filter
-      description: >-
-        Get songs by filter
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                keyword:
-                  type: string
-
+  /album/{id}:
+    get:
+      summary: Get tracks of an album
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: ID of the album to get tracks for
       responses:
-        '200':
+        "200":
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Album"
+        "404":
+          description: Album not found
+          content:
+            application/json:
+              example:
+                message: Album not found
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              example:
+                message: Internal server error
 
-
-         
-
-         
 components:
   securitySchemes:
     password:
       type: oauth2
       flows:
         password:
-          tokenUrl: 'http://example.com/oauth/token'
+          tokenUrl: "http://example.com/oauth/token"
           scopes:
             write: allows modifying resources
             read: allows reading resources
   schemas:
-    user:
+    Track:
       type: object
       properties:
         id:
           type: string
-        username:
+          format: varchar(255)
+        tempo:
+          type: number
+          format: float
+        name:
           type: string
-        nickname:
+          format: varchar(255)
+        danceability:
+          type: number
+          format: float
+        release_date:
           type: string
-        email:
-          type: string
-        gender:
-          type: boolean
-        profile_img:
-          type: string
-        about_me:
-          type: string
-    song:
+          format: date
+        energy:
+          type: number
+          format: float
+        duration_ms:
+          type: integer
+          format: int32
+      required:
+        - id
+        - name
+        - release_date
+        - duration_ms
+    Album:
       type: object
       properties:
         id:
           type: string
-        song_name:
+          format: varchar(255)
+        title:
           type: string
+          format: varchar(255)
+        tracks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Track"
+      required:
+        - id
+        - title
+    TracksAlbumsMapping:
+      type: object
+      properties:
+        track_id:
+          type: string
+          format: varchar(255)
         album_id:
           type: string
-        
+          format: varchar(255)
+      required:
+        - track_id
+        - album_id

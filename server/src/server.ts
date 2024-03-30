@@ -63,7 +63,7 @@ router.get("/test", (req: any, res: any) => user.test(req, res));
 router.post("/login", (req: any, res: any) => auth.loginUser(req, res));
 
 // 专辑查询
-router.get("/album/:id", (req: any, res: any) => user.getUserById(req, res));
+router.get("/album/:id", (req: any, res: any) => album.getTracks(req, res));
 // 歌曲查询
 router.get("/track/:id", (req: any, res: any) => user.getUserByName(req, res));
 
