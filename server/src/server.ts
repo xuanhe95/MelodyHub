@@ -65,8 +65,11 @@ router.post("/login", (req: any, res: any) => auth.loginUser(req, res));
 // 专辑查询
 router.get("/album/:id", (req: any, res: any) => album.getTracks(req, res));
 // 歌曲查询
-router.get("/track/:id", (req: any, res: any) => user.getUserByName(req, res));
+//router.get("/track/:id", (req: any, res: any) => user.getUserByName(req, res));
 
+router.get("/track/search/", (req: any, res: any) => track.searchTracks(req, res));
+router.get("/track/top/country/:country", (req: any, res: any) => track.getTopTracksByCountry(req, res));
+router.get("/track/top/playlists", (req: any, res: any) => track.getTopTracksByPlaylists(req, res));
 
 app.use(express.json());
 app.use("/api", router);
