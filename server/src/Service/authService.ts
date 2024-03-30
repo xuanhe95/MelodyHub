@@ -38,7 +38,8 @@ class AuthService {
             return null;
         }
     };
-
+    
+    // 生成token
     generateToken = (payload: any): string => {
         return jwt.sign(payload, privateKey, { expiresIn: "1h" });
     };
