@@ -62,10 +62,10 @@ class UserService {
     // 通过用户名获取用户信息
     async getUserByName(req: Request, res: Response): Promise<User | null> {
         return new Promise((resolve, reject) => {
-          const sql = "SELECT * FROM users WHERE username = ?";
-          const name: string = req.params.name;
-          
-          this.db.query(sql, [name], (err, results) => {
+            const sql = "SELECT * FROM users WHERE username = ?";
+            const name: string = req.params.name;
+
+        this.db.query(sql, [name], (err, results) => {
             if (err) {
                 console.error(err);
                 res.status(500).json({ message: "Internal Server Error" });
@@ -83,7 +83,7 @@ class UserService {
                 };
                 resolve(userObj);
             }
-          });
+            });
         });
     }
 }

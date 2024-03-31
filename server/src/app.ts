@@ -12,7 +12,7 @@ app.use(express.json());
 app.use("/api", router);
 
 // test query to verify db connection before starting app.
-db.query('SELECT *', (error) => {
+db.query('SELECT 1', (error) => {
     if (error) {
         console.error('Error connecting to the database:', error);
         process.exit(1); // Exit the app if the database connection fails

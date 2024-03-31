@@ -4,8 +4,7 @@ Swagger API: https://xuanhe95.github.io/MelodyTracker/
 
 # How to run backend
 
-1. in root directory, find .env.example, copy paste it and rename into ".env"
-    copy credentials into relevant field
+1. in /server directory, find .env.example, copy paste it and rename into ".env", copy credentials into relevant field
 
 2. navigate to server folder
 ```
