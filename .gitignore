@@ -21,3 +21,6 @@ yarn-error.log*
 /credentials.json
 server/.env
 .DS_Store
+
+.client/web/create-react-app/yarn.lock
+.client/web/create-react-app/package-lock.json

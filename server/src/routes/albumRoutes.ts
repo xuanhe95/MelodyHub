@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import AlbumService from "../services/albumService";
 import AlbumController from '../controllers/albumController';
-import { pool } from '../db';
+import { db } from '../db';
 
 const router = Router();
-const albumService = new AlbumService(pool);
+const albumService = new AlbumService(db);
 const albumController = new AlbumController(albumService);
 
 // Album routes

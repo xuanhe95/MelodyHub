@@ -1,7 +1,8 @@
-import { Pool } from "pg";
+import * as mysql from 'mysql';
 import config from "./config";
 
-export const pool = new Pool({
+export const db = mysql.createPool({
+    connectionLimit: 10,
     user: config.rds_user,
     host: config.rds_host,
     database: config.rds_db,

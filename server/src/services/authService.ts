@@ -1,33 +1,46 @@
-import { Pool, QueryResult } from "pg";
+import { Pool } from "mysql";
 import { Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 const privateKey = process.env.privateKey || 'private';
 
 class AuthService {
-    private pool: Pool;
-    constructor(pool: Pool) {
-        this.pool = pool;
+    private db: Pool;
+    constructor(db: Pool) {
+        this.db = db;
     }
 
     // 用户登录
-    loginUser = async (req: Request, res: Response): Promise<string | null> => {
-        const { username, password } = req.body;
-        const sql = "SELECT * FROM users WHERE username = $1";
-        const result: QueryResult = await this.pool.query(sql, [username]);
-        const user = result.rows[0];
-        if (!user) {
-            res.status(401).json({ message: "用户名不存在" });
-            return null;
-        }
+    loginUser = async (req: Request, res: Response): Promise<string | null> => {        
+        return new Promise((resolve, reject) => {
+            const { username, password } = req.body;
+            // Change the query syntax to use MySQL's ? placeholder
+            const sql = "SELECT * FROM users WHERE username = ?";
 
-        if (user.password !== password) {
-            res.status(401).json({ message: "用户名或密码错误" });
-            return null;
-        } else {
-            const token = this.generateToken({ username });
-            return token;
-        }
-    };
+            this.db.query(sql, [username], (err, results) => {
+                if (err) {
+                    console.error('Error fetching user:', err);
+                    res.status(500).json({ message: "Internal Server Error" });
+                    reject(null);
+                    return;
+                }
+
+                const user = results[0];
+                if (!user) {
+                    res.status(401).json({ message: "用户名不存在" });
+                    resolve(null);
+                    return;
+                }
+
+                if (user.password !== password) {
+                    res.status(401).json({ message: "用户名或密码错误" });
+                    resolve(null);
+                } else {
+                    const token = this.generateToken({ username });
+                    resolve(token);
+                }
+            });
+        });
+    }
 
     // 用户验证
     verifyToken = (token: string): JwtPayload | null => {
