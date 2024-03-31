@@ -2,10 +2,10 @@ import { Router } from 'express';
 import AuthService from '../services/authService';
 import AuthController from '../controllers/authController';
 import UserService from '../services/userService';
-import { pool } from '../db';
+import { db } from '../db';
 
-const authService = new AuthService(pool);
-const userService = new UserService(pool);
+const authService = new AuthService(db);
+const userService = new UserService(db);
 const authController = new AuthController(userService, authService);
 
 const router = Router();

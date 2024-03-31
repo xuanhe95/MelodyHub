@@ -5,3 +5,5 @@ server/node_modules/
 client/OLD
 client/web/node_modules
 .DS_Store
+.client/web/create-react-app/yarn.lock
+.client/web/create-react-app/package-lock.json

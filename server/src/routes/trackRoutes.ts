@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import TrackService from "../services/trackService";
 import TrackController from '../controllers/trackController';
-import { pool } from '../db';
+import { db } from '../db';
 
 const router = Router();
-const trackService = new TrackService(pool);
+const trackService = new TrackService(db);
 const trackController = new TrackController(trackService);
 
 // Track routes
