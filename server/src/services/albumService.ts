@@ -1,6 +1,6 @@
 import { Pool, QueryResult } from "pg";
-import {Album} from "../Model/album";
-import {Track} from "../Model/track";
+import {Album} from "../models/album";
+import {Track} from "../models/track";
 class AlbumService {
     private pool: Pool;
     constructor(pool: Pool) {

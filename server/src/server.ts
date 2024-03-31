@@ -1,14 +1,14 @@
 //import router from "./routes";
 import { Pool, QueryResult } from "pg";
-import AuthService from "./Service/authService";
-import UserService from "./Service/userService";
-import AuthController from "./Controller/authController";
-import UserController from "./Controller/userController";
-import AlbumService from "./Service/albumService";
-import TrackService from "./Service/trackService";
-import AlbumController from "./Controller/albumController";
-import TrackController from "./Controller/trackController";
-import {test} from "./Utils/musicBrainz";
+import AuthService from "./services/authService";
+import UserService from "./services/userService";
+import AuthController from "./controllers/authController";
+import UserController from "./controllers/userController";
+import AlbumService from "./services/albumService";
+import TrackService from "./services/trackService";
+import AlbumController from "./controllers/albumController";
+import TrackController from "./controllers/trackController";
+import {test} from "./utils/musicBrainz";
 
 const express = require("express");
 const cors = require("cors");

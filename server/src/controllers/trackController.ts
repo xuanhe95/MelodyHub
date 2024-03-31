@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'; // 假设使用 Express 框架
-import TrackService from '../Service/trackService';
-import { Track } from '../Model/track';
+import TrackService from '../services/trackService';
+import { Track } from '../models/track';
 
 class TrackController {
     private trackService: TrackService;

@@ -1,6 +1,6 @@
 import { Pool, QueryResult } from "pg";
 import { Request, Response } from "express";
-import {Track} from "../Model/track";
+import {Track} from "../models/track";
 
 class TrackService {
     private pool: Pool;
@@ -195,11 +195,11 @@ class TrackService {
         try {
             console.log('n:', n);
             const sql = `WITH top_10 AS (SELECT tt.country,
-                       tt.track_id,
-                       ROW_NUMBER() OVER (PARTITION BY tt.country ORDER BY COUNT(tt.track_id) DESC) AS row_num
+                tt.track_id,
+                ROW_NUMBER() OVER (PARTITION BY tt.country ORDER BY COUNT(tt.track_id) DESC) AS row_num
                 FROM top_tracks tt
                 GROUP BY tt.country,
-                         tt.track_id
+                tt.track_id
                 )
 
                 SELECT * from top_10

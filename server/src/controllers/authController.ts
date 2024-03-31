@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import AuthService from "../Service/authService";
-import UserService from "../Service/userService";
+import AuthService from "../services/authService";
+import UserService from "../services/userService";
 
 class AuthController {
     private auth: AuthService;

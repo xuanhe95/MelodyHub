@@ -1,6 +1,6 @@
 import { Pool, QueryResult } from "pg";
 import { Request, Response } from "express";
-import { User } from "../Model/user";
+import { User } from "../models/user";
 
 class UserService {
     private pool: Pool;
