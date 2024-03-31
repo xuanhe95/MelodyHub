@@ -1,8 +1,7 @@
 import { Pool, QueryResult } from "pg";
 import { Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-const config = require("../config.json");
-const privateKey = config.private_key;
+const privateKey = process.env.privateKey || 'private';
 
 class AuthService {
     private pool: Pool;
