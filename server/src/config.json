@@ -1,9 +1,9 @@
 {
-  "rds_host": "localhost",
-  "rds_port": "5432",
-  "rds_user": "postgres",
-  "rds_password": "123456",
-  "rds_db": "postgres",
+  "rds_host": "database-1.c5cm0qmaizjf.us-east-1.rds.amazonaws.com",
+  "rds_port": "3306",
+  "rds_user": "yujia22",
+  "rds_password": "yujia2222",
+  "rds_db": "MUSIC_DB",
   "server_host": "localhost",
   "server_port": "8080",
 
