@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import UserService from "../Service/userService";
+import UserService from "../services/userService";
 
 class UserController {
     private user: UserService;
@@ -35,7 +35,7 @@ class UserController {
         }
     }
     async test(req: Request, res: Response): Promise<void> {
-        console.log("test");
+        //console.log("test");
         res.json({ message: "test" });
     }
 }
