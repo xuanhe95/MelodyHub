@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import AlbumService from '../services/albumService';
 
-
 class AlbumController {
     private albumService: AlbumService;
 
@@ -9,51 +8,48 @@ class AlbumController {
         this.albumService = albumService;
     }
 
-    // 获取专辑的所有歌曲
+    // Get all tracks in an album
     async getTracks(req: Request, res: Response): Promise<void> {
+        const albumId: string = req.params.id;
         try {
-            const albumId: string = req.params.id; // 假设 ID 存在于请求的参数中，这里假设参数名为 id
-            console.log("albumId:", albumId);
             const tracks = await this.albumService.getTracks(albumId);
             if (tracks) {
                 res.json(tracks);
             } else {
-                res.status(404).json({ message: "Album not found" });
+                res.status(404).json({ message: "Album not found or has no tracks" });
             }
         } catch (error) {
-            console.error("Error occurred while fetching album songs:", error);
+            console.error("Error fetching album tracks:", error);
             res.status(500).json({ message: "Internal server error" });
         }
     }
 
-    // 通过id获取专辑信息
+    // Get album information by ID
     async getAlbumById(req: Request, res: Response): Promise<void> {
+        const albumId: string = req.params.id;
         try {
-            const albumId: string = req.params.id; // 假设 ID 存在于请求的参数中，这里假设参数名为 id
-            const id = parseInt(albumId, 10);
-            const album = await this.albumService.getAlbumById(id);
+            const album = await this.albumService.getAlbumById(albumId);
             if (album) {
                 res.json(album);
             } else {
                 res.status(404).json({ message: "Album not found" });
             }
         } catch (error) {
-            console.error("Error occurred while fetching album:", error);
+            console.error("Error fetching album:", error);
             res.status(500).json({ message: "Internal server error" });
         }
     }
 
-    // 获取所有专辑
+    // Get all albums
     async getAllAlbums(req: Request, res: Response): Promise<void> {
         try {
             const albums = await this.albumService.getAllAlbums();
             res.json(albums);
         } catch (error) {
-            console.error("Error occurred while fetching albums:", error);
+            console.error("Error fetching albums:", error);
             res.status(500).json({ message: "Internal server error" });
         }
     }
-
 }
 
 export default AlbumController;

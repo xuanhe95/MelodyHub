@@ -1,42 +1,40 @@
 import { Request, Response } from "express";
 import AuthService from "../services/authService";
-import UserService from "../services/userService";
+import {UserService} from "../services/userService";
 
 class AuthController {
-    private auth: AuthService;
-    private user: UserService;
+    private authService: AuthService;
+    private userService: UserService;
 
     constructor(userService: UserService, authService: AuthService) {
-        this.auth = authService;
-        this.user = userService;
+        this.authService = authService;
+        this.userService = userService;
     }
 
-    // 用户登录
+    // User login
     async loginUser(req: Request, res: Response): Promise<void> {
-        const token = this.auth.loginUser(req, res);
+        const { username, password } = req.body;
+        const token = await this.authService.loginUser(username, password);
         if (token) {
-            token.then((result) => {
-                if (result) {
-                    res.json({ token: result });
-                }
-            });
+            res.json({ token: token });
         } else {
-            res.status(401).json({ message: "用户名不存在" });
+            res.status(401).json({ message: "Invalid username or password" });
         }
     }
 
-    // 用户验证
+    // Verify user
     async verifyUser(req: Request, res: Response): Promise<void> {
-        const token = req.headers.authorization;
+        const token = req.headers.authorization?.split(' ')[1];
         if (!token) {
-            res.status(401).json({ message: "Token缺失" });
+            res.status(401).json({ message: "Token is missing" });
             return;
         }
-        const result = this.auth.verifyToken(token);
+
+        const result = this.authService.verifyToken(token);
         if (result) {
             res.json(result);
         } else {
-            res.status(401).json({ message: "Token无效" });
+            res.status(401).json({ message: "Invalid or expired token" });
         }
     }
 }

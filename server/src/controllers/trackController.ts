@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'; // 假设使用 Express 框架
 import TrackService from '../services/trackService';
-import { Track } from '../models/track';
+import { Track } from '../entity/track';
 
 class TrackController {
     private trackService: TrackService;
@@ -25,43 +25,51 @@ class TrackController {
         }
     }
 
-    // 联合搜索
     async searchTracks(req: Request, res: Response): Promise<void> {
         try {
-            const { title, artist, album, start, end, tempo, danceability, energy, duration} = req.query;
-            console.log('title:', title);
-            console.log('artist:', artist);
-            console.log('album:', album);
-            console.log('start:', start);
-            console.log('end:', end);
-
-            
-            // 将日期字符串转换为日期对象
-            let startDate = typeof start === 'string' ? new Date(start) : undefined;
-            let endDate = typeof end === 'string' ? new Date(end) : undefined;
-
-            // 调用服务的搜索方法
-            let tracks: Track[] | null = await this.trackService.searchTracks(
-                title as string,
-                artist as string,
-                album as string,
+            const title = req.query.title as string | undefined;
+            const artist = req.query.artist as string | undefined;
+            const album = req.query.album as string | undefined;
+            let startDate: Date | undefined = undefined;
+            let endDate: Date | undefined = undefined;
+    
+            if (typeof req.query.start === 'string') {
+                startDate = new Date(req.query.start);
+            }
+    
+            if (typeof req.query.end === 'string') {
+                endDate = new Date(req.query.end);
+            }
+    
+            const tempo = req.query.tempo as number | undefined;
+            const danceability = req.query.danceability as number | undefined;
+            const energy = req.query.energy as number | undefined;
+            const duration = req.query.duration as number | undefined;
+    
+            const tracks: Track[] | null = await this.trackService.searchTracks(
+                title,
+                artist,
+                album,
                 startDate,
-                endDate
+                endDate,
+                tempo,
+                danceability,
+                energy,
+                duration
             );
-
-            // 如果没有找到任何结果，则返回 404
+    
             if (!tracks) {
                 res.status(404).json({ message: 'No tracks found' });
                 return;
             }
-
-            // 如果找到了结果，则返回结果
+    
             res.json(tracks);
         } catch (error) {
             console.error('Error occurred while searching tracks:', error);
             res.status(500).json({ message: 'Internal server error' });
         }
     }
+    
 
     // 获取所有歌曲
     async getAllTracks(req: Request, res: Response): Promise<void> {

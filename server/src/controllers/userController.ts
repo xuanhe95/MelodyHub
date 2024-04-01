@@ -1,43 +1,56 @@
-import { Request, Response } from "express";
-import UserService from "../services/userService";
+// src/controllers/userController.ts
+import { Request, Response } from 'express';
+import { UserService } from '../services/userService';
 
-class UserController {
-    private user: UserService;
+export class UserController {
+    private userService: UserService;
 
     constructor(userService: UserService) {
-        this.user = userService;
+        this.userService = userService;
     }
-    // 通过id获取用户信息
-    async getUserById(req: Request, res: Response): Promise<void> {
-        const user = await this.user.getUserById(req, res);
-        if (user) {
-            res.json(user);
-        } else {
-            res.status(404).json({ message: "User not found" });
-        }
-    }
-    // 通过用户名获取用户信息
-    async getUserByName(req: Request, res: Response): Promise<void> {
-        const user = await this.user.getUserByName(req, res);
-        if (user) {
-            res.json(user);
-        } else {
-            res.status(404).json({ message: "User not found" });
-        }
-    }
-    // 用户注册
+
     async registerUser(req: Request, res: Response): Promise<void> {
-        const ok: boolean = await this.user.registerUser(req, res);
-        if (ok) {
-            res.status(201).json({ message: "User created" });
-        } else {
+        const { username, password } = req.body;
+        try {
+            const success = await this.userService.createUser(username, password);
+            if (success) {
+                res.status(201).json({ message: "User created successfully." });
+            } else {
+                res.status(400).json({ message: "Failed to create user." });
+            }
+        } catch (error) {
+            console.error(error);
             res.status(500).json({ message: "Internal Server Error" });
         }
     }
-    async test(req: Request, res: Response): Promise<void> {
-        //console.log("test");
-        res.json({ message: "test" });
+
+    async getUserById(req: Request, res: Response): Promise<void> {
+        const id = parseInt(req.params.id, 10);
+        try {
+            const user = await this.userService.getUserById(id);
+            if (!user) {
+                res.status(404).json({ message: "User not found." });
+            } else {
+                res.json(user);
+            }
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Internal Server Error" });
+        }
+    }
+
+    async getUserByName(req: Request, res: Response): Promise<void> {
+        const { name } = req.params;
+        try {
+            const user = await this.userService.getUserByName(name);
+            if (!user) {
+                res.status(404).json({ message: "User not found." });
+            } else {
+                res.json(user);
+            }
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: "Internal Server Error" });
+        }
     }
 }
-
-export default UserController;

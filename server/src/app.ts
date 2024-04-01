@@ -1,31 +1,40 @@
 const express = require("express");
 const cors = require("cors");
+import 'dotenv/config';
 import { Request, Response } from 'express';
-import router from "./routes";
-import config from "./config";
-import { db } from './db';
+import router from './routes';
+import config from './config';
+import { AppDataSource } from './db';
 
 const app = express();
 
-app.use(cors({ origin: "*" }));
+app.use(cors({ origin: '*' }));
 app.use(express.json());
-app.use("/api", router);
+app.use('/api', router);
 
-// test query to verify db connection before starting app.
-db.query('SELECT 1', (error) => {
-    if (error) {
-        console.error('Error connecting to the database:', error);
-        process.exit(1); // Exit the app if the database connection fails
+console.log("Starting application...");
+
+const startServer = async () => {
+    try {
+        console.log("Initializing data source...");
+        await AppDataSource.initialize();
+        console.log("Data Source has been initialized!");
+
+        // Start the express server
+        app.listen(config.server_port, () => {
+            console.log(`Backend Server running at http://${config.server_host}:${config.server_port}/`);
+        });
+
+        // Define the root route
+        app.get('/', (_req: Request, res: Response) => {
+            res.send('Server is running!');
+        });
+    } catch (error) {
+        console.error("Error during Data Source initialization:", error);
+        process.exit(1);
     }
+};
 
-    // Only start the Express server after the database connection is established
-    app.listen(config.server_port, () => {
-        console.log(`Backend Server running at http://${config.server_host}:${config.server_port}/`);
-    });
-
-    app.get('/', (_req: Request, res: Response) => {
-        res.send('Server is running!');
-    });
-});
+startServer();
 
 export default app;
