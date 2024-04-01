@@ -127,6 +127,35 @@ class TrackService {
       return null;
     }
   }
+
+  /*
+  Searching songs by genre:
+
+SELECT t.* FROM tracks t
+JOIN artists_tracks at ON t.id = at.track_id
+JOIN artists_genres ag ON at.artist_id = ag.artist_id
+WHERE ag.genre LIKE '%keyword%';
+
+Searching songs based on keywords:
+SELECT * FROM tracks WHERE
+name LIKE '%romantic%' OR
+name LIKE '%South Korea%' OR
+name LIKE '%hip-hop%';
+
+Personal playlists based on keywords:
+SELECT t.* FROM tracks t
+WHERE t.name LIKE '%keyword1%'
+OR t.name LIKE '%keyword2%'
+OR t.name LIKE '%keyword3%'
+LIMIT 10;
+
+
+
+
+  */
+
+
+
 }
 
 export default TrackService;
