@@ -1,19 +1,23 @@
-import { Entity, Column, OneToMany, PrimaryColumn } from 'typeorm';
+import { Entity, PrimaryColumn, Column, ManyToOne, OneToMany } from 'typeorm';
 import { PlaylistSong } from './playlistSong';
-import { User } from '../models/user';
+import { User } from './user';
 
 @Entity()
 export class Playlist {
-    @PrimaryColumn() // Do not auto-generate this column.
-    id!: string;
+    @PrimaryColumn()
+    playlist_id!: string;
+
+    @Column()
+    year!: number;
 
     @Column()
     name!: string;
 
-    @Column()
-    user: User | undefined;
+    // many-to-one relationship between Playlist and User
+    @ManyToOne(() => User, user => user.playlists) 
+    user!: User;
 
     @OneToMany(() => PlaylistSong, playlistSong => playlistSong.playlist)
     playlistSongs!: PlaylistSong[];
-    
+
 }

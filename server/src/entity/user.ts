@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Playlist } from './playlist'; 
 
 @Entity()
 export class User {
@@ -16,6 +17,10 @@ export class User {
 
     @UpdateDateColumn({ type: 'timestamp' })
     last_login_at!: Date;
+
+    // Add this property to establish the one-to-many relationship with Playlist
+    @OneToMany(() => Playlist, playlist => playlist.user)
+    playlists!: Playlist[];
 
     constructor(init?: Partial<User>) {
         if (init) {

@@ -10,7 +10,7 @@ export class PlaylistSong {
     playlistId!: string;
 
     // Composite primary key: part 2
-    @PrimaryColumn({ name: 'song_id' }) // Assuming 'song_id' is the column name in your database
+    @PrimaryColumn({ name: 'song_id' })
     trackId!: string;
 
     @Column({ name: 'year' })

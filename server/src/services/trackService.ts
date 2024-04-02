@@ -128,34 +128,39 @@ class TrackService {
     }
   }
 
-  /*
-  Searching songs by genre:
+  // Searching songs based on keywords
+  async findTracksByKeywords(keywords: string[]): Promise<Track[]> {
+      const queryRunner = AppDataSource.createQueryRunner();
+      await queryRunner.connect();
 
-SELECT t.* FROM tracks t
-JOIN artists_tracks at ON t.id = at.track_id
-JOIN artists_genres ag ON at.artist_id = ag.artist_id
-WHERE ag.genre LIKE '%keyword%';
+      const query = keywords.map(keyword => `name LIKE '%${keyword}%'`).join(' OR ');
+      const tracks = await queryRunner.query(`SELECT * FROM tracks WHERE ${query}`);
 
-Searching songs based on keywords:
-SELECT * FROM tracks WHERE
-name LIKE '%romantic%' OR
-name LIKE '%South Korea%' OR
-name LIKE '%hip-hop%';
+      await queryRunner.release();
+      return tracks;
+  }
 
-Personal playlists based on keywords:
-SELECT t.* FROM tracks t
-WHERE t.name LIKE '%keyword1%'
-OR t.name LIKE '%keyword2%'
-OR t.name LIKE '%keyword3%'
-LIMIT 10;
+  //get an overview of the average features (optional: tempo, energy) of songs for a selected genre.  
+  async getAverageFeaturesByGenre(genre: string): Promise<any> {
+    try {
+        const sql = `
+            SELECT G.genre, AVG(S.tempo) AS AverageTempo, AVG(S.energy) AS AverageEnergy
+            FROM ARTIST_GENRES G
+            JOIN ARTISTS A ON G.artist_id = A.artist_id
+            JOIN RELEASE_BY R ON A.artist_id = R.artist_id
+            JOIN SONGS S ON R.song_id = S.id
+            WHERE G.genre = ?
+            GROUP BY G.genre;
+        `;
 
-
-
-
-  */
-
-
-
+        // Execute the query with the provided genre
+        const results = await AppDataSource.query(sql, [genre]);
+        return results;
+    } catch (error) {
+        console.error("Error getting average features by genre:", error);
+        return [];
+    }
+  }
 }
 
 export default TrackService;

@@ -4,7 +4,7 @@ import { Track } from "../entity/track";
 
 class AlbumService {
     
-    async getTracks(albumId: string): Promise<Track[] | null> {
+    async findTracksByAlbumId(albumId: string): Promise<Track[] | null> {
         try {
             const albumRepository = AppDataSource.getRepository(Album);
             const album = await albumRepository.findOne({
@@ -18,7 +18,7 @@ class AlbumService {
         }
     }
 
-    async getAllAlbums(): Promise<Album[] | null> {
+    async listAllAlbums(): Promise<Album[] | null> {
         try {
             const albumRepository = AppDataSource.getRepository(Album);
             return await albumRepository.find();
@@ -28,7 +28,7 @@ class AlbumService {
         }
     }
 
-    async getAlbumById(id: string): Promise<Album | null> {
+    async findAlbumById(id: string): Promise<Album | null> {
         try {
             const albumRepository = AppDataSource.getRepository(Album);
             return await albumRepository.findOneBy({ id });

@@ -12,7 +12,7 @@ class AlbumController {
     async getTracks(req: Request, res: Response): Promise<void> {
         const albumId: string = req.params.id;
         try {
-            const tracks = await this.albumService.getTracks(albumId);
+            const tracks = await this.albumService.findTracksByAlbumId(albumId);
             if (tracks) {
                 res.json(tracks);
             } else {
@@ -28,7 +28,7 @@ class AlbumController {
     async getAlbumById(req: Request, res: Response): Promise<void> {
         const albumId: string = req.params.id;
         try {
-            const album = await this.albumService.getAlbumById(albumId);
+            const album = await this.albumService.findAlbumById(albumId);
             if (album) {
                 res.json(album);
             } else {
@@ -43,7 +43,7 @@ class AlbumController {
     // Get all albums
     async getAllAlbums(req: Request, res: Response): Promise<void> {
         try {
-            const albums = await this.albumService.getAllAlbums();
+            const albums = await this.albumService.listAllAlbums();
             res.json(albums);
         } catch (error) {
             console.error("Error fetching albums:", error);
