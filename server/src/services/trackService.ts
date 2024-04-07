@@ -36,28 +36,43 @@ class TrackService {
     }
 
     // Complex search query, retaining direct SQL usage
-    async searchTracks(title?: string, artist?: string, album?: string, start?: Date, end?: Date, tempo?: number, danceability?: number, energy?: number, duration?: number): Promise<Track[] | null> {
+    async searchTracks(
+      title?: string,
+      artist?: string,
+      album?: string,
+      start?: string,
+      end?: string,
+      tempo?: number,
+      danceability?: number,
+      energy?: number,
+      duration?: number
+  ): Promise<Track[] | null> {
       try {
           let sql = `SELECT * FROM tracks WHERE 1=1`;
           let params: (string | number | Date)[] = [];
-
+  
           if (title) {
-              sql += ` AND title = ?`;
-              params.push(title);
+              sql += ` AND title LIKE ?`;
+              params.push(`%${title}%`); // Using LIKE for partial match
           }
           if (artist) {
-              sql += ` AND artist = ?`;
-              params.push(artist);
+              sql += ` AND artist LIKE ?`;
+              params.push(`%${artist}%`); // Using LIKE for partial match
           }
           if (album) {
-            sql += ` AND album = ?`;
-            params.push(album);
+              sql += ` AND album LIKE ?`;
+              params.push(`%${album}%`); // Using LIKE for partial match
           }
-          if (start && end) {
-            sql += ` AND release_date BETWEEN ? AND ?`;
-            params.push(start, end);
+          if (start) {
+              const startDate = new Date(start);
+              sql += ` AND release_date >= ?`;
+              params.push(startDate);
           }
-          // Repeat for other conditions like tempo, danceability, etc.
+          if (end) {
+              const endDate = new Date(end);
+              sql += ` AND release_date <= ?`;
+              params.push(endDate);
+          }
           if (tempo) {
             sql += ` AND tempo = ?`;
             params.push(tempo);
@@ -85,18 +100,25 @@ class TrackService {
           return null;
       }
     }
-    async getTopTracksByCountry(country: string, n: number): Promise<Track[] | null> {
+    
+    // since SONGS db is old, return all songs that are on daily_rank if founded
+    async getAllTimeTopTracksByCountry(country: string): Promise<Track[] | null> {
       try {
-        // Note: The actual SQL will depend on your database schema and how you're tracking top tracks by country
-        const sql = `
-            SELECT tracks.* FROM tracks
-            JOIN top_tracks_country ON tracks.id = top_tracks_country.track_id
-            WHERE top_tracks_country.country = ?
-            ORDER BY top_tracks_country.rank LIMIT ?`;
+        const sql = `            
+            SELECT s.*
+            FROM SONGS s
+            JOIN (
+                SELECT spotify_id
+                FROM TOP_SONGS_BY_COUNTRY
+                WHERE country = ?
+                GROUP BY spotify_id
+                ORDER BY SUM(daily_rank) ASC
+            ) top_songs ON s.id = top_songs.spotify_id;   
+            `;
 
         const queryRunner = AppDataSource.createQueryRunner();
         await queryRunner.connect();
-        const tracks = await queryRunner.query(sql, [country, n]);
+        const tracks = await queryRunner.query(sql, [country]);
         await queryRunner.release();
         return tracks;
       } catch (error) {
@@ -105,17 +127,16 @@ class TrackService {
       }
   }
 
-  // Get Top N Tracks from Playlists using direct SQL
-  async getTopTracksByPlaylists(n: number): Promise<Track[] | null> {
+  // Get Top N Tracks from Playlists
+  async getTopNTracksFromPlaylists(n: number): Promise<Track[] | null> {
     try {
-      // Note: This SQL assumes there's a way to determine "top" tracks in playlists, e.g., via a count of appearances
       const sql = `
-          SELECT tracks.*, COUNT(playlist_tracks.track_id) AS appearance_count
-          FROM tracks
-          JOIN playlist_tracks ON tracks.id = playlist_tracks.track_id
-          GROUP BY tracks.id
-          ORDER BY appearance_count DESC
-          LIMIT ?`;
+        SELECT s.*, COUNT(ps.song_id) as appearances
+        FROM SONGS s
+        JOIN PLAYLIST_SONGS ps ON s.id = ps.song_id
+        GROUP BY s.id
+        ORDER BY appearances DESC
+        LIMIT ?`;
 
       const queryRunner = AppDataSource.createQueryRunner();
       await queryRunner.connect();

@@ -5,6 +5,7 @@ import { Track } from '../entity/track';
 import { PlaylistSong } from '../entity/playlistSong';
 import { UserService } from './userService';
 import { Artist } from '../entity/artist';
+import { User } from '../entity/user';
 
 export class PlaylistService {
     private dataSource: DataSource;
@@ -19,10 +20,7 @@ export class PlaylistService {
 
     // Find a playlist by ID
     async findPlaylistById(playlistId: string): Promise<Playlist | null> {
-        return this.playlistRepository.findOne({
-            where: { playlist_id: playlistId },
-            relations: ['playlistSongs', 'playlistSongs.track'], // Adjust based on your entity relationships
-        });
+        return this.dataSource.manager.findOneBy(Playlist, { playlist_id: playlistId });
     }
 
     // List all playlists
@@ -44,18 +42,27 @@ export class PlaylistService {
         });
     }
     
-    async generatePlaylistBasedOnTrack(songId: string, userId: number): Promise<Playlist> {
+    async generatePlaylistBasedOnTrackByAdminPlaylists(songId: string, userId: number): Promise<Playlist> {
+        // Check if the song exists in any playlist first
+        const songExistsInPlaylist = await this.dataSource.query(
+            `SELECT 1 FROM PLAYLIST_SONGS WHERE song_id = ? LIMIT 1`,
+            [songId]
+        );
+
+        // If the song is not found in any playlist, throw an error or handle accordingly
+        if (songExistsInPlaylist.length === 0) {
+            throw new Error('Song not found in any playlist');
+        }
+
+        // If the song exists in playlists, continue to generate the related tracks
         const relatedTracks = await this.dataSource.query(
-            `SELECT t.id, t.name, COUNT(*) AS appearance_count
-            FROM PLAYLIST_SONGS ps
-            JOIN SONGS t ON ps.song_id = t.id
-            WHERE ps.playlist_id IN (
-                SELECT playlist_id FROM PLAYLIST_SONGS WHERE song_id = ?
-            )
-            AND t.id != ?
-            GROUP BY t.id, t.name
+            `SELECT ps2.song_id, COUNT(*) AS appearance_count
+            FROM PLAYLIST_SONGS ps1
+            JOIN PLAYLIST_SONGS ps2 ON ps1.playlist_id = ps2.playlist_id
+            WHERE ps1.song_id = ? AND ps2.song_id != ?
+            GROUP BY ps2.song_id
             ORDER BY appearance_count DESC
-            LIMIT 10;`,
+            LIMIT 10`,
             [songId, songId]
         );
 
@@ -87,6 +94,25 @@ export class PlaylistService {
         return newPlaylist;
     }
 
+    // Method to create a new empty playlist for a user
+    async createPlaylistForUser(playlistName: string, userId: number): Promise<Playlist> {
+        // Retrieve the user based on userId
+        const user = await this.dataSource.manager.findOneBy(User, { id: userId });
+        if (!user) {
+            throw new Error(`User with ID ${userId} not found`);
+        }
+
+        // Create a new playlist instance
+        const newPlaylist = new Playlist();
+        newPlaylist.name = playlistName;
+        newPlaylist.user = user; // Associate the user with the playlist
+
+        // Save the new playlist entity in the database
+        await this.dataSource.manager.save(newPlaylist);
+
+        return newPlaylist;
+    }
+
     async addTracksToPlaylist(playlistId: string, trackIds: string[]): Promise<void> {
         // Use helper method to retrieve playlist
         const playlist = await this.findPlaylistById(playlistId);
@@ -94,12 +120,15 @@ export class PlaylistService {
             throw new Error(`Playlist with ID ${playlistId} not found`);
         }
 
+        // Retrieve all track entities based on the given track IDs
         const tracks = await this.dataSource.manager.findBy(Track, { id: In(trackIds) });
 
+        // Iterate through each track and create a PlaylistSong association
         for (const track of tracks) {
             const playlistSong = new PlaylistSong();
             playlistSong.playlist = playlist;
             playlistSong.track = track;
+            // Save the PlaylistSong entity, which links a track with the playlist
             await this.dataSource.manager.save(playlistSong);
         }
     }

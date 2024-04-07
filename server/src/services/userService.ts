@@ -9,7 +9,7 @@ export class UserService {
             // Assume password hashing is handled here
             const newUser = this.userRepository.create({
                 username,
-                password, // Hashed password should be passed here
+                password, // Hashed password
             });
 
             await this.userRepository.save(newUser);

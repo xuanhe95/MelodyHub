@@ -9,7 +9,7 @@ class AlbumController {
     }
 
     // Get all tracks in an album
-    async getTracks(req: Request, res: Response): Promise<void> {
+    async findTracksByAlbumId(req: Request, res: Response): Promise<void> {
         const albumId: string = req.params.id;
         try {
             const tracks = await this.albumService.findTracksByAlbumId(albumId);
@@ -24,8 +24,19 @@ class AlbumController {
         }
     }
 
+    // Get all albums
+    async listAllAlbums(req: Request, res: Response): Promise<void> {
+        try {
+            const albums = await this.albumService.listAllAlbums();
+            res.json(albums);
+        } catch (error) {
+            console.error("Error fetching albums:", error);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    }
+    
     // Get album information by ID
-    async getAlbumById(req: Request, res: Response): Promise<void> {
+    async findAlbumById(req: Request, res: Response): Promise<void> {
         const albumId: string = req.params.id;
         try {
             const album = await this.albumService.findAlbumById(albumId);
@@ -40,16 +51,6 @@ class AlbumController {
         }
     }
 
-    // Get all albums
-    async getAllAlbums(req: Request, res: Response): Promise<void> {
-        try {
-            const albums = await this.albumService.listAllAlbums();
-            res.json(albums);
-        } catch (error) {
-            console.error("Error fetching albums:", error);
-            res.status(500).json({ message: "Internal server error" });
-        }
-    }
 }
 
 export default AlbumController;

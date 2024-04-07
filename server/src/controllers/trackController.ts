@@ -1,112 +1,111 @@
-import { Request, Response } from 'express'; // 假设使用 Express 框架
+import { Request, Response } from 'express';
 import TrackService from '../services/trackService';
-import { Track } from '../entity/track';
 
-class TrackController {
+export class TrackController {
     private trackService: TrackService;
 
     constructor(trackService: TrackService) {
         this.trackService = trackService;
     }
 
-    // 通过id获取歌曲信息
+    async getAllTracks(req: Request, res: Response): Promise<void> {
+        try {
+            const tracks = await this.trackService.getAllTracks();
+            res.json(tracks);
+        } catch (error) {
+            res.status(500).json({ message: "Internal server error", error });
+        }
+    }
+
     async getTrackById(req: Request, res: Response): Promise<void> {
         try {
-            const trackId: string = req.params.id; // 假设 ID 存在于请求的参数中，这里假设参数名为 id
-            const track = await this.trackService.getTrackById(trackId);
+            const id = req.params.id;
+            const track = await this.trackService.getTrackById(id);
             if (track) {
                 res.json(track);
             } else {
                 res.status(404).json({ message: "Track not found" });
             }
         } catch (error) {
-            console.error("Error occurred while fetching track:", error);
-            res.status(500).json({ message: "Internal server error" });
+            res.status(500).json({ message: "Internal server error", error });
+        }
+    }
+
+    async getTracksByTitle(req: Request, res: Response): Promise<void> {
+        try {
+            const title = req.query.title as string;
+            const tracks = await this.trackService.getTracksByTitle(title);
+            if (tracks && tracks.length > 0) {
+                res.json(tracks);
+            } else {
+                res.status(404).json({ message: "No tracks found with the given title" });
+            }
+        } catch (error) {
+            res.status(500).json({ message: "Internal server error", error });
         }
     }
 
     async searchTracks(req: Request, res: Response): Promise<void> {
         try {
-            const title = req.query.title as string | undefined;
-            const artist = req.query.artist as string | undefined;
-            const album = req.query.album as string | undefined;
-            let startDate: Date | undefined = undefined;
-            let endDate: Date | undefined = undefined;
-    
-            if (typeof req.query.start === 'string') {
-                startDate = new Date(req.query.start);
-            }
-    
-            if (typeof req.query.end === 'string') {
-                endDate = new Date(req.query.end);
-            }
-    
-            const tempo = req.query.tempo as number | undefined;
-            const danceability = req.query.danceability as number | undefined;
-            const energy = req.query.energy as number | undefined;
-            const duration = req.query.duration as number | undefined;
-    
-            const tracks: Track[] | null = await this.trackService.searchTracks(
-                title,
-                artist,
-                album,
-                startDate,
-                endDate,
-                tempo,
-                danceability,
-                energy,
-                duration
+            // Extract query params
+            const { title, artist, album, start, end, tempo, danceability, energy, duration } = req.query;
+
+            // Call service method
+            const tracks = await this.trackService.searchTracks(
+                title as string,
+                artist as string,
+                album as string,
+                start as string, // Convert to Date in service if needed
+                end as string, // Convert to Date in service if needed
+                parseFloat(tempo as string),
+                parseFloat(danceability as string),
+                parseFloat(energy as string),
+                parseFloat(duration as string),
             );
-    
-            if (!tracks) {
-                res.status(404).json({ message: 'No tracks found' });
-                return;
-            }
-    
+
             res.json(tracks);
         } catch (error) {
-            console.error('Error occurred while searching tracks:', error);
-            res.status(500).json({ message: 'Internal server error' });
+            res.status(500).json({ message: "Internal server error", error });
         }
     }
-    
 
-    // 获取所有歌曲
-    async getAllTracks(req: Request, res: Response): Promise<void> {
+    async getAllTimeTopTracksByCountry(req: Request, res: Response): Promise<void> {
         try {
-            const tracks = await this.trackService.getAllTracks();
+            const country = req.params.country;
+            const tracks = await this.trackService.getAllTimeTopTracksByCountry(country);
             res.json(tracks);
         } catch (error) {
-            console.error("Error occurred while fetching tracks:", error);
-            res.status(500).json({ message: "Internal server error" });
+            res.status(500).json({ message: "Internal server error", error });
         }
     }
 
-    // 获取各国Top N歌曲
-    async getTopTracksByCountry(req: Request, res: Response): Promise<void> {
+    async getTopNTracksFromPlaylists(req: Request, res: Response): Promise<void> {
         try {
-            const country: string = req.params.country; // 假设 country 存在于请求的参数中，这里假设参数名为 country
-            console.log("country:", country);
-            const tracks = await this.trackService.getTopTracksByCountry(country, 10);
+            const n = parseInt(req.params.n, 10);
+            const tracks = await this.trackService.getTopNTracksFromPlaylists(n);
             res.json(tracks);
         } catch (error) {
-            console.error("Error occurred while fetching top tracks:", error);
-            res.status(500).json({ message: "Internal server error" });
+            res.status(500).json({ message: "Internal server error", error });
         }
     }
 
-    // 获取歌曲列表中的Top N歌曲
-    async getTopTracksByPlaylists(req: Request, res: Response): Promise<void> {
+    async findTracksByKeywords(req: Request, res: Response): Promise<void> {
         try {
-            const tracks = await this.trackService.getTopTracksByPlaylists(10);
+            const keywords = (req.query.keywords as string).split(",");
+            const tracks = await this.trackService.findTracksByKeywords(keywords);
             res.json(tracks);
         } catch (error) {
-            console.error("Error occurred while fetching top tracks:", error);
-            res.status(500).json({ message: "Internal server error" });
+            res.status(500).json({ message: "Internal server error", error });
         }
     }
 
-    
+    async getAverageFeaturesByGenre(req: Request, res: Response): Promise<void> {
+        try {
+            const genre = req.params.genre;
+            const features = await this.trackService.getAverageFeaturesByGenre(genre);
+            res.json(features);
+        } catch (error) {
+            res.status(500).json({ message: "Internal server error", error });
+        }
+    }
 }
-
-export default TrackController;

@@ -6,6 +6,11 @@ import { Track } from './entity/track';
 import { Artist } from './entity/artist';
 import { Concert } from './entity/concert';
 import { ReleaseBy } from './entity/releaseBy';
+import { Playlist } from './entity/playlist';
+import { ArtistGenre } from './entity/artistGenre';
+import { PlaylistSong } from './entity/playlistSong';
+import { SongRanking } from './entity/songRanking';
+import { TopSongByCountry } from './entity/TopSongByCountry';
 
 export const AppDataSource = new DataSource({
     type: 'mysql', // the type of your database
@@ -19,8 +24,13 @@ export const AppDataSource = new DataSource({
         Album,
         Track,
         Artist,
+        ArtistGenre,
         ReleaseBy,
         Concert,
+        Playlist,
+        PlaylistSong,
+        SongRanking,
+        TopSongByCountry,        
     ],
     synchronize: false, // dev stage
 });
