@@ -15,23 +15,24 @@ const authService = new AuthService();
 const userService = new UserService();
 const authController = new AuthController(userService, authService);
 
-
-
-
-
 router.post('/playlists/generate', (req, res) => playlistController.generatePlaylistBasedOnTrack(req, res));
 // router.put('/playlists/:playlistId/tracks', (req, res) => playlistController.addTracksToPlaylist(req, res));
 
 // Verified APIs
 
 // List all playlists
-router.get('/playlists', playlistController.listAllPlaylists);
+router.get('/all-playlists', playlistController.listAllPlaylists);
 // Find playlists by user
-router.get('/playlists/user/:userId', (req, res) => playlistController.findPlaylistsByUser(req, res));
+router.get('/playlists/user/:userId', playlistController.findPlaylistsByUser);
+
+router.get('/playlists', authController.authUser, playlistController.findPlaylistsForUser);
 // Create playlist for user
 router.post('/playlists', authController.authUser, playlistController.createPlaylistForUser);
 // Add track to playlist
 router.post('/playlists/track', authController.authUser, playlistController.addTrackToPlaylist);
+
+
+router.get('/playlists/:id', playlistController.findPlaylistById);
 
 
 export default router;

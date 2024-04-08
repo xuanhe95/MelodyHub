@@ -52,6 +52,10 @@ const MainRoutes = {
       element: <Playlists />
     },
     {
+      path: 'playlists/:id',
+      element: <Playlists />
+    },
+    {
       path: 'search',
       element: <Search />
     },

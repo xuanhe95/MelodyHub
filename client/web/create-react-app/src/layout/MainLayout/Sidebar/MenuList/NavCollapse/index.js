@@ -27,8 +27,14 @@ const NavCollapse = ({ menu, level }) => {
   const handleClick = () => {
     setOpen(!open);
     setSelected(!selected ? menu.id : null);
-    if (menu?.id !== 'authentication') {
-      navigate(menu.children[0]?.url);
+    // 如果当前菜单项不是用于认证，也没有子菜单，即它是一个直接的链接，则进行导航
+    if (menu?.type === 'item' && menu?.url) {
+      navigate(menu.url);
+    }
+    // 如果它是一个包含子项的菜单项但不是认证类型，尝试导航到第一个子项（如果有的话）
+    else if (menu?.type === 'collapse' && menu.id !== 'authentication' && menu.children?.length) {
+      // 此处不进行任何导航，因为我们希望点击只是用来展开或收起子菜单
+      // 如果您有特定逻辑需要在此处处理，确保它适用于您的场景
     }
   };
 

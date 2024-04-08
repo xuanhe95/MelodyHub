@@ -150,7 +150,11 @@ const FirebaseLogin = ({ ...others }) => {
             if (response.ok) {
               const token = await response.json();
               console.log('Login success', token)
-              localStorage.setItem('token', token);
+
+
+
+              localStorage.setItem('token', JSON.stringify(token));
+              console.log('Stored token in local storage:', localStorage.getItem('token'));
               console.log('token:', token);
               navigate('/');
             } else {

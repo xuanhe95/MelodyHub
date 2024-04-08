@@ -12,7 +12,28 @@ export class PlaylistController {
         this.addTrackToPlaylist = this.addTrackToPlaylist.bind(this);
         this.listAllPlaylists = this.listAllPlaylists.bind(this);
         this.findPlaylistsByUser = this.findPlaylistsByUser.bind(this);
+        this.findPlaylistsForUser = this.findPlaylistsForUser.bind(this);
+        this.findPlaylistById = this.findPlaylistById.bind(this);
 
+    }
+
+    /**
+     * Find a playlist by ID
+     * @param req 
+     * @param res 
+     */
+    async findPlaylistById(req: Request, res: Response): Promise<void> {
+        const playlistId = req.params.id;
+        try {
+            const playlist = await this.playlistService.findPlaylistById(playlistId);
+            if (playlist) {
+                res.json(playlist);
+            } else {
+                res.status(404).json({ message: "Playlist not found" });
+            }
+        } catch (error) {
+            res.status(500).json({ message: "Internal server error", error });
+        }
     }
 
     async listAllPlaylists(req: Request, res: Response): Promise<void> {
@@ -28,6 +49,18 @@ export class PlaylistController {
         const userId = parseInt(req.params.userId);
         try {
             const playlists = await this.playlistService.findPlaylistsByUser(userId);
+            res.json(playlists);
+        } catch (error) {
+            res.status(500).json({ message: "Internal server error", error });
+        }
+    }
+
+
+    async findPlaylistsForUser(req: Request, res: Response): Promise<void> {
+        const user = res.locals.user as User;
+        console.log("Finding playlists for user", user);
+        try {
+            const playlists = await this.playlistService.findPlaylistsByUser(user.id);
             res.json(playlists);
         } catch (error) {
             res.status(500).json({ message: "Internal server error", error });

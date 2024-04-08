@@ -37,11 +37,12 @@ const pages = {
       title: 'Playlists',
       type: 'collapse',
       icon: icons.IconPlaylist,
-      children: 
+      url: '/',
+      children:
         generatePlaylistMenuItems()
-       // 使用动态生成的播放列表项
-    }, 
-    
+      // 使用动态生成的播放列表项
+    },
+
     {
       id: 'authentication',
       title: 'Authentication',

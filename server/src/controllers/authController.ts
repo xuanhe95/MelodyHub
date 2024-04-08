@@ -43,6 +43,7 @@ class AuthController {
 
     async authUser(req: Request, res: Response, next: NextFunction): Promise<void> {
         const authHeader = req.headers['authorization'];
+        console.log('AuthHeader:', authHeader);
         const token = authHeader && authHeader.split(' ')[1];
         console.log('Token:', token);
         // console.log('AuthHeader:', authHeader);
@@ -63,7 +64,7 @@ class AuthController {
                 next();
             }else{
                 res.sendStatus(403);
-                next();
+                return;
             }
         } catch (error) {
             console.error('Error verifying token:', error);

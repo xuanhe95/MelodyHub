@@ -1,15 +1,19 @@
 import React from 'react';
-import { Table, TableHead, TableBody, TableRow, TableCell, Typography, Avatar } from '@mui/material';
+import { Table, TableHead, TableBody, TableRow, TableCell, Typography, Avatar, Box } from '@mui/material';
 
-const musicList = [
-  { title: 'Song 1', artist: 'Artist 1', album: 'Album 1', duration: '3:45' },
-  { title: 'Song 2', artist: 'Artist 2', album: 'Album 2', duration: '4:20' },
-  { title: 'Song 3', artist: 'Artist 3', album: 'Album 3', duration: '2:58' },
-  { title: 'Song 4', artist: 'Artist 4', album: 'Album 4', duration: '5:12' },
-  { title: 'Song 5', artist: 'Artist 5', album: 'Album 5', duration: '3:30' }
-];
+// const musicList = [
+//   { title: 'Song 1', artist: 'Artist 1', album: 'Album 1', duration: '3:45' },
+//   { title: 'Song 2', artist: 'Artist 2', album: 'Album 2', duration: '4:20' },
+//   { title: 'Song 3', artist: 'Artist 3', album: 'Album 3', duration: '2:58' },
+//   { title: 'Song 4', artist: 'Artist 4', album: 'Album 4', duration: '5:12' },
+//   { title: 'Song 5', artist: 'Artist 5', album: 'Album 5', duration: '3:30' }
+// ];
 
-const MusicTable = () => {
+const MusicTable = ({ playlist }) => {
+  console.log(playlist);
+  if (!playlist) {
+    return <Typography variant="h3">Loading...</Typography>;
+  }
   return (
     <Table>
       {/* 表头 */}
@@ -29,17 +33,19 @@ const MusicTable = () => {
           </TableCell>
         </TableRow>
       </TableHead>
-      
+
       {/* 表格内容 */}
       <TableBody>
-        {musicList.map((music, index) => (
+        {playlist.map((music, index) => (
           <TableRow key={index}>
             <TableCell colSpan={1}>
-              <Avatar alt={music.title} src="/path/to/music-icon.jpg" />
-              <Typography variant="body1">{music.title}</Typography>
+              <Box display="flex" alignItems="center"> {/* 使用flex布局并垂直居中对齐 */}
+                <Avatar alt={music.track.title} src="/path/to/music-icon.jpg" sx={{ mr: 2 }} /> {/* marginRight添加一些间隔 */}
+                <Typography variant="body1">{music.track.title}</Typography>
+              </Box>
             </TableCell>
-            <TableCell colSpan={1}>{music.artist}</TableCell>
-            <TableCell colSpan={1}>{music.album}</TableCell>
+            <TableCell colSpan={1}>{music.artist.name}</TableCell>
+            <TableCell colSpan={1}>{music.id}</TableCell>
             <TableCell>{music.duration}</TableCell>
           </TableRow>
         ))}

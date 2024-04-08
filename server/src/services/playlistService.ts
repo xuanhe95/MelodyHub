@@ -28,7 +28,12 @@ export class PlaylistService {
     async findPlaylistById(playlistId: string): Promise<Playlist | null> {
         return this.dataSource.manager.findOne(Playlist, {
             where: { playlist_id: playlistId },
-            relations: ['user'] // Include user in the response
+            relations: [
+                'user', 
+                'playlistSongs',
+                'playlistSongs.track', 
+                'playlistSongs.artist',
+            ] // Include user and songs in the response
         });
     }
 
@@ -50,6 +55,7 @@ export class PlaylistService {
         // if (!user) {
         //     throw new Error(`User with ID ${userId} not found`);
         // }
+        console.log(userId);
         return this.playlistRepository.find({
             where: { user: { id: userId } },
             relations: ['playlistSongs', 'playlistSongs.track'],
