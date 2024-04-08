@@ -8,7 +8,13 @@ const privateKey = process.env.privateKey || 'private';
 class AuthService {
     private userRepository = AppDataSource.getRepository(User);
 
-    // User login
+    /**
+     * Login user
+     * @param username 
+     * @param password 
+     * @returns 
+     */
+
     async loginUser(username: string, password: string): Promise<string | null> {
         const user = await this.userRepository
             .createQueryBuilder("user")
@@ -20,11 +26,9 @@ class AuthService {
             return null; // User not found
         }
 
-        console.log('Password is:', password    );
-        console.log('User password is:', user.password);    
 
         const passwordIsValid = await bcrypt.compare(password, user.password);
-        console.log('Password is valid:', passwordIsValid);
+
         if (!passwordIsValid) {
             return null; // Password does not match
         }
@@ -37,8 +41,11 @@ class AuthService {
         console.log('Token:', token);  
         return token;
     }
-
-    // Verify JWT token
+    /**
+     * Verify token
+     * @param token 
+     * @returns 
+     */
     verifyToken(token: string): JwtPayload | null {
         try {
             if(token === undefined || token === null || token === ''){
@@ -52,7 +59,11 @@ class AuthService {
         }
     }
     
-    // Generate JWT token
+    /**
+     * Generate token
+     * @param payload 
+     * @returns 
+     */
     generateToken(payload: any): string {
         return jwt.sign(payload, privateKey, { expiresIn: "5h" });
     }

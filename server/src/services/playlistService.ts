@@ -20,11 +20,15 @@ export class PlaylistService {
         this.userService = userService;
     }
 
-    // Find a playlist by ID
+    /**
+     * Find a playlist by ID
+     * @param playlistId 
+     * @returns 
+     */
     async findPlaylistById(playlistId: string): Promise<Playlist | null> {
         return this.dataSource.manager.findOne(Playlist, {
             where: { playlist_id: playlistId },
-            relations: ['user'] // 指定加载'user'关联
+            relations: ['user'] // Include user in the response
         });
     }
 
@@ -35,16 +39,22 @@ export class PlaylistService {
         });
     }
 
-    // Find playlists for a specific user
+
+    /**
+     * Find playlists by user
+     * @param userId 
+     * @returns 
+     */
     async findPlaylistsByUser(userId: number): Promise<Playlist[]> {
-        const user = await this.userService.getUserById(userId);
-        if (!user) {
-            throw new Error(`User with ID ${userId} not found`);
-        }
+        // const user = await this.userService.getUserById(userId);
+        // if (!user) {
+        //     throw new Error(`User with ID ${userId} not found`);
+        // }
         return this.playlistRepository.find({
-            where: { user: user },
-            relations: ['playlistSongs', 'playlistSongs.track'], // Include tracks in the response
+            where: { user: { id: userId } },
+            relations: ['playlistSongs', 'playlistSongs.track'],
         });
+        
     }
     
     async generatePlaylistBasedOnTrackByAdminPlaylists(songId: string, userId: number): Promise<Playlist> {
@@ -99,6 +109,13 @@ export class PlaylistService {
         return newPlaylist;
     }
 
+    /**
+     * Create a new playlist for a user
+     * @param playlistName The name of the playlist
+     * @param userId The ID of the user
+     * @returns Promise<Playlist>
+     * */
+
     // Method to create a new empty playlist for a user
     async createPlaylistForUser(playlistName: string, userId: number): Promise<Playlist> {
         // Retrieve the user based on userId
@@ -124,8 +141,6 @@ export class PlaylistService {
     }
 
 
-
-
     async addTracksToPlaylist(playlistId: string, trackIds: string[]): Promise<void> {
         // Use helper method to retrieve playlist
         const playlist = await this.findPlaylistById(playlistId);
@@ -147,7 +162,12 @@ export class PlaylistService {
     }
 
 
-
+    /**
+     * Add a track to a playlist
+     * @param playlistId The ID of the playlist
+     * @param trackId The ID of the track
+     * @returns Promise<void>
+     **/
 
     async addTrackToPlaylist(playlistId: string, trackId: string): Promise<void> {
         const queryRunner = this.dataSource.createQueryRunner();
@@ -166,14 +186,11 @@ export class PlaylistService {
                 throw new Error(`Track with ID ${trackId} not found`);
             }
 
-            console.log('Adding track to playlist:', playlist, track);
-
             const releases = await queryRunner.manager.find(ReleaseBy, {
                 where: { track: { id: trackId }},
                 relations: ['artist']
             });
 
-            console.log('Releases:', releases);
 
             const playlistSongs = releases.map(release => {
                 const playlistSong = new PlaylistSong();
@@ -185,16 +202,14 @@ export class PlaylistService {
                 return playlistSong;
             });
 
-            console.log('Playlist songs:', playlistSongs);
             if(playlistSongs.length > 0){
                 await queryRunner.manager.save(PlaylistSong, playlistSongs);
                 await queryRunner.commitTransaction();
             }
             else{
                 console.log('No releases found for track:', track);
+                await queryRunner.rollbackTransaction();
             }
-            
-
 
         } catch (error) {
             await queryRunner.rollbackTransaction();
@@ -236,25 +251,25 @@ export class PlaylistService {
 
 
 
-    async addPlaylistToUser(userId: number, playlistId: string): Promise<void> {
-        // Retrieve the user entity
-        const user = await this.userService.getUserById(userId);
-        if (!user) {
-            throw new Error(`User with ID ${userId} not found`);
-        }
+    // async addPlaylistToUser(userId: number, playlistId: string): Promise<void> {
+    //     // Retrieve the user entity
+    //     const user = await this.userService.getUserById(userId);
+    //     if (!user) {
+    //         throw new Error(`User with ID ${userId} not found`);
+    //     }
 
-        // Retrieve the playlist entity
-        const playlist = await this.findPlaylistById(playlistId);
-        if (!playlist) {
-            throw new Error(`Playlist with ID ${playlistId} not found`);
-        }
+    //     // Retrieve the playlist entity
+    //     const playlist = await this.findPlaylistById(playlistId);
+    //     if (!playlist) {
+    //         throw new Error(`Playlist with ID ${playlistId} not found`);
+    //     }
 
-        // Add the playlist to the user's playlists
-        user.playlists.push(playlist);
+    //     // Add the playlist to the user's playlists
+    //     user.playlists.push(playlist);
 
-        // Save the updated user entity
-        await this.dataSource.manager.save(user);
-    }
+    //     // Save the updated user entity
+    //     await this.dataSource.manager.save(user);
+    // }
 }
 
 

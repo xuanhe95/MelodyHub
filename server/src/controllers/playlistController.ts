@@ -10,6 +10,8 @@ export class PlaylistController {
         this.listAllPlaylists = this.listAllPlaylists.bind(this);
         this.createPlaylistForUser = this.createPlaylistForUser.bind(this);
         this.addTrackToPlaylist = this.addTrackToPlaylist.bind(this);
+        this.listAllPlaylists = this.listAllPlaylists.bind(this);
+        this.findPlaylistsByUser = this.findPlaylistsByUser.bind(this);
 
     }
 
@@ -66,35 +68,29 @@ export class PlaylistController {
 
 
     async addTrackToPlaylist(req: Request, res: Response): Promise<void> {
-        console.log("Adding track to playlist");
+
         const { playlistId, trackId } = req.body;
-        console.log(req.body);
         const user = res.locals.user as User;
-        console.log(user);
-        console.log(user.id );
+
         try{
             const playlist = await this.playlistService.findPlaylistById(playlistId);
-
-            if(playlist){
-                console.log("Playlist found")
-                
-            }
 
             if(!playlist){
                 res.status(404).json({ message: "Playlist not found" });
                 return;
             }
             else if(playlist.user.id !== user.id){
+                // User does not have permission to add tracks to this playlist
                 res.status(403).json({ message: "You do not have permission to add tracks to this playlist" });
                 return;
             }
-            console.log("Playlist found")
         } catch (error) {
             res.status(500).json({ message: "Internal server error1", error });
             return;
         }
 
         try {
+            // Add track to playlist
             await this.playlistService.addTrackToPlaylist(playlistId, trackId);
             res.json({ message: "Track added to playlist successfully" });
         } catch (error) {
@@ -102,15 +98,4 @@ export class PlaylistController {
         }
 
     }
-
-
-    // async addPlaylistToUser(req: Request, res: Response): Promise<void> {
-    //     const { playlistId, userId } = req.body;
-    //     try {
-    //         await this.playlistService.addPlaylistToUser(playlistId, userId);
-    //         res.json({ message: "Playlist added to user successfully" });
-    //     } catch (error) {
-    //         res.status(500).json({ message: "Internal server error", error });
-    //     }
-    // }
 }

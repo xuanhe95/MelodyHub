@@ -17,12 +17,17 @@ const authController = new AuthController(userService, authService);
 
 
 
-router.get('/playlists', (req, res) => playlistController.listAllPlaylists(req, res));
-router.get('/playlists/user/:userId', (req, res) => playlistController.findPlaylistsByUser(req, res));
+
+
 router.post('/playlists/generate', (req, res) => playlistController.generatePlaylistBasedOnTrack(req, res));
-router.put('/playlists/:playlistId/tracks', (req, res) => playlistController.addTracksToPlaylist(req, res));
+// router.put('/playlists/:playlistId/tracks', (req, res) => playlistController.addTracksToPlaylist(req, res));
 
+// Verified APIs
 
+// List all playlists
+router.get('/playlists', playlistController.listAllPlaylists);
+// Find playlists by user
+router.get('/playlists/user/:userId', (req, res) => playlistController.findPlaylistsByUser(req, res));
 // Create playlist for user
 router.post('/playlists', authController.authUser, playlistController.createPlaylistForUser);
 // Add track to playlist
