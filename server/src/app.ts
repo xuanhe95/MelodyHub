@@ -12,6 +12,7 @@ app.use(cors({ origin: '*' }));
 app.use(express.json());
 app.use('/api', router);
 
+
 console.log("Starting application...");
 
 const startServer = async () => {

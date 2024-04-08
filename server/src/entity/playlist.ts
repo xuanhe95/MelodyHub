@@ -1,8 +1,8 @@
-import { Entity, PrimaryColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { PlaylistSong } from './playlistSong';
 import { User } from './user';
 
-@Entity()
+@Entity({name: 'playlists'})
 export class Playlist {
     @PrimaryColumn()
     playlist_id!: string;
@@ -15,6 +15,7 @@ export class Playlist {
 
     // many-to-one relationship between Playlist and User
     @ManyToOne(() => User, user => user.playlists) 
+    @JoinColumn({ name: 'user' })
     user!: User;
 
     @OneToMany(() => PlaylistSong, playlistSong => playlistSong.playlist)

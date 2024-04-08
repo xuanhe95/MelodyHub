@@ -6,6 +6,8 @@ import { PlaylistSong } from '../entity/playlistSong';
 import { UserService } from './userService';
 import { Artist } from '../entity/artist';
 import { User } from '../entity/user';
+import { v4 as uuidv4 } from 'uuid';
+import { ReleaseBy } from '../entity/releaseBy';
 
 export class PlaylistService {
     private dataSource: DataSource;
@@ -20,7 +22,10 @@ export class PlaylistService {
 
     // Find a playlist by ID
     async findPlaylistById(playlistId: string): Promise<Playlist | null> {
-        return this.dataSource.manager.findOneBy(Playlist, { playlist_id: playlistId });
+        return this.dataSource.manager.findOne(Playlist, {
+            where: { playlist_id: playlistId },
+            relations: ['user'] // 指定加载'user'关联
+        });
     }
 
     // List all playlists
@@ -98,20 +103,28 @@ export class PlaylistService {
     async createPlaylistForUser(playlistName: string, userId: number): Promise<Playlist> {
         // Retrieve the user based on userId
         const user = await this.dataSource.manager.findOneBy(User, { id: userId });
+        console.log(user);
         if (!user) {
             throw new Error(`User with ID ${userId} not found`);
         }
 
         // Create a new playlist instance
         const newPlaylist = new Playlist();
+
+        // Generate a unique playlist ID
+        newPlaylist.playlist_id = uuidv4(); // Assign a unique ID to the playlist
         newPlaylist.name = playlistName;
         newPlaylist.user = user; // Associate the user with the playlist
+        newPlaylist.year = new Date().getFullYear();
 
         // Save the new playlist entity in the database
         await this.dataSource.manager.save(newPlaylist);
 
         return newPlaylist;
     }
+
+
+
 
     async addTracksToPlaylist(playlistId: string, trackIds: string[]): Promise<void> {
         // Use helper method to retrieve playlist
@@ -131,6 +144,69 @@ export class PlaylistService {
             // Save the PlaylistSong entity, which links a track with the playlist
             await this.dataSource.manager.save(playlistSong);
         }
+    }
+
+
+
+
+    async addTrackToPlaylist(playlistId: string, trackId: string): Promise<void> {
+        const queryRunner = this.dataSource.createQueryRunner();
+
+        await queryRunner.connect();
+        await queryRunner.startTransaction();
+
+        try {
+            const playlist = await queryRunner.manager.findOneBy(Playlist, { playlist_id: playlistId });
+            if (!playlist) {
+                throw new Error(`Playlist with ID ${playlistId} not found`);
+            }
+
+            const track = await queryRunner.manager.findOneBy(Track, { id: trackId });
+            if (!track) {
+                throw new Error(`Track with ID ${trackId} not found`);
+            }
+
+            console.log('Adding track to playlist:', playlist, track);
+
+            const releases = await queryRunner.manager.find(ReleaseBy, {
+                where: { track: { id: trackId }},
+                relations: ['artist']
+            });
+
+            console.log('Releases:', releases);
+
+            const playlistSongs = releases.map(release => {
+                const playlistSong = new PlaylistSong();
+                playlistSong.playlist = playlist;
+                playlistSong.track = track;
+                playlistSong.year = playlist.year;
+                console.log("artist", release.artist)
+                playlistSong.artist = release.artist;
+                return playlistSong;
+            });
+
+            console.log('Playlist songs:', playlistSongs);
+            if(playlistSongs.length > 0){
+                await queryRunner.manager.save(PlaylistSong, playlistSongs);
+                await queryRunner.commitTransaction();
+            }
+            else{
+                console.log('No releases found for track:', track);
+            }
+            
+
+
+        } catch (error) {
+            await queryRunner.rollbackTransaction();
+            console.error('Transaction failed:', error);
+            // 在这里可以抛出错误或返回错误信息，以便可以在调用该函数的地方处理
+            throw error;
+        } finally {
+            await queryRunner.release();
+        }
+
+   
+        
     }
 
     // Method to find all songs in a playlist for a specific year
@@ -156,6 +232,28 @@ export class PlaylistService {
             ORDER BY PlaylistAppearances DESC;`
         );
         return artists;
+    }
+
+
+
+    async addPlaylistToUser(userId: number, playlistId: string): Promise<void> {
+        // Retrieve the user entity
+        const user = await this.userService.getUserById(userId);
+        if (!user) {
+            throw new Error(`User with ID ${userId} not found`);
+        }
+
+        // Retrieve the playlist entity
+        const playlist = await this.findPlaylistById(playlistId);
+        if (!playlist) {
+            throw new Error(`Playlist with ID ${playlistId} not found`);
+        }
+
+        // Add the playlist to the user's playlists
+        user.playlists.push(playlist);
+
+        // Save the updated user entity
+        await this.dataSource.manager.save(user);
     }
 }
 

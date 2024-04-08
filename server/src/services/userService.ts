@@ -1,11 +1,14 @@
 import { AppDataSource } from '../db'; 
 import { User } from '../entity/user';
+import bcrypt, { hash } from 'bcrypt';
 
 export class UserService {
     private userRepository = AppDataSource.getRepository(User);
 
     async createUser(username: string, password: string): Promise<boolean> {
         try {
+
+            password = await bcrypt.hash(password, 10);
             // Assume password hashing is handled here
             const newUser = this.userRepository.create({
                 username,

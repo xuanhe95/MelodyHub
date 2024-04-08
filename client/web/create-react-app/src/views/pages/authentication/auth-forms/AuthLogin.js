@@ -151,11 +151,12 @@ const FirebaseLogin = ({ ...others }) => {
               const token = await response.json();
               console.log('Login success', token)
               localStorage.setItem('token', token);
+              console.log('token:', token);
               navigate('/');
             } else {
               console.log('Login failed:', response.statusText);
             }
-          } catch (error){
+          } catch (error) {
             console.error('Error during login:', error.message);
           }
           try {
