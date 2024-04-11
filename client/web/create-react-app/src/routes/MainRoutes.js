@@ -19,6 +19,7 @@ const UtilsTablerIcons = Loadable(lazy(() => import('views/utilities/TablerIcons
 const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 
 const Index = Loadable(lazy(() => import('views/dashboard/Index')));
+const Home = Loadable(lazy(() => import('views/pages/home')));
 const Albums = Loadable(lazy(() => import('views/pages/albums')));
 const Playlists = Loadable(lazy(() => import('views/pages/playlists')));
 const Search = Loadable(lazy(() => import('views/pages/search')));
@@ -38,6 +39,10 @@ const MainRoutes = {
     {
       path: 'test',
       element: <Index />
+    },
+    {
+      path: 'home',
+      element: <Home />
     },
     {
       path: 'albums',
