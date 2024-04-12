@@ -25,6 +25,7 @@ const Playlists = Loadable(lazy(() => import('views/pages/playlists')));
 const Search = Loadable(lazy(() => import('views/pages/search')));
 const Recommanded = Loadable(lazy(() => import('views/pages/recommanded')));
 const Album = Loadable(lazy(() => import('views/pages/album')));
+const Concert = Loadable(lazy(() => import('views/pages/concert')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -39,6 +40,10 @@ const MainRoutes = {
     {
       path: 'test',
       element: <Index />
+    },
+    {
+      path: 'concert',
+      element: <Concert />
     },
     {
       path: 'home',

@@ -1,8 +1,8 @@
 // assets
-import { IconDashboard, IconDisc, IconPlaylist, IconSearch, IconMusicQuestion, IconMusic } from '@tabler/icons-react';
+import { IconDashboard, IconDisc, IconPlaylist, IconSearch, IconMusicQuestion, IconMusic, IconHome, IconMicrophone2 } from '@tabler/icons-react';
 
 // constant
-const icons = { IconDashboard, IconDisc, IconPlaylist, IconSearch, IconMusicQuestion, IconMusic };
+const icons = { IconDashboard, IconDisc, IconPlaylist, IconSearch, IconMusicQuestion, IconMusic, IconHome, IconMicrophone2 };
 
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
 
@@ -24,14 +24,14 @@ const dashboard = {
       title: 'Home',
       type: 'item',
       url: '/home',
-      icon: icons.IconDashboard,
+      icon: icons.IconHome,
       breadcrumbs: false
     },
     {
       id: 'albums',
       title: 'Albums',
       type: 'item',
-      url: '/album',
+      url: '/albums',
       icon: icons.IconDisc,
       breadcrumbs: false
     },
@@ -39,8 +39,16 @@ const dashboard = {
       id: 'music',
       title: 'Music',
       type: 'item',
-      url: '/albums',
+      url: '/album',
       icon: icons.IconMusic,
+      breadcrumbs: false
+    },
+    {
+      id: 'concert',
+      title: 'Concert',
+      type: 'item',
+      url: '/concert',
+      icon: icons.IconMicrophone2,
       breadcrumbs: false
     },
     {
