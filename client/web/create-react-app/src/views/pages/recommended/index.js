@@ -12,7 +12,7 @@ import MusicTable from './MusicTable';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 
-const RecommandedPage = () => (
+const RecommendedPage = () => (
   <MainCard title="Playlists">
     <CardContent>
 
@@ -36,4 +36,4 @@ const RecommandedPage = () => (
 
 );
 
-export default RecommandedPage;
+export default RecommendedPage;

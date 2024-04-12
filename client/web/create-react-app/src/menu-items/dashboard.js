@@ -44,10 +44,10 @@ const dashboard = {
       breadcrumbs: false
     },
     {
-      id: 'recommanded',
+      id: 'recommended',
       title: 'Surprise Me',
       type: 'item',
-      url: '/recommanded',
+      url: '/recommended',
       icon: icons.IconMusicQuestion,
       breadcrumbs: false
     },
