@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Grid, Card, CardActionArea, CardMedia, Collapse, List, ListItem, ListItemText } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Grid, Card, CardActionArea, CardMedia} from '@mui/material';
+import config from '../../../config.json';
 
 // material-ui
 import { Typography, CardContent } from '@mui/material';
@@ -9,23 +10,30 @@ import MainCard from 'ui-component/cards/MainCard';
 
 import { Divider, Box } from '@mui/material';
 
-const AlbumPage = () => {
-  // 将 selectedAlbum 状态移出组件外部
-  const [selectedAlbum, setSelectedAlbum] = useState(null);
+const HomePage = () => {
+  const [popularAlbums, setPopularAlbums] = useState([]);
+  const [favoriteAlbums, setfavoriteAlbums] = useState([]);
 
-  // 假设这是你的专辑数据
-  const albums = [
-    { id: 1, title: 'Album 1', cover: 'cover1.jpg', songs: ['Song 1', 'Song 2'] },
-    { id: 2, title: 'Album 2', cover: 'cover2.jpg', songs: ['Song 4', 'Song 5', 'Song 6'] },
-    { id: 3, title: 'Album 3', cover: 'cover3.jpg', songs: ['Song 7', 'Song 8', 'Song 9'] },
-    { id: 4, title: 'Album 4', cover: 'cover4.jpg', songs: ['Song 10', 'Song 11', 'Song 12'] },
-    { id: 5, title: 'Album 5', cover: 'cover5.jpg', songs: ['Song 13', 'Song 14', 'Song 15'] }
-    // 其他专辑...
-  ];
 
-  // 处理专辑点击事件
-  const handleAlbumClick = (album) => {
-    setSelectedAlbum(selectedAlbum === album ? null : album);
+  useEffect(() => {
+    const fetchAlbums = async () => {
+      try {
+        // randomly fetch 10 since we don't have user associated data yet.
+        const response = await fetch(`http://${config.server_host}:${config.server_port}/api/albums/random/10`);
+        const data = await response.json();
+
+        setPopularAlbums(data.slice(0,5));
+        setfavoriteAlbums(data.slice(5,10));
+      } catch (error) {
+        console.error('Failed to fetch albums:', error);
+      }
+    };
+  
+    fetchAlbums();
+  }, []); // The empty array ensures this effect runs only once after the component mounts.
+
+  const handleAlbumClick = () => {
+    // TODO: this should direct you to the album page.
   };
 
   return (
@@ -36,23 +44,17 @@ const AlbumPage = () => {
         </Typography>
         <Box height={20} />
         <Grid container spacing={3}>
-          {albums.map((album) => (
+          {popularAlbums.map((album) => (
             <Grid item xs={6} sm={4} md={2} key={album.id}>
               <Card>
                 <CardActionArea onClick={() => handleAlbumClick(album)}>
-                  <CardMedia component="img" height="180" image={album.cover} alt={album.title} />
+                  <CardMedia component="img" height="180" image={album.cover} alt={album.cover} />
+                  <CardContent>
+                    <Typography gutterBottom variant="h5" component="div">
+                      {album.album}
+                    </Typography>
+                  </CardContent>
                 </CardActionArea>
-                {selectedAlbum && selectedAlbum.id === album.id && (
-                  <Collapse in={true}>
-                    <List>
-                      {album.songs.map((song, songIndex) => (
-                        <ListItem key={songIndex}>
-                          <ListItemText primary={song} />
-                        </ListItem>
-                      ))}
-                    </List>
-                  </Collapse>
-                )}
               </Card>
             </Grid>
           ))}
@@ -65,23 +67,17 @@ const AlbumPage = () => {
         </Typography>
         <Box height={20} />
         <Grid container spacing={3}>
-          {albums.map((album) => (
+          {favoriteAlbums.map((album) => (
             <Grid item xs={6} sm={4} md={2} key={album.id}>
               <Card>
                 <CardActionArea onClick={() => handleAlbumClick(album)}>
                   <CardMedia component="img" height="180" image={album.cover} alt={album.title} />
                 </CardActionArea>
-                {selectedAlbum && selectedAlbum.id === album.id && (
-                  <Collapse in={true}>
-                    <List>
-                      {album.songs.map((song, songIndex) => (
-                        <ListItem key={songIndex}>
-                          <ListItemText primary={song} />
-                        </ListItem>
-                      ))}
-                    </List>
-                  </Collapse>
-                )}
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="div">
+                    {album.album}
+                  </Typography>
+                </CardContent>
               </Card>
             </Grid>
           ))}
@@ -91,4 +87,4 @@ const AlbumPage = () => {
   );
 };
 
-export default AlbumPage;
+export default HomePage;

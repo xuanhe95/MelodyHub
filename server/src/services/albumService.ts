@@ -37,6 +37,20 @@ class AlbumService {
             return null;
         }
     }
+
+    async fetchRandomNAlbums(numOfAlums: number): Promise<Album[] | null> {
+        try {
+            const albumRepository = AppDataSource.getRepository(Album);
+            return await albumRepository.query(`
+                SELECT * FROM ALBUMS
+                ORDER BY RAND()
+                LIMIT ?;
+            `, [numOfAlums]);
+        } catch (error) {
+            console.error('Error fetching random albums:', error);
+            return null;
+        }
+    }
 }
 
 export default AlbumService;
