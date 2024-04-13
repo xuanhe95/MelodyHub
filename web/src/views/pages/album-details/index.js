@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import {IconArrowLeft} from '@tabler/icons-react';
-import { Typography, CardContent, Button, Table, TableHead, TableBody, TableRow, TableCell} from '@mui/material';
+import { Typography, CardContent, Button, Table, TableHead, TableBody, TableRow, TableCell, CircularProgress} from '@mui/material';
 import { Divider, Box } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
 
@@ -13,9 +13,11 @@ const AlbumDetailsPage = () => {
   const { id } = useParams(); // Retrieve the album ID from the URL
   const [songs, setSongs] = useState([]); // State to hold song details
   const [album, setAlbum] = useState([]); // State to hold album
+  const [songsFetchingDone, setSongsFetchingDone] = useState(true); // State to track loading status
 
   useEffect(() => {
     const fetchSongs = async () => {
+      setSongsFetchingDone(false);
       try {
         const response = await fetch(`http://${config.server_host}:${config.server_port}/api/albums/details/${id}/tracks`);
         const data = await response.json();
@@ -30,6 +32,8 @@ const AlbumDetailsPage = () => {
       } catch (error) {
         console.error('Failed to fetch songs:', error);
       }
+
+      setSongsFetchingDone(true);
     };
 
     const fetchAlbum = async () => {
@@ -85,17 +89,23 @@ const AlbumDetailsPage = () => {
           </TableHead>
 
           <TableBody>
-            {songs.map((music, index) => (
-              <TableRow key={index}>
-                <TableCell colSpan={1}>
-                  <Typography variant="body1">{music.title}</Typography>
-                </TableCell>
-                <TableCell colSpan={1}>{music.release_date}</TableCell>
-                <TableCell colSpan={1}>{music.tempo}</TableCell>
-                <TableCell>{music.energy}</TableCell>
-                <TableCell>{music.danceability}</TableCell>
-              </TableRow>
-            ))}
+            {songsFetchingDone ? (
+              songs.map((music, index) => (
+                <TableRow key={index}>
+                  <TableCell>{music.title}</TableCell>
+                  <TableCell>{music.release_date}</TableCell>
+                  <TableCell>{music.tempo}</TableCell>
+                  <TableCell>{music.energy}</TableCell>
+                  <TableCell>{music.danceability}</TableCell>
+                </TableRow>
+              ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} style={{ textAlign: 'center' }}>
+                    <CircularProgress />
+                  </TableCell>
+                </TableRow>
+            )}
           </TableBody>
         </Table>
 
