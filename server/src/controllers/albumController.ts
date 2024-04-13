@@ -1,15 +1,16 @@
 import { Request, Response } from "express";
 import AlbumService from '../services/albumService';
-import { MusicBrainzAPI } from "../utils/musicBrainz";
-import { Album } from "../entity/album";
-import { AlbumWithCover } from "../entity/albumWithCover";
+//import { MusicBrainzAPI } from "../utils/musicBrainz";
+//import { Album } from "../entity/album";
+//import { AlbumWithCover } from "../entity/albumWithCover";
+import { getAlbumCover } from '../external/musicBrainz';
 
 class AlbumController {
     private albumService: AlbumService;
 
     constructor(albumService: AlbumService) {
         this.albumService = albumService;
-        this.getAllAlbumsWithPages = this.getAllAlbumsWithPages.bind(this);
+        //this.getAllAlbumsWithPages = this.getAllAlbumsWithPages.bind(this);
     }
 
     // Get all tracks in an album
@@ -33,7 +34,7 @@ class AlbumController {
         try {
             const albums = await this.albumService.listAllAlbums();
             res.json(albums);
-        } catch (error) {
+        } catch (error) { 
             console.error("Error fetching albums:", error);
             res.status(500).json({ message: "Internal server error" });
         }
@@ -56,6 +57,7 @@ class AlbumController {
     }
 
 // Get all albums with pagination
+/*
 async getAllAlbumsWithPages(req: Request, res: Response): Promise<void> {
     console.log('req.query:', req.query);
     const page: number = parseInt(req.query.page as string) || 1;
@@ -110,7 +112,7 @@ async getAllAlbumsWithPages(req: Request, res: Response): Promise<void> {
         console.error("Error fetching albums with pagination:", error);
         res.status(500).json({ message: "Internal server error" });
     }
-}
+}*/
     
     async fetchRandomNAlbums(req: Request, res: Response): Promise<void> {
         try {
@@ -123,6 +125,21 @@ async getAllAlbumsWithPages(req: Request, res: Response): Promise<void> {
         }
     }
 
+    async fetchAlbumImage(req: Request, res: Response): Promise<void> {
+        const albumId: string = req.params.id;
+        try {
+            const album = await this.albumService.findAlbumById(albumId);
+            if (album) {
+                const albumCover = await getAlbumCover(album.name);
+                res.json({"imageUrl" : albumCover});
+            } else {
+                res.json({"imageUrl" : ''});
+            }
+        } catch (error) {
+            console.error("Error fetching album:", error);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    }
 }
 
 export default AlbumController;
