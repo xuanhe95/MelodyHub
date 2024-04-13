@@ -20,19 +20,19 @@ const HomePage = () => {
     const fetchAlbums = async () => {
       try {
         // randomly fetch 10 since we don't have user associated data yet.
-        const response = await fetch(`http://${config.server_host}:${config.server_port}/api/albums/random/10`);
+        const response = await fetch(`http://${config.server_host}:${config.server_port}/api/albums/random/8`);
         const data = await response.json();
 
         // Initialize albums with placeholder images
-        const initialPopular = data.slice(0, 5).map(album => ({ ...album, imageUrl: 'https://breckenridge.skyrun.com/components/com_jomholiday/assets/images/04-spinner.gif' }));
-        const initialFavorite = data.slice(5, 10).map(album => ({ ...album, imageUrl: 'https://breckenridge.skyrun.com/components/com_jomholiday/assets/images/04-spinner.gif' }));
+        const initialPopular = data.slice(0, 4).map(album => ({ ...album, imageUrl: 'https://breckenridge.skyrun.com/components/com_jomholiday/assets/images/04-spinner.gif' }));
+        const initialFavorite = data.slice(4, 8).map(album => ({ ...album, imageUrl: 'https://breckenridge.skyrun.com/components/com_jomholiday/assets/images/04-spinner.gif' }));
 
         setPopularAlbums(initialPopular);
         setFavoriteAlbums(initialFavorite);
 
         // Asynchronously update with actual images
-        updateAlbumImages(data.slice(0, 5), setPopularAlbums);
-        updateAlbumImages(data.slice(5, 10), setFavoriteAlbums);
+        updateAlbumImages(data.slice(0, 4), setPopularAlbums);
+        updateAlbumImages(data.slice(4, 8), setFavoriteAlbums);
 
       } catch (error) {
         console.error('Failed to fetch albums:', error);
@@ -68,15 +68,15 @@ const HomePage = () => {
     <MainCard title="">
       <CardContent>
         <Typography variant="h1" style={{ fontSize: '2rem' }}>
-          Popular
+          Made for You
         </Typography>
         <Box height={20} />
         <Grid container spacing={3}>
           {popularAlbums.map((album) => (
-            <Grid item xs={6} sm={4} md={2} key={album.id}>
+            <Grid item xs={7} sm={5} md={3} key={album.id}>
               <Card>
                 <CardActionArea onClick={() => handleAlbumClick(album)}>
-                  <CardMedia component="img" height="180" image={album.imageUrl} />
+                  <CardMedia component="img" height="300" image={album.imageUrl} />
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
                       {album.album}
@@ -90,16 +90,13 @@ const HomePage = () => {
         <Box height={20} />
         <Divider variant="middle" />
         <Box height={50} />
-        <Typography variant="h1" style={{ fontSize: '2rem' }}>
-          Favorite
-        </Typography>
         <Box height={20} />
         <Grid container spacing={3}>
           {favoriteAlbums.map((album) => (
-            <Grid item xs={6} sm={4} md={2} key={album.id}>
+            <Grid item xs={7} sm={5} md={3} key={album.id}>
               <Card>
                 <CardActionArea onClick={() => handleAlbumClick(album)}>
-                  <CardMedia component="img" height="180" image={album.imageUrl} />
+                  <CardMedia component="img" height="300" image={album.imageUrl} />
                 </CardActionArea>
                 <CardContent>
                   <Typography gutterBottom variant="h5" component="div">
