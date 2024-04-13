@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Grid, Card, CardActionArea, CardMedia, Typography } from '@mui/material';
 import config from '../../../config.json';
 
-const AlbumPage = () => {
+const AllAlbumsPage = () => {
   const [albums, setAlbums] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -92,4 +92,4 @@ const AlbumPage = () => {
     </div>
   );
 };
-export default AlbumPage;
+export default AllAlbumsPage;
