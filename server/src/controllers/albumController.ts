@@ -112,6 +112,17 @@ async getAllAlbumsWithPages(req: Request, res: Response): Promise<void> {
     }
 }
     
+    async fetchRandomNAlbums(req: Request, res: Response): Promise<void> {
+        try {
+            const numOfAlums: number = +req.params.numOfAlbums
+            const albums = await this.albumService.fetchRandomNAlbums(numOfAlums);
+            res.json(albums);
+        } catch (error) {
+            console.error("Error fetching albums:", error);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    }
+
 }
 
 export default AlbumController;
