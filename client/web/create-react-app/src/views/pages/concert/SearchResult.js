@@ -7,8 +7,7 @@ const SearchResult = () => {
   // 假设这是搜索结果数据
   const searchResults = [
     { date: '2024-05-01', location: 'Concert Hall', performer: 'Artist A', setlist: ['Song 1', 'Song 2', 'Song 3'] },
-    { date: '2024-05-15', location: 'Outdoor Stadium', performer: 'Artist B', setlist: ['Song 4', 'Song 5', 'Song 6'] },
- 
+    { date: '2024-05-15', location: 'Outdoor Stadium', performer: 'Artist B', setlist: ['Song 4', 'Song 5', 'Song 6'] }
   ];
 
   return (

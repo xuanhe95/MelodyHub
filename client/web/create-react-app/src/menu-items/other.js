@@ -2,7 +2,7 @@
 import { IconBrandChrome, IconHelp, IconDisc } from '@tabler/icons-react';
 
 // constant
-const icons = { IconBrandChrome, IconHelp, IconDisc};
+const icons = { IconBrandChrome, IconHelp, IconDisc };
 
 // ==============================|| SAMPLE PAGE & DOCUMENTATION MENU ITEMS ||============================== //
 

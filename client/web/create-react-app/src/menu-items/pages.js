@@ -3,7 +3,8 @@ import { IconKey, IconPlaylist } from '@tabler/icons-react';
 
 // constant
 const icons = {
-  IconKey, IconPlaylist
+  IconKey,
+  IconPlaylist
 };
 
 // ==============================|| EXTRA PAGES MENU ITEMS ||============================== //
@@ -11,7 +12,7 @@ const icons = {
 // 示例的用户播放列表数据
 const userPlaylists = [
   { id: 'playlist1', title: 'Playlist 1', url: 'playlists' },
-  { id: 'playlist2', title: 'Playlist 2', url: 'playlists2' },
+  { id: 'playlist2', title: 'Playlist 2', url: 'playlists2' }
   // 可以根据需要添加更多的播放列表项
 ];
 
@@ -38,8 +39,7 @@ const pages = {
       type: 'collapse',
       icon: icons.IconPlaylist,
       url: '/',
-      children:
-        generatePlaylistMenuItems()
+      children: generatePlaylistMenuItems()
       // 使用动态生成的播放列表项
     },
 
@@ -65,7 +65,7 @@ const pages = {
           target: true
         }
       ]
-    },
+    }
   ]
 };
 

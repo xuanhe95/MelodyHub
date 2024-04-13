@@ -39,7 +39,9 @@ const MusicTable = ({ playlist }) => {
         {playlist.map((music, index) => (
           <TableRow key={index}>
             <TableCell colSpan={1}>
-              <Box display="flex" alignItems="center"> {/* 使用flex布局并垂直居中对齐 */}
+              <Box display="flex" alignItems="center">
+                {' '}
+                {/* 使用flex布局并垂直居中对齐 */}
                 <Avatar alt={music.track.title} src="/path/to/music-icon.jpg" sx={{ mr: 2 }} /> {/* marginRight添加一些间隔 */}
                 <Typography variant="body1">{music.track.title}</Typography>
               </Box>

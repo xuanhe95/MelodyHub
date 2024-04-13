@@ -140,7 +140,7 @@ const FirebaseLogin = ({ ...others }) => {
             const response = await fetch(`http://${config.server_host}:${config.server_port}/api/login`, {
               method: 'POST',
               headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
               },
               body: JSON.stringify({
                 username: email,
@@ -149,9 +149,7 @@ const FirebaseLogin = ({ ...others }) => {
             });
             if (response.ok) {
               const token = await response.json();
-              console.log('Login success', token)
-
-
+              console.log('Login success', token);
 
               localStorage.setItem('token', JSON.stringify(token));
               console.log('Stored token in local storage:', localStorage.getItem('token'));

@@ -140,14 +140,13 @@ const FirebaseRegister = ({ ...others }) => {
           password: Yup.string().max(255).required('Password is required')
         })}
         onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-
           const { email, password } = values;
 
           try {
             const response = await fetch(`http://${config.server_host}:${config.server_port}/api/user`, {
               method: 'POST',
               headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
               },
               body: JSON.stringify({
                 username: email,
@@ -159,16 +158,15 @@ const FirebaseRegister = ({ ...others }) => {
               // console.log('Login success', token)
               // localStorage.setItem('token', token);
               // navigate('/');
-              console.log('Register success')
-              console.log("username:", email);
-              console.log("password:", password);
-
+              console.log('Register success');
+              console.log('username:', email);
+              console.log('password:', password);
 
               try {
                 const response = await fetch(`http://${config.server_host}:${config.server_port}/api/login`, {
                   method: 'POST',
                   headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                   },
                   body: JSON.stringify({
                     username: email,
@@ -177,22 +175,21 @@ const FirebaseRegister = ({ ...others }) => {
                 });
                 if (response.ok) {
                   const token = await response.json();
-                  console.log('Login success', token)
+                  console.log('Login success', token);
                   localStorage.setItem('token', token);
                   navigate('/');
                 } else {
                   console.log('Login failed:', response.statusText);
                 }
-              } catch (error){
+              } catch (error) {
                 console.error('Error during login:', error.message);
               }
             } else {
               console.log('Register failed:', response.statusText);
             }
-          } catch (error){
+          } catch (error) {
             console.error('Error during register:', error.message);
           }
-
 
           try {
             if (scriptedRef.current) {

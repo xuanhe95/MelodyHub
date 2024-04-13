@@ -13,7 +13,7 @@ const AlbumPage = () => {
     try {
       const requestOptions = {
         method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' }
       };
 
       const response = await fetch(`http://${config.server_host}:${config.server_port}/api/albums`, requestOptions);
@@ -64,12 +64,7 @@ const AlbumPage = () => {
           <Grid item xs={12} sm={6} md={3} key={String(album.album_id)}>
             <Card>
               <CardActionArea onClick={() => handleAlbumClick(album)}>
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image={album.cover}
-                  alt={album.name}
-                />
+                <CardMedia component="img" height="140" image={album.cover} alt={album.name} />
                 <Typography variant="h6" component="div" style={{ padding: '8px' }}>
                   {album.name}
                 </Typography>

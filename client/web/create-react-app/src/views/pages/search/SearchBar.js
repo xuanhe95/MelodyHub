@@ -28,7 +28,7 @@ const SearchBar = ({ onSearch }) => {
             <IconButton type="submit" edge="end" aria-label="search">
               <SearchIcon />
             </IconButton>
-          ),
+          )
         }}
       />
     </form>

@@ -30,9 +30,9 @@ async function fetchPlaylist(id) {
     const requestOptions = {
       method: 'GET',
       headers: new Headers({
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
-      }),
+      })
     };
 
     const response = await fetch(`http://${config.server_host}:${config.server_port}/api/playlists/${id}`, requestOptions);
@@ -43,15 +43,11 @@ async function fetchPlaylist(id) {
     }
 
     return await response.json();
-
   } catch (error) {
     console.error('Error during fetching playlist:', error);
     return null;
   }
 }
-
-
-
 
 const PlaylistsPage = () => {
   const { id } = useParams();
@@ -61,7 +57,7 @@ const PlaylistsPage = () => {
     const fetchPlaylistData = async () => {
       const playlistData = await fetchPlaylist(id);
       setPlaylist(playlistData);
-    }
+    };
     fetchPlaylistData();
   }, [id]);
 
@@ -69,17 +65,15 @@ const PlaylistsPage = () => {
     return (
       <MainCard title="Playlists">
         <CardContent>
-
-
           <Typography variant="h1" style={{ fontSize: '5rem' }}>
             Name Of the Playlist
           </Typography>
           <Box height={20} />
           <Typography variant="body2">
-            Lorem ipsum dolor sit amen, consenter nipissing eli, sed do elusion tempos incident ut laborers et doolie magna alissa. Ut enif ad
-            minim venice, quin nostrum exercitation illampu laborings nisi ut liquid ex ea commons construal. Duos aube grue dolor in reprehended
-            in voltage veil esse colum doolie eu fujian bulla parian. Exceptive sin ocean cuspidate non president, sunk in culpa qui officiate
-            descent molls anim id est labours.
+            Lorem ipsum dolor sit amen, consenter nipissing eli, sed do elusion tempos incident ut laborers et doolie magna alissa. Ut enif
+            ad minim venice, quin nostrum exercitation illampu laborings nisi ut liquid ex ea commons construal. Duos aube grue dolor in
+            reprehended in voltage veil esse colum doolie eu fujian bulla parian. Exceptive sin ocean cuspidate non president, sunk in culpa
+            qui officiate descent molls anim id est labours.
           </Typography>
           <Box height={20} />
           <Divider variant="middle" />
@@ -95,12 +89,9 @@ const PlaylistsPage = () => {
         <CardContent>
           <Typography variant="h1" style={{ fontSize: '5rem' }}>
             {playlist.name}
-
           </Typography>
           <Box height={20} />
-          <Typography variant="body2">
-            {playlist.year}
-          </Typography>
+          <Typography variant="body2">{playlist.year}</Typography>
           <Box height={20} />
           <Divider variant="middle" />
           <Box height={20} />

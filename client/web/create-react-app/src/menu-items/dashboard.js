@@ -1,8 +1,17 @@
 // assets
-import { IconDashboard, IconDisc, IconPlaylist, IconSearch, IconMusicQuestion, IconMusic, IconHome, IconMicrophone2 } from '@tabler/icons-react';
+import {
+  IconDashboard,
+  IconDisc,
+  IconPlaylist,
+  IconSearch,
+  IconMusicQuestion,
+  IconMusic,
+  IconHome,
+  IconMicrophone2
+} from '@tabler/icons-react';
 
 // constant
-const icons = { IconDashboard, IconDisc, IconPlaylist, IconSearch, IconMusicQuestion, IconMusic, IconHome, IconMicrophone2};
+const icons = { IconDashboard, IconDisc, IconPlaylist, IconSearch, IconMusicQuestion, IconMusic, IconHome, IconMicrophone2 };
 
 // ==============================|| DASHBOARD MENU ITEMS ||============================== //
 
@@ -66,8 +75,7 @@ const dashboard = {
       url: '/search',
       icon: icons.IconSearch,
       breadcrumbs: false
-    },
-
+    }
   ]
 };
 

@@ -10,9 +10,6 @@ import { useEffect, useState } from 'react';
 
 // ==============================|| SIDEBAR MENU LIST ||============================== //
 
-
-
-
 async function generatePlaylistMenuItems() {
   try {
     const tokenObj = JSON.parse(localStorage.getItem('token'));
@@ -26,9 +23,9 @@ async function generatePlaylistMenuItems() {
     const requestOptions = {
       method: 'GET',
       headers: new Headers({
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json'
-      }),
+      })
     };
 
     const response = await fetch(`http://${config.server_host}:${config.server_port}/api/playlists`, requestOptions);
@@ -53,17 +50,13 @@ async function generatePlaylistMenuItems() {
       url: `/playlists/${playlist.playlist_id}`,
       target: false
     }));
-
   } catch (error) {
     console.error('Error during fetching playlists:', error);
     return [];
   }
 }
 
-
-
 const MenuList = () => {
-
   const [menuItems, setMenuItems] = useState(menuItem);
 
   useEffect(() => {
@@ -72,12 +65,11 @@ const MenuList = () => {
       // Creating a new menuItem object, updating the relevant part with fetched data
       const updatedMenuItems = {
         ...menuItems,
-        items: menuItems.items.map(item => {
+        items: menuItems.items.map((item) => {
           if (item.id === 'pages') {
-
             return {
               ...item,
-              children: item.children.map(child => {
+              children: item.children.map((child) => {
                 if (child.id === 'playlists') {
                   console.log('Updating playlists');
                   return {
@@ -92,8 +84,7 @@ const MenuList = () => {
           } else {
             return item;
           }
-        }
-        )
+        })
       };
 
       setMenuItems(updatedMenuItems); // Update state with the modified menu structure
@@ -102,9 +93,8 @@ const MenuList = () => {
     updatePlaylistItems();
   }, []);
 
-
   // console.log(playlistItems);
-  console.log(menuItems)
+  console.log(menuItems);
   // menuItem.items[1].children[0].children[1] = {
   //   id: 'login32',
   //   title: 'Login',
@@ -113,8 +103,6 @@ const MenuList = () => {
   //   target: true
   // }
   console.log(menuItems.items[1].children[0].children);
-
-
 
   const navItems = menuItems.items.map((item) => {
     switch (item.type) {
