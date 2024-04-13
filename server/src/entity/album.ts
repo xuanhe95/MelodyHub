@@ -9,11 +9,11 @@ export class Album {
     @Column({ name: 'album' })
     name!: string;  
     
-    @CreateDateColumn({ name: 'created_at' }) // Auto
-    created_at!: Date;
+   // @CreateDateColumn({ name: 'created_at' }) // Auto
+   //created_at!: Date;
 
-    @UpdateDateColumn({ name: 'updated_at' }) // Auto
-    updated_at!: Date;
+   // @UpdateDateColumn({ name: 'updated_at' }) // Auto
+   // updated_at!: Date;
 
     // OneToMany relationship with Track
     @OneToMany(() => Track, track => track.album)
