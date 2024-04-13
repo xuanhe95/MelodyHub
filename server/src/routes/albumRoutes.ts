@@ -16,7 +16,7 @@ router.get('/albums/details/:id', (req, res) => albumController.findAlbumById(re
 router.get('/albums', (req, res) => albumController.listAllAlbums(req, res));
 
 // Get all albums with pagination
-//router.get('/albums/pages', albumController.getAllAlbumsWithPages);
+router.get('/albums/pages', albumController.getAllAlbumsWithPages);
 
 // Get random 10 albums
 router.get('/albums/random/:numOfAlbums', (req, res) => albumController.fetchRandomNAlbums(req, res));

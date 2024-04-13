@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, Card, CardActionArea, CardMedia} from '@mui/material';
+import { Grid, Card, CardActionArea, CardMedia } from '@mui/material';
 import config from '../../../config.json';
+// import { Container } from '@mui/material';
 
 // material-ui
 import { Typography, CardContent } from '@mui/material';
@@ -38,7 +39,7 @@ const HomePage = () => {
         console.error('Failed to fetch albums:', error);
       }
     };
-  
+
     fetchAlbums();
   }, []); // The empty array ensures this effect runs only once after the component mounts.
 
@@ -65,7 +66,8 @@ const HomePage = () => {
   };
 
   return (
-    <MainCard title="">
+    // <Container >
+    <MainCard title="" sx={{ maxWidth: 2100, marginRight: 'auto', width: '100%' }}>
       <CardContent>
         <Typography variant="h1" style={{ fontSize: '2rem' }}>
           Popular
@@ -73,10 +75,10 @@ const HomePage = () => {
         <Box height={20} />
         <Grid container spacing={3}>
           {popularAlbums.map((album) => (
-            <Grid item xs={6} sm={4} md={2} key={album.id}>
+            <Grid item xs={6} sm={4} md={3} lg={2} key={album.id}>
               <Card>
                 <CardActionArea onClick={() => handleAlbumClick(album)}>
-                  <CardMedia component="img" height="180" image={album.imageUrl} />
+                  <CardMedia component="img" height="auto" image={album.imageUrl} />
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
                       {album.album}
@@ -96,10 +98,10 @@ const HomePage = () => {
         <Box height={20} />
         <Grid container spacing={3}>
           {favoriteAlbums.map((album) => (
-            <Grid item xs={6} sm={4} md={2} key={album.id}>
+            <Grid item xs={6} sm={4} md={3} lg={2} key={album.id}>
               <Card>
                 <CardActionArea onClick={() => handleAlbumClick(album)}>
-                  <CardMedia component="img" height="180" image={album.imageUrl} />
+                  <CardMedia component="img" height="auto" image={album.imageUrl} />
                 </CardActionArea>
                 <CardContent>
                   <Typography gutterBottom variant="h5" component="div">
@@ -112,6 +114,7 @@ const HomePage = () => {
         </Grid>
       </CardContent>
     </MainCard>
+    // </Container>
   );
 };
 
