@@ -1,8 +1,8 @@
 {
-  "name": "berry-free-material-react-cra",
+  "name": "frontend",
   "version": "3.4.2",
   "private": true,
-  "homepage": "https://berrydashboard.io/free",
+  "homepage": "https://berrydashboard.io/home",
   "dependencies": {
     "@emotion/cache": "^11.11.0",
     "@emotion/react": "^11.11.3",
