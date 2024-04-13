@@ -64,56 +64,66 @@ export class PlaylistService {
     }
     
     async generatePlaylistBasedOnTrackByAdminPlaylists(songId: string, userId: number): Promise<Playlist> {
-        // Check if the song exists in any playlist first
-        const songExistsInPlaylist = await this.dataSource.query(
-            `SELECT 1 FROM PLAYLIST_SONGS WHERE song_id = ? LIMIT 1`,
-            [songId]
-        );
-
-        // If the song is not found in any playlist, throw an error or handle accordingly
-        if (songExistsInPlaylist.length === 0) {
-            throw new Error('Song not found in any playlist');
-        }
-
-        // If the song exists in playlists, continue to generate the related tracks
-        const relatedTracks = await this.dataSource.query(
-            `SELECT ps2.song_id, COUNT(*) AS appearance_count
-            FROM PLAYLIST_SONGS ps1
-            JOIN PLAYLIST_SONGS ps2 ON ps1.playlist_id = ps2.playlist_id
-            WHERE ps1.song_id = ? AND ps2.song_id != ?
-            GROUP BY ps2.song_id
-            ORDER BY appearance_count DESC
-            LIMIT 10`,
-            [songId, songId]
-        );
-
-        // Retrieve user using UserService
-        const user = await this.userService.getUserById(userId);
-        if (!user) {
-            throw new Error('User not found');
-        }
-
-        // Create a new playlist
-        const newPlaylist = new Playlist();
-        newPlaylist.name = `Generated Playlist based on Song ${songId}`;
-        newPlaylist.user = user; // This assumes that the Playlist entity has a 'user' relationship
-        await this.dataSource.manager.save(newPlaylist);
-
-        // Add related tracks to the new playlist
-        for (const track of relatedTracks) {
-            const trackEntity = await this.dataSource.manager.findOne(Track, { where: { id: track.id } });
-            if (!trackEntity) {
-                throw new Error(`Track with ID ${track.id} not found`);
+        try {
+            // Check if the song exists in any playlist first
+            const songExistsInPlaylist = await this.dataSource.query(
+                `SELECT 1 FROM PLAYLIST_SONGS WHERE song_id = ? LIMIT 1`,
+                [songId]
+            );
+    
+            // If the song is not found in any playlist, throw an error
+            if (songExistsInPlaylist.length === 0) {
+                console.error(`Song with ID ${songId} not found in any playlist.`);
+                throw new Error('Song not found in any playlist');
             }
-
-            const playlistSong = new PlaylistSong();
-            playlistSong.playlist = newPlaylist;
-            playlistSong.track = trackEntity;
-            await this.dataSource.manager.save(playlistSong);
+    
+            // If the song exists in playlists, continue to generate the related tracks
+            const relatedTracks = await this.dataSource.query(
+                `SELECT ps2.song_id, COUNT(*) AS appearance_count
+                FROM PLAYLIST_SONGS ps1
+                JOIN PLAYLIST_SONGS ps2 ON ps1.playlist_id = ps2.playlist_id
+                WHERE ps1.song_id = ? AND ps2.song_id != ?
+                GROUP BY ps2.song_id
+                ORDER BY appearance_count DESC
+                LIMIT 10`,
+                [songId, songId]
+            );
+    
+            // Retrieve user using UserService
+            const user = await this.userService.getUserById(userId);
+            if (!user) {
+                console.error(`User with ID ${userId} not found.`);
+                throw new Error('User not found');
+            }
+    
+            // Create a new playlist
+            const newPlaylist = new Playlist();
+            newPlaylist.name = `Generated Playlist based on Song ${songId}`;
+            newPlaylist.user = user;
+            newPlaylist.playlist_id = generatePlaylistId(userId.toString());
+            await this.dataSource.manager.save(newPlaylist);
+    
+            // Add related tracks to the new playlist
+            for (const track of relatedTracks) {
+                const trackEntity = await this.dataSource.manager.findOne(Track, { where: { id: track.song_id } });
+                if (!trackEntity) {
+                    console.error(`Track with ID ${track.song_id} not found.`);
+                    throw new Error(`Track with ID ${track.song_id} not found`);
+                }
+    
+                const playlistSong = new PlaylistSong();
+                playlistSong.playlist = newPlaylist;
+                playlistSong.track = trackEntity;
+                await this.dataSource.manager.save(playlistSong);
+            }
+    
+            return newPlaylist;
+        } catch (error) {
+            console.error(`Error generating playlist based on track: ${songId}`);
+            throw error;
         }
-
-        return newPlaylist;
     }
+    
 
     /**
      * Create a new playlist for a user
@@ -225,8 +235,6 @@ export class PlaylistService {
         } finally {
             await queryRunner.release();
         }
-
-   
         
     }
 
@@ -276,7 +284,10 @@ export class PlaylistService {
     //     // Save the updated user entity
     //     await this.dataSource.manager.save(user);
     // }
+    
 }
 
 
-
+function generatePlaylistId(userId: string) {
+        return `${userId}_${Date.now()}`;
+    }

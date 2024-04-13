@@ -71,12 +71,21 @@ export class PlaylistController {
         const { songId, userId } = req.body;
         try {
             const playlist = await this.playlistService.generatePlaylistBasedOnTrackByAdminPlaylists(songId, userId);
-            res.json(playlist);
+            if (playlist) {
+                res.json({ 
+                    message: "Playlist generated successfully",
+                    playlistId: playlist.playlist_id,
+                    playlist
+                });
+            } else {
+                res.status(404).json({ message: "Unable to generate playlist" });
+            }
         } catch (error) {
-            res.status(500).json({ message: "Internal server error", error });
+            console.error("Error generating playlist:", error);
+            res.status(500).json({ message: "Internal server error" });
         }
     }
-
+    
     async createPlaylistForUser(req: Request, res: Response): Promise<void> {
         console.log("Creating playlist for user");
         console.log(req.body);

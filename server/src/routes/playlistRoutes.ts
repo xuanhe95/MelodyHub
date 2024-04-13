@@ -18,8 +18,6 @@ const authController = new AuthController(userService, authService);
 router.post('/playlists/generate', (req, res) => playlistController.generatePlaylistBasedOnTrack(req, res));
 // router.put('/playlists/:playlistId/tracks', (req, res) => playlistController.addTracksToPlaylist(req, res));
 
-// Verified APIs
-
 // List all playlists
 router.get('/all-playlists', playlistController.listAllPlaylists);
 // Find playlists by user

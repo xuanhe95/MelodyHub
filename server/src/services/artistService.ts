@@ -28,21 +28,23 @@ class ArtistService {
     async getArtistDetails(id: string): Promise<Artist | null> {
         return this.artistRepository.findOne({
             where: { id },
-            relations: ['tracks', 'genres'], // Adjust based on your actual relations
+            relations: ['releaseBys', 'releaseBys.track', 'genres', 'playlistSongs'],
         });
     }
+    
+    
 
     async findAllSongsByArtist(artistName: string): Promise<Track[]> {
         const artist = await this.artistRepository.findOne({
             where: { name: artistName },
-            relations: ['releaseBys', 'releaseBys.track'], // Assuming 'releaseBys' is the relation in Artist entity
+            relations: ['releaseBys', 'releaseBys.track'],
         });
 
         if (!artist) {
             throw new Error(`Artist ${artistName} not found`);
         }
 
-        return artist.releaseBys.map(releaseBy => releaseBy.track); // Assuming 'track' is the relation in ReleaseBy entity
+        return artist.releaseBys.map(releaseBy => releaseBy.track); 
     }
 
     async getAllGenresForArtist(artistName: string): Promise<string[]> {

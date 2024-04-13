@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, ManyToOne, Column } from 'typeorm';
+import { Entity, PrimaryColumn, ManyToOne, Column, JoinColumn } from 'typeorm';
 import { Artist } from './artist';
 import { Concert } from './concert';
 import { Track } from './track';
@@ -8,10 +8,11 @@ export class ArtistGenre {
     @PrimaryColumn()
     artist_id!: string;
 
-    @Column()
+    @PrimaryColumn()
     genre!: string;
 
     @ManyToOne(() => Artist, artist => artist.genres)
+    @JoinColumn({ name: 'artist_id' })
     artist!: Artist;
 }
 

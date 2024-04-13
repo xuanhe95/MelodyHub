@@ -36,9 +36,14 @@ class ArtistController {
     async getArtistDetails(req: Request, res: Response): Promise<void> {
         const artistId = req.params.id;
         try {
-            const artistDetails = await this.artistService.getArtistDetails(artistId);
-            if (artistDetails) {
-                res.json(artistDetails);
+            const artist = await this.artistService.getArtistDetails(artistId);
+            if (artist) {
+                // Transforming the response to include tracks directly
+                const transformedArtist = {
+                    ...artist,
+                    tracks: artist.releaseBys.map(releaseBy => releaseBy.track)
+                };
+                res.json(transformedArtist);
             } else {
                 res.status(404).json({ message: "Artist not found" });
             }
@@ -47,6 +52,7 @@ class ArtistController {
             res.status(500).json({ message: "Internal server error" });
         }
     }
+    
 
     async findAllSongsByArtist(req: Request, res: Response): Promise<void> {
         const artistName = req.params.name;
