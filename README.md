@@ -20,3 +20,18 @@ npm start
 ```
 5. ctrl+c to stop
 
+# How to run frontend
+
+1. open a NEW terminal, navigate to web folder
+```
+cd web
+```
+2. install dependencies
+```
+npm install
+```
+3. run it, it succeeded terminal will direct to http://localhost:3000/home
+```
+npm start
+```
+4. ctrl+c to stop
