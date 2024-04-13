@@ -16,7 +16,7 @@ const AlbumPage = () => {
         headers: { 'Content-Type': 'application/json' }
       };
 
-      const response = await fetch(`http://${config.server_host}:${config.server_port}/api/albums`, requestOptions);
+      const response = await fetch(`http://${config.server_host}:${config.server_port}/api/albums/pages`, requestOptions);
       if (!response.ok) {
         throw new Error('Failed to fetch albums');
       }
@@ -64,7 +64,7 @@ const AlbumPage = () => {
           <Grid item xs={12} sm={6} md={3} key={String(album.album_id)}>
             <Card>
               <CardActionArea onClick={() => handleAlbumClick(album)}>
-                <CardMedia component="img" height="140" image={album.cover} alt={album.name} />
+                <CardMedia component="img" height="250" image={album.cover} alt={album.name} />
                 <Typography variant="h6" component="div" style={{ padding: '8px' }}>
                   {album.name}
                 </Typography>
@@ -72,11 +72,15 @@ const AlbumPage = () => {
               {selectedAlbum && selectedAlbum.id === album.id && (
                 <div>
                   <Typography variant="h5">Tracks:</Typography>
-                  <ul>
-                    {tracks.map((track) => (
-                      <li key={track.id}>{track.title}</li>
-                    ))}
-                  </ul>
+                  {tracks.length > 0 ? (
+                    <ul>
+                      {tracks.filter(track => track !== undefined).map((track) => (
+                        <li key={track.id}>{track.title}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>No tracks available</p>
+                  )}
                 </div>
               )}
             </Card>
@@ -88,5 +92,4 @@ const AlbumPage = () => {
     </div>
   );
 };
-
 export default AlbumPage;

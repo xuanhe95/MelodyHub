@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 
+class MusicBrainzAPI{
 /**
  * 获取 MusicBrainz 上的专辑 ID
  * @param songName 歌曲名
@@ -8,7 +9,7 @@ import axios from 'axios';
  * @param strictMode 是否为严格模式
  * @returns 专辑 ID
  */
-async function getMusicBrainzAlbumId(songName: string, albumName: string, strictMode?: boolean): Promise<string | null> {
+static async getMusicBrainzAlbumId(songName: string, albumName: string, strictMode?: boolean): Promise<string | null> {
     try {
         if(!strictMode) {
             strictMode = false;
@@ -61,7 +62,7 @@ async function getMusicBrainzAlbumId(songName: string, albumName: string, strict
  * @param size 图片尺寸
  * @returns 专辑封面图片 URL
  */
-async function getMusicBrainzSongId(songName: string, albumName: string, strictMode?: boolean): Promise<string | null> {
+static async getMusicBrainzSongId(songName: string, albumName: string, strictMode?: boolean): Promise<string | null> {
     try {
         if(!strictMode) {
             strictMode = false;
@@ -109,7 +110,7 @@ async function getMusicBrainzSongId(songName: string, albumName: string, strictM
  * @param size 图片尺寸
  * @returns 专辑封面图片 URL
  */
-function getAlbumCoverImageUrl(mbid: string, imageId?: string | 'front' | 'back', size?: 250 | 500 | 1200): string {
+static getAlbumCoverImageUrl(mbid: string, imageId?: string | 'front' | 'back', size?: 250 | 500 | 1200): string {
     if (!imageId) {
         imageId = 'front'; // 默认为封面图片
     }
@@ -126,11 +127,11 @@ function getAlbumCoverImageUrl(mbid: string, imageId?: string | 'front' | 'back'
  * @param size 图片尺寸
  * @returns 专辑封面图片 URL
  */
-function getCover(songName: string, albumName: string, size?: 250 | 500 | 1200): Promise<string | null> {
-    return getMusicBrainzAlbumId(songName, albumName)
+static getCover(songName: string, albumName: string, size?: 250 | 500 | 1200): Promise<string | null> {
+    return MusicBrainzAPI.getMusicBrainzAlbumId(songName, albumName)
         .then((musicbrainzId) => {
             if (musicbrainzId) {
-                return getAlbumCoverImageUrl(musicbrainzId, undefined, size);
+                return MusicBrainzAPI.getAlbumCoverImageUrl(musicbrainzId, undefined, size);
             } else {
                 return null;
             }
@@ -139,20 +140,20 @@ function getCover(songName: string, albumName: string, size?: 250 | 500 | 1200):
 
     
 
-    function test() {
+    static test() {
     
 // 使用示例
 const musicBrainzId = "76df3287-6cda-33eb-8e9a-044b5e15ffdd";
 const size = 250; // 或者 500 或 1200
 
-const imageUrl = getAlbumCoverImageUrl(musicBrainzId, undefined, size); // 不传入 imageId，默认为封面图片
+const imageUrl =MusicBrainzAPI.getAlbumCoverImageUrl(musicBrainzId, undefined, size); // 不传入 imageId，默认为封面图片
 console.log("专辑封面图片 URL:", imageUrl);
 
 // 调用函数并传入歌曲名和专辑名
 const songName = "My Shot";
 const albumName = "Hamilton";
 console.log("正在获取专辑封面图片...");
-getCover(songName, albumName, size)
+MusicBrainzAPI.getCover(songName, albumName, size)
     .then((imageUrl) => {
         if (imageUrl) {
             console.log("专辑封面图片 URL:", imageUrl);
@@ -161,5 +162,6 @@ getCover(songName, albumName, size)
         }
     });
     }
+}
 
-export { getMusicBrainzAlbumId, getAlbumCoverImageUrl, getCover, test };
+export { MusicBrainzAPI };

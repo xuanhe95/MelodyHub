@@ -8,7 +8,7 @@ export class Album {
 
     @Column({ name: 'album' })
     name!: string;  
-    
+
    // @CreateDateColumn({ name: 'created_at' }) // Auto
    //created_at!: Date;
 

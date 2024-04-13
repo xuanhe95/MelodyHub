@@ -3,6 +3,9 @@ import { Album } from "../entity/album";
 import { Track } from "../entity/track";
 
 class AlbumService {
+
+
+
     
     async findTracksByAlbumId(albumId: string): Promise<Track[] | null> {
         try {
@@ -34,6 +37,29 @@ class AlbumService {
             return await albumRepository.findOneBy({ id });
         } catch (error) {
             console.error('Error fetching album by ID:', error);
+            return null;
+        }
+    }
+
+    async getAllAlbumsWithPages(page: number, limit: number): Promise<Album[] | null> {
+        try {
+            console.log('page:', page, 'limit:', limit);
+            const albumRepository = AppDataSource.getRepository(Album);
+            return await albumRepository.find({
+                select: {
+                    // 这里假设你想要获取Album的某些字段，例如id和name
+                    id: true,
+                    name: true,
+                    tracks: {
+                        title: true
+                    }
+                },
+                relations: ["tracks"],
+                skip: (page - 1) * limit,
+                take: limit
+            });
+        } catch (error) {
+            console.error('Error fetching all albums with pagination:', error);
             return null;
         }
     }
