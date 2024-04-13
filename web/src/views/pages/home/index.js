@@ -21,19 +21,19 @@ const HomePage = () => {
     const fetchAlbums = async () => {
       try {
         // randomly fetch 10 since we don't have user associated data yet.
-        const response = await fetch(`http://${config.server_host}:${config.server_port}/api/albums/random/10`);
+        const response = await fetch(`http://${config.server_host}:${config.server_port}/api/albums/random/8`);
         const data = await response.json();
 
         // Initialize albums with placeholder images
-        const initialPopular = data.slice(0, 5).map(album => ({ ...album, imageUrl: 'https://breckenridge.skyrun.com/components/com_jomholiday/assets/images/04-spinner.gif' }));
-        const initialFavorite = data.slice(5, 10).map(album => ({ ...album, imageUrl: 'https://breckenridge.skyrun.com/components/com_jomholiday/assets/images/04-spinner.gif' }));
+        const initialPopular = data.slice(0, 4).map(album => ({ ...album, imageUrl: 'https://breckenridge.skyrun.com/components/com_jomholiday/assets/images/04-spinner.gif' }));
+        const initialFavorite = data.slice(4, 8).map(album => ({ ...album, imageUrl: 'https://breckenridge.skyrun.com/components/com_jomholiday/assets/images/04-spinner.gif' }));
 
         setPopularAlbums(initialPopular);
         setFavoriteAlbums(initialFavorite);
 
         // Asynchronously update with actual images
-        updateAlbumImages(data.slice(0, 5), setPopularAlbums);
-        updateAlbumImages(data.slice(5, 10), setFavoriteAlbums);
+        updateAlbumImages(data.slice(0, 4), setPopularAlbums);
+        updateAlbumImages(data.slice(4, 8), setFavoriteAlbums);
 
       } catch (error) {
         console.error('Failed to fetch albums:', error);
@@ -70,7 +70,7 @@ const HomePage = () => {
     <MainCard title="" sx={{ maxWidth: 2100, marginRight: 'auto', width: '100%' }}>
       <CardContent>
         <Typography variant="h1" style={{ fontSize: '2rem' }}>
-          Popular
+          Made for You
         </Typography>
         <Box height={20} />
         <Grid container spacing={3}>
@@ -92,9 +92,6 @@ const HomePage = () => {
         <Box height={20} />
         <Divider variant="middle" />
         <Box height={50} />
-        <Typography variant="h1" style={{ fontSize: '2rem' }}>
-          Favorite
-        </Typography>
         <Box height={20} />
         <Grid container spacing={3}>
           {favoriteAlbums.map((album) => (
