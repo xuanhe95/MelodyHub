@@ -20,11 +20,11 @@ const SamplePage = Loadable(lazy(() => import('views/sample-page')));
 
 const Index = Loadable(lazy(() => import('views/dashboard/Index')));
 const Home = Loadable(lazy(() => import('views/pages/home')));
-const Albums = Loadable(lazy(() => import('views/pages/albums')));
+const Albums = Loadable(lazy(() => import('views/pages/album')));
 const Playlists = Loadable(lazy(() => import('views/pages/playlists')));
 const Search = Loadable(lazy(() => import('views/pages/search')));
 const Recommended = Loadable(lazy(() => import('views/pages/recommended')));
-const Album = Loadable(lazy(() => import('views/pages/album')));
+const AlbumDetails = Loadable(lazy(() => import('views/pages/album-details')));
 const Concert = Loadable(lazy(() => import('views/pages/concert')));
 
 // ==============================|| MAIN ROUTING ||============================== //
@@ -54,8 +54,8 @@ const MainRoutes = {
       element: <Albums />
     },
     {
-      path: 'album',
-      element: <Album />
+      path: 'album/details/:id',
+      element: <AlbumDetails />
     },
     {
       path: 'playlists',

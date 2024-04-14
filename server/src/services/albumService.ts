@@ -46,15 +46,15 @@ class AlbumService {
             console.log('page:', page, 'limit:', limit);
             const albumRepository = AppDataSource.getRepository(Album);
             return await albumRepository.find({
-                select: {
-                    // 这里假设你想要获取Album的某些字段，例如id和name
-                    id: true,
-                    name: true,
-                    tracks: {
-                        title: true
-                    }
-                },
-                relations: ["tracks"],
+                // select: {
+                //     // 这里假设你想要获取Album的某些字段，例如id和name
+                //     id: true,
+                //     name: true,
+                //     // tracks: {
+                //     //     title: true
+                //     // }
+                // },
+                // relations: ["tracks"],
                 skip: (page - 1) * limit,
                 take: limit
             });
@@ -62,6 +62,16 @@ class AlbumService {
             console.error('Error fetching all albums with pagination:', error);
         }
         return null;
+    }
+
+    async getTotalAlbumsCount(): Promise<number> {
+        try {
+            const albumRepository = AppDataSource.getRepository(Album);
+            return await albumRepository.count();
+        } catch (error) {
+            console.error('Error fetching total albums count:', error);
+            return 0;
+        }
     }
 
     async fetchRandomNAlbums(numOfAlums: number): Promise<Album[] | null> {

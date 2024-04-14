@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, Card, CardActionArea, CardMedia } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+import { Grid, Card, CardActionArea, CardMedia} from '@mui/material';
 import config from '../../../config.json';
 // import { Container } from '@mui/material';
 
@@ -12,6 +13,7 @@ import MainCard from 'ui-component/cards/MainCard';
 import { Divider, Box } from '@mui/material';
 
 const HomePage = () => {
+  const navigate = useNavigate(); 
   const [popularAlbums, setPopularAlbums] = useState([]);
   const [favoriteAlbums, setFavoriteAlbums] = useState([]);
 
@@ -61,8 +63,8 @@ const HomePage = () => {
   };
 
 
-  const handleAlbumClick = () => {
-    // TODO: this should direct you to the album page.
+  const handleAlbumClick = (album) => {
+    navigate(`/album/details/${album.album_id}`);
   };
 
   return (

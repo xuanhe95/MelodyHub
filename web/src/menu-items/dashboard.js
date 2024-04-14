@@ -40,16 +40,8 @@ const dashboard = {
       id: 'albums',
       title: 'Albums',
       type: 'item',
-      url: '/album',
-      icon: icons.IconDisc,
-      breadcrumbs: false
-    },
-    {
-      id: 'music',
-      title: 'Music',
-      type: 'item',
       url: '/albums',
-      icon: icons.IconMusic,
+      icon: icons.IconDisc,
       breadcrumbs: false
     },
     {
