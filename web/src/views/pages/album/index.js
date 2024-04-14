@@ -42,9 +42,6 @@ const AlbumPage = () => {
       const data = await response.json();
 
       setTotalPages(data.totalPages);
-      console.log(limit);
-      console.log(totalPages);
-      console.log(page);
       updateAlbumImages(data.albums.slice(0, 18), setAlbums);
       // setAlbums(data.slice(0, 36));
       // setLoading(false);
