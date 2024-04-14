@@ -77,10 +77,10 @@ const HomePage = () => {
         <Box height={20} />
         <Grid container spacing={3}>
           {popularAlbums.map((album) => (
-            <Grid item xs={6} sm={4} md={3} lg={2} key={album.id}>
+            <Grid item xs={7} sm={5} md={3} key={album.id}>
               <Card>
                 <CardActionArea onClick={() => handleAlbumClick(album)}>
-                  <CardMedia component="img" height="auto" image={album.imageUrl} />
+                  <CardMedia component="img" height="250" image={album.imageUrl} />
                   <CardContent>
                     <Typography gutterBottom variant="h5" component="div">
                       {album.album}
@@ -97,10 +97,10 @@ const HomePage = () => {
         <Box height={20} />
         <Grid container spacing={3}>
           {favoriteAlbums.map((album) => (
-            <Grid item xs={6} sm={4} md={3} lg={2} key={album.id}>
+            <Grid item xs={7} sm={5} md={3} key={album.id}>
               <Card>
                 <CardActionArea onClick={() => handleAlbumClick(album)}>
-                  <CardMedia component="img" height="auto" image={album.imageUrl} />
+                  <CardMedia component="img" height="250" image={album.imageUrl} />
                 </CardActionArea>
                 <CardContent>
                   <Typography gutterBottom variant="h5" component="div">
