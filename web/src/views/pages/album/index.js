@@ -54,75 +54,6 @@ const AlbumPage = () => {
   };
 
 
-
-
-  // const updateAlbumImages = async (albums, setAlbumState) => {
-  //   const promises = albums.map(async (album) => {
-  //     try {
-  //       const imgResponse = await fetch(`http://${config.server_host}:${config.server_port}/api/albums/details/${album.id}/image`);
-  //       const imgData = await imgResponse.json();
-  //       return { ...album, imageUrl: imgData.imageUrl || defaultImageUrl };
-  //     } catch (error) {
-  //       console.error('Failed to fetch image for album:', album.id, error);
-  //       return { ...album, imageUrl: defaultImageUrl }; // Use default image on error
-  //     }
-  //   });
-
-  //   const updatedAlbums = await Promise.all(promises);
-  //   setAlbumState(updatedAlbums);
-  // }
-
-  // const updateAlbumImages = async (albums, setAlbumState) => {
-  //   setAlbumState(albums.map(album => ({ ...album, imageUrl: loadingImageUrl })));
-  //   for (const album of albums) {
-  //     try {
-  //       const imgResponse = await fetch(`http://${config.server_host}:${config.server_port}/api/albums/details/${album.id}/image`);
-  //       if (!imgResponse.ok) {
-  //         throw new Error(`Failed to fetch image for album: ${album.id}`);
-  //       }
-  //       const imgData = await imgResponse.json();
-  //       setAlbumState(prevAlbums => {
-  //         const newAlbums = prevAlbums.map(item =>
-  //           item.id === album.id ? { ...item, imageUrl: imgData.imageUrl || defaultImageUrl } : item
-  //         );
-  //         return newAlbums;
-  //       });
-  //     } catch (error) {
-  //       console.error('Failed to fetch image for album:', album.id, error);
-  //       setAlbumState(prevAlbums => prevAlbums.map(item =>
-  //         item.id === album.id ? { ...item, imageUrl: defaultImageUrl } : item
-  //       ));
-  //     }
-
-  //   }
-  // };
-
-  // const updateAlbumImages = async (albums, setAlbumState) => {
-  //   // 首先设置所有图片为加载中的图片
-  //   setAlbumState(albums.map(album => ({ ...album, imageUrl: loadingImageUrl })));
-
-  //   // 创建一个并行执行的请求列表
-  //   albums.forEach(async (album) => {
-  //     try {
-  //       const imgResponse = await fetch(`http://${config.server_host}:${config.server_port}/api/albums/details/${album.id}/image`);
-  //       if (!imgResponse.ok) {
-  //         throw new Error(`Failed to fetch image for album: ${album.id}`);
-  //       }
-  //       const imgData = await imgResponse.json();
-  //       // 对于每个完成的请求，立即更新状态
-  //       setAlbumState(prevAlbums => prevAlbums.map(item =>
-  //         item.id === album.id ? { ...item, imageUrl: imgData.imageUrl || defaultImageUrl } : item
-  //       ));
-  //     } catch (error) {
-  //       console.error('Failed to fetch image for album:', album.id, error);
-  //       // 如果请求失败，设置默认图片
-  //       setAlbumState(prevAlbums => prevAlbums.map(item =>
-  //         item.id === album.id ? { ...item, imageUrl: defaultImageUrl } : item
-  //       ));
-  //     }
-  //   });
-  // };
-
   const updateAlbumImages = async (albums, setAlbumState, maxRetries = 16) => {
     // 首先设置所有图片为加载中的图片
     setAlbumState(albums.map(album => ({ ...album, imageUrl: loadingImageUrl })));
@@ -219,15 +150,7 @@ const AlbumPage = () => {
           sx={{ marginTop: 2, marginBottom: 2, display: 'flex', justifyContent: 'center' }} // 样式
         />
 
-        {/* <Select
-          value={limit}
-          onChange={(event) => setLimit(Number(event.target.value))}
-          displayEmpty
-        >
-          <MenuItem value={10}>10</MenuItem>
-          <MenuItem value={20}>20</MenuItem>
-          <MenuItem value={50}>50</MenuItem>
-        </Select> */}
+
 
         {/* {loading && <p>Loading...</p>} */}
         {error && <p>Error: {error}</p>}

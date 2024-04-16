@@ -7,14 +7,16 @@ import MainCard from 'ui-component/cards/MainCard';
 import { Divider } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 // material-ui
-
-import SearchBar from './SearchBar';
+import { useLocation } from 'react-router-dom';
+// import SearchBar from './SearchBar';
 import { Search } from '@mui/icons-material';
 
 import config from '../../../config.json';
 
 // ==============================|| SAMPLE PAGE ||============================== //
 const SearchPage = () => {
+  const location = useLocation();
+  const { searchQuery } = location.state || {};  // 使用解构来获取state，如果state不存在则默认为空对象
 
   const [tracks, setTracks] = useState([]);
   const [page, setPage] = useState(1);
@@ -24,11 +26,11 @@ const SearchPage = () => {
   const defaultImageUrl = 'https://files.readme.io/f2e91bb-portalDocs-sonosApp-defaultArtAlone.png';
   // const loadingImageUrl = 'https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExczU2djFpdWNyZ3RheWVjankzdHc0M3RlMDYwNTc2MGRhanNpbXgzOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/JFTg9PBtHZz9hHRkBN/giphy.gif';
   const [searchParams, setSearchParams] = useState({
-    title: '',
+    title: searchQuery?.title || '',
     artist: '',
-    album: '',
+    album: searchQuery?.album || '',
     tempo_low: 0,
-    tempo_high: 1,
+    tempo_high: 250,
     danceability_low: 0,
     danceability_high: 1,
     energy_low: 0,
@@ -39,11 +41,18 @@ const SearchPage = () => {
 
   const options = {
     title: [],
-    albums: ['Album 1', 'Album 2', 'Album 3']
+    album: [],
   };
 
   const handleChange = (name, value) => {
     setSearchParams(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // 阻止表单默认提交事件
+      handleSubmit(e); // 调用搜索函数
+    }
   };
 
   const handleSliderChange = (type, newValue) => {
@@ -61,6 +70,7 @@ const SearchPage = () => {
 
     // 创建 URLSearchParams 对象，并添加查询参数
     const params = new URLSearchParams();
+
     Object.entries(searchParams).forEach(([key, value]) => {
       if (value != null) params.append(key, value); // 仅添加非空参数
     });
@@ -85,7 +95,6 @@ const SearchPage = () => {
       });
 
       const data = await response.json();
-      console.log(data);
       setTracks(data.tracks);
       setTotalPages(data.total);
     } catch (error) {
@@ -106,60 +115,88 @@ const SearchPage = () => {
   return (
     <MainCard>
       <CardContent>
-        <Search />
+
         <Paper style={{ padding: '20px', margin: '20px' }}>
-          <Typography variant="h4" gutterBottom>
-            Music Track Search
-          </Typography>
-          <form onSubmit={handleSubmit}>
-            <Grid container spacing={2}>
-              {Object.entries(options).map(([key, values]) => (
-                <Grid item xs={12} sm={6} key={key}>
-                  <TextField
-                    fullWidth
-                    label={key.charAt(0).toUpperCase() + key.slice(1)}
-                    value={searchParams[key]}
-                    onChange={(e) => handleChange(key, e.target.value)}
-                  >
-                    {values.map(option => (
-                      <MenuItem key={option} value={option}>
-                        {option}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-              ))}
-              {['duration', 'danceability', 'energy', 'tempo'].map((param) => (
-                <Grid item xs={12} sm={6} md={3} key={param}> <Box display="flex" justifyContent="center" width="100%">
-                  <Typography gutterBottom>{param.charAt(0).toUpperCase() + param.slice(1)}</Typography>
+          <Box>
+
+
+            <form onSubmit={handleSubmit}>
+
+              <Grid container spacing={2}>
+
+                <Box display="flex" justifyContent="center" width="100%" gap={2}>
+                  <Button type="submit" variant="contained" color="primary" style={{ width: '120px', borderRadius: '15px' }}>
+                    <Search />  Search
+                  </Button>
+                  {Object.entries(options).map(([key, values]) => (
+
+                    <Grid item xs={12} sm={6} key={key} style={{ width: '30%' }}>
+                      <TextField
+                        fullWidth
+                        label={key.charAt(0).toUpperCase() + key.slice(1)}
+                        value={searchParams[key]}
+                        onChange={(e) => handleChange(key, e.target.value)}
+                        onKeyDown={handleKeyDown}
+                      >
+                        {values.map(option => (
+                          <MenuItem key={option} value={option}>
+                            {option}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                    </Grid>
+                  ))}
+
                 </Box>
+                {['duration', 'danceability', 'energy'].map((param) => (
+                  <Grid item xs={12} sm={6} md={3} key={param}> <Box display="flex" justifyContent="center" width="100%">
+                    <Typography gutterBottom>{param.charAt(0).toUpperCase() + param.slice(1)}</Typography>
+                  </Box>
+                    <Box display="flex" justifyContent="center" width="100%">
+                      <Slider
+                        style={{ width: '95%' }}
+                        value={[searchParams[`${param}_low`], searchParams[`${param}_high`]]}
+                        onChange={(e, newValue) => {
+                          handleSliderChange(`${param}_low`, newValue[0]);
+                          handleSliderChange(`${param}_high`, newValue[1]);
+                        }}
+                        valueLabelDisplay="auto"
+                        step={0.01}
+                        marks
+                        min={0}
+                        max={1}
+                      />
+                    </Box>
+                  </Grid>
+                ))}
+                <Grid
+                  item xs={12} sm={6} md={3} key="tempo"> <Box display="flex" justifyContent="center" width="100%">
+                    <Typography gutterBottom>Tempo</Typography>
+                  </Box>
+
                   <Box display="flex" justifyContent="center" width="100%">
                     <Slider
-                      style={{ width: '90%' }}
-                      value={[searchParams[`${param}_low`], searchParams[`${param}_high`]]}
+                      style={{ width: '95%' }}
+                      value={[searchParams.tempo_low, searchParams.tempo_high]}
                       onChange={(e, newValue) => {
-                        handleSliderChange(`${param}_low`, newValue[0]);
-                        handleSliderChange(`${param}_high`, newValue[1]);
+                        handleSliderChange('tempo_low', newValue[0]);
+                        handleSliderChange('tempo_high', newValue[1]);
                       }}
                       valueLabelDisplay="auto"
-                      step={0.01}
+                      step={1}
                       marks
                       min={0}
-                      max={1}
+                      max={250}
                     />
                   </Box>
                 </Grid>
-              ))}
-              <Grid item xs={12}>
-                <Button type="submit" variant="contained" color="primary">
-                  Search
-                </Button>
+
               </Grid>
-            </Grid>
-          </form>
+            </form>
+          </Box>
         </Paper>
         <Divider />
-        <SearchBar onSearch={(query) => console.log(query)} />
+        {/* <SearchBar onSearch={(query) => console.log(query)} /> */}
 
       </CardContent>
       <CardContent>
@@ -171,9 +208,11 @@ const SearchPage = () => {
               <Card>
                 {/* <CardActionArea onClick={() => handleAlbumClick(album)}> */}
                 <CardMedia component="img" height="auto" image={track.imageUrl || defaultImageUrl} alt={track.name} />
-                <Typography variant="h6" component="div" style={{ padding: '8px' }}>
+                <Typography variant="h5" component="div" style={{ padding: '8px' }}>
                   {track.name}
                 </Typography>
+                <Typography variant="h6" component="div" style={{ padding: '8px', fontWeight: 'lighter' }}>
+                  {track.album}</Typography>
                 {/* </CardActionArea> */}
               </Card>
             </Grid>
