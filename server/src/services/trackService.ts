@@ -37,64 +37,94 @@ class TrackService {
 
     // Complex search query, retaining direct SQL usage
     async searchTracks(
+        page: number,
+        limit: number,
       title?: string,
       artist?: string,
       album?: string,
       start?: string,
       end?: string,
-      tempo?: number,
-      danceability?: number,
-      energy?: number,
-      duration?: number
-  ): Promise<Track[] | null> {
+      tempo_low?: number,
+      tempo_high?: number,
+      danceability_low?: number,
+      danceability_high?: number,
+      energy_low?: number,
+      energy_high?: number,
+      duration_low?: number,
+      duration_high?: number
+  ): Promise<any | null> {
       try {
-          let sql = `SELECT * FROM tracks WHERE 1=1`;
-          let params: (string | number | Date)[] = [];
   
+          let sql = `SELECT id, name FROM SONGS WHERE 1=1`;
+          let totalSql = `SELECT COUNT(*) as total FROM SONGS WHERE 1=1`;
+          let where = '';
+          let params: (string | number | Date)[] = [];
+            console.log('danceability_low:', danceability_low);
+          console.log('danceability_high:', danceability_high);
+        
+          console.log('title:', title);
           if (title) {
-              sql += ` AND title LIKE ?`;
+              where += ` AND name LIKE ?`;
               params.push(`%${title}%`); // Using LIKE for partial match
           }
           if (artist) {
-              sql += ` AND artist LIKE ?`;
+              where += ` AND artist LIKE ?`;
               params.push(`%${artist}%`); // Using LIKE for partial match
           }
           if (album) {
-              sql += ` AND album LIKE ?`;
+              where += ` AND album LIKE ?`;
               params.push(`%${album}%`); // Using LIKE for partial match
           }
           if (start) {
               const startDate = new Date(start);
-              sql += ` AND release_date >= ?`;
+              where += ` AND release_date >= ?`;
               params.push(startDate);
           }
           if (end) {
               const endDate = new Date(end);
-              sql += ` AND release_date <= ?`;
+              where += ` AND release_date <= ?`;
               params.push(endDate);
           }
-          if (tempo) {
-            sql += ` AND tempo = ?`;
-            params.push(tempo);
+          if (tempo_low && tempo_high) {
+              where += ` AND tempo BETWEEN ? AND ?`;
+              params.push(tempo_low);
+              params.push(tempo_high);
+
           }
-          if (danceability) {
-            sql += ` AND danceability = ?`;
-            params.push(danceability);
+          if (danceability_low !== undefined && danceability_high !== undefined) {
+              where += ` AND danceability BETWEEN ? AND ?`;
+              params.push(danceability_low);
+              params.push(danceability_high);
           }
-          if (energy) {
-            sql += ` AND energy = ?`;
-            params.push(energy);
+          if (energy_low !== undefined && energy_high !== undefined) {
+              where += ` AND energy BETWEEN ? AND ?`;
+              params.push(energy_low);
+              params.push(energy_high);
           }
-          if (duration) {
-            sql += ` AND duration = ?`;
-            params.push(duration);
+          if (duration_low !== undefined && duration_high !== undefined) {
+              where += ` AND duration BETWEEN ? AND ?`;
+              params.push(duration_low);
+              params.push(duration_high);
           }
+        // Pagination
 
           const queryRunner = AppDataSource.createQueryRunner();
           await queryRunner.connect();
-          const tracks = await queryRunner.query(sql, params);
+          const total = await queryRunner.query(totalSql+where, params);
+
+          const offset = (page - 1) * limit;
+
+            where += ` LIMIT ? OFFSET ?`;
+            params.push(limit, offset);
+
+          const tracks = await queryRunner.query(sql+where, params);
+          console.log(sql+where, params);
           await queryRunner.release();
-          return tracks;
+          let result = {
+                tracks,
+                total: Math.ceil(total[0].total / limit)
+            }
+            return result;
       } catch (error) {
           console.error("Error searching tracks:", error);
           return null;
