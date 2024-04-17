@@ -57,6 +57,10 @@ const ProfileSection = () => {
   const anchorRef = useRef(null);
   const handleLogout = async () => {
     console.log('Logout');
+    // 清除本地存储中的 token
+    localStorage.removeItem('token');
+    // 跳转到登录页面
+    navigate('/pages/login/login3');
   };
 
   const handleClose = (event) => {

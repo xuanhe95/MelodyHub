@@ -54,17 +54,20 @@ const AlbumPage = () => {
   };
 
 
-  const updateAlbumImages = async (albums, setAlbumState, maxRetries = 16) => {
+  const updateAlbumImages = async (inputAlbums, setAlbumState, maxRetries = 8, retryDelay = 1000) => {
     // 首先设置所有图片为加载中的图片
-    setAlbumState(albums.map(album => ({ ...album, imageUrl: loadingImageUrl })));
+    setAlbumState(inputAlbums.map(album => ({ ...album, imageUrl: loadingImageUrl })));
 
-    albums.forEach(async (album) => {
-      if (album.imageUrl && album.imageUrl !== loadingImageUrl) {
-        return;
-      }
+    inputAlbums.forEach(async (album, index) => {
       let retries = 0;
       const loadAlbumImage = async () => {
         try {
+          console.log('Fetching image for album:', album.id);
+
+          if (albums[index] && albums[index].imageUrl && albums[index].imageUrl !== loadingImageUrl && albums[index].imageUrl !== defaultImageUrl) {
+            console.log('Skipping album:', album.id, 'as it already has an image');
+            return;
+          }
 
           const imgResponse = await fetch(`http://${config.server_host}:${config.server_port}/api/albums/details/${album.id}/image`);
           if (!imgResponse.ok) throw new Error(`Failed to fetch image for album: ${album.id}`);
@@ -72,7 +75,16 @@ const AlbumPage = () => {
           if (!imgData.imageUrl && retries < maxRetries) {
             retries++;
             console.log(`Retrying to fetch image for album: ${album.id}, attempt ${retries}`);
-            loadAlbumImage(); // 重新尝试加载图片
+            //loadAlbumImage(); // 重新尝试加载图片
+            if (retries > 4) {
+              setTimeout(loadAlbumImage, retryDelay); // 延迟一段时间后重新尝试加载图片
+            } else if (retries > 2) {
+              setTimeout(loadAlbumImage, retryDelay / 2); // 延迟一段时间后重新尝试加载图片
+            }
+            else {
+              setTimeout(loadAlbumImage, retryDelay / 4); // 延迟一段时间后重新尝试加载图片
+            }
+
             return;
           }
 
@@ -80,12 +92,14 @@ const AlbumPage = () => {
           setAlbumState(prevAlbums => prevAlbums.map(item =>
             item.id === album.id ? { ...item, imageUrl: imgData.imageUrl || defaultImageUrl } : item
           ));
+          console.log("set album image" + imgData.imageUrl || defaultImageUrl);
         } catch (error) {
           console.error('Failed to fetch image for album:', album.id, error);
           if (retries < maxRetries) {
             retries++;
             console.log(`Retrying to fetch image for album: ${album.id}, attempt ${retries}`);
-            loadAlbumImage(); // 重新尝试加载图片
+            //loadAlbumImage(); // 重新尝试加载图片
+            setTimeout(loadAlbumImage, retryDelay); // 延迟一段时间后重新尝试加载图片
           } else {
             setAlbumState(prevAlbums => prevAlbums.map(item =>
               item.id === album.id ? { ...item, imageUrl: defaultImageUrl } : item
