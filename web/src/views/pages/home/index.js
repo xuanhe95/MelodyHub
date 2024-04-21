@@ -17,7 +17,8 @@ const HomePage = () => {
   const [popularAlbums, setPopularAlbums] = useState([]);
   const [favoriteAlbums, setFavoriteAlbums] = useState([]);
 
-  const defaultImageUrl = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTetYniHzzXBzERIr7kiWQldnJLoaNhYbmgOk0mimmKubR8Mjb9ry-32knM5D_DdutMcE8&usqp=CAU'
+  //const defaultImageUrl = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTetYniHzzXBzERIr7kiWQldnJLoaNhYbmgOk0mimmKubR8Mjb9ry-32knM5D_DdutMcE8&usqp=CAU'
+  const defaultImageUrl = 'https://yt3.googleusercontent.com/-PdzRcsbWuUsX0R5sJWknVvo3_gp3IqAwPPXvBWBeUxllHgM28XStKdFP4MNXbhLcPL4JcfutQ=s900-c-k-c0x00ffffff-no-rj'
 
   useEffect(() => {
     const fetchAlbums = async () => {
