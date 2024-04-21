@@ -24,4 +24,11 @@ router.get('/artists/:name/genres', (req, res) => artistController.getAllGenresF
 // Get the average tempo for a specific artist
 router.get('/artists/:name/average-tempo', (req, res) => artistController.getAverageTempoForArtist(req, res));
 
+// Find artist(s) by song ID
+router.get('/artists/bytrack/:id', (req, res) => artistController.findArtistBySongId(req, res));
+
+// Find artist(s) by album ID
+router.get('/artists/byalbum/:id', (req, res) => artistController.findArtistsByAlbumId(req, res));
+
+
 export default router;

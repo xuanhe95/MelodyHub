@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import {IconArrowLeft} from '@tabler/icons-react';
 import { Typography, CardContent, Button, Table, TableHead, TableBody, TableRow, TableCell, CircularProgress} from '@mui/material';
+import { IconUser } from '@tabler/icons-react';
 import { Divider, Box } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
 
@@ -13,7 +14,9 @@ const AlbumDetailsPage = () => {
   const { id } = useParams(); // Retrieve the album ID from the URL
   const [songs, setSongs] = useState([]); // State to hold song details
   const [album, setAlbum] = useState([]); // State to hold album
+  const [artists, setArtists] = useState([]); // State to hold artists
   const [songsFetchingDone, setSongsFetchingDone] = useState(true); // State to track loading status
+  const [artistsFetchingDone, setArtistsFetchingDone] = useState(true); // State to track loading status
 
   useEffect(() => {
     const fetchSongs = async () => {
@@ -50,7 +53,21 @@ const AlbumDetailsPage = () => {
       }
     };
 
+    const fetchArtists = async () => {
+      setArtistsFetchingDone(false)
+      try {
+        const response = await fetch(`http://${config.server_host}:${config.server_port}/api/artists/byalbum/${id}`);
+        const data = await response.json();
+
+        setArtists(data);
+      } catch (error) {
+        console.error('Failed to fetch artists:', error);
+      }
+      setArtistsFetchingDone(true)
+    };
+
     fetchAlbum();
+    fetchArtists();
     fetchSongs();
   }, [id]); // Dependency array ensures this effect runs whenever the `id` changes
 
@@ -59,13 +76,21 @@ const AlbumDetailsPage = () => {
     <MainCard>
       <Button variant="outlined" startIcon={<IconArrowLeft />} onClick={() => navigate(-1)}>Back</Button>
       <CardContent>
-        <Typography variant="h1" style={{ fontSize: '5rem' }}>
+        <Typography variant="h5" style={{ fontSize: '5rem' }}>
           {album.name}
         </Typography>
         <Box height={20} />
-        <Typography variant="body2">
-          Artist Name Here
-        </Typography>
+        {artistsFetchingDone ? (
+          <Typography variant="subtitle1" color="text.secondary" style={{ fontSize: '2rem' }}>
+            <IconUser size={"1.6rem"} style={{ marginRight: '0.3rem' }} />
+            {artists.length > 0 ? artists[0].artist : "Unknown Artist"}
+          </Typography>
+          ) : (
+          <Typography variant="subtitle1" color="text.secondary" style={{ fontSize: '2rem' }}>
+            <IconUser size={"1.6rem"} style={{ marginRight: '0.3rem' }} />
+            <CircularProgress size={"1.6rem"} />
+          </Typography>
+        )}
         <Box height={20} />
         <Divider variant="middle" />
         <Box height={20} />

@@ -2,6 +2,7 @@ import { DataSource, Repository } from 'typeorm';
 import { Artist } from '../entity/artist';
 import { Track } from '../entity/track';
 import { ArtistGenre } from '../entity/artistGenre';
+import { Album } from '../entity/album';
 
 class ArtistService {
     private artistRepository: Repository<Artist>;
@@ -176,6 +177,47 @@ class ArtistService {
         `;
 
         return this.dataSource.query(sql);
+    }
+
+    async findArtistBySongId(songId: string): Promise<Artist[]> {
+        const artists = await this.dataSource.query(`
+            SELECT A.*
+            FROM ARTISTS A
+            JOIN RELEASE_BY R ON A.artist_id = R.artist_id
+            WHERE R.song_id = ?
+        `, [songId]);
+
+        return artists;
+    }
+
+    async findArtistsByAlbumId(albumId: string): Promise<Artist[]> {
+        try {
+            const albumRepository = this.dataSource.getRepository(Album);
+            const album = await albumRepository.findOne({
+                where: { id: albumId },
+                relations: ["tracks"]
+            });
+    
+            if (!album || !album.tracks.length) {
+                // If no album or no tracks found, return an empty array
+                return [];
+            }
+    
+            // Fetch the artists for each track
+            const artistPromises = album.tracks.map(track =>
+                this.findArtistBySongId(track.id)
+            );
+            const artistArrays = await Promise.all(artistPromises);
+            
+            // Flatten the array of arrays and deduplicate the artists based on artist_id
+            const allArtists = artistArrays.flat();
+            const uniqueArtists = Array.from(new Map(allArtists.map(artist => [artist.id, artist])).values());
+    
+            return uniqueArtists;
+        } catch (error) {
+            console.error('Error fetching artists for album:', error);
+            return [];
+        }
     }
 }
 
