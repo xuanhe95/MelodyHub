@@ -17,7 +17,7 @@ const HomePage = () => {
   const [popularAlbums, setPopularAlbums] = useState([]);
   const [favoriteAlbums, setFavoriteAlbums] = useState([]);
 
-  const defaultImageUrl = 'https://img.freepik.com/premium-photo/cut-cat-wear-hodie_248267-607.jpg'
+  const defaultImageUrl = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTetYniHzzXBzERIr7kiWQldnJLoaNhYbmgOk0mimmKubR8Mjb9ry-32knM5D_DdutMcE8&usqp=CAU'
 
   useEffect(() => {
     const fetchAlbums = async () => {
