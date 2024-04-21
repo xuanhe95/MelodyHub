@@ -14,16 +14,16 @@ export class Track {
 	@Column({ name: 'name' })
 	title!: string;
 
-	@Column({ name: 'tempo' })
+	@Column({ name: 'tempo', type: 'double' })
 	tempo!: number;
 
-	@Column({ name: 'danceability' })
+	@Column({ name: 'danceability', type: 'double' })
 	danceability!: number;
 
 	@Column({ name: 'release_date' })
 	release_date!: Date;
 
-	@Column({ name: 'energy' })
+	@Column({ name: 'energy', type: 'double' })
 	energy!: number;
 
 	@Column({ name: 'duration' })

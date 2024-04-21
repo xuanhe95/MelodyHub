@@ -22,10 +22,13 @@ const AlbumDetailsPage = () => {
         const response = await fetch(`http://${config.server_host}:${config.server_port}/api/albums/details/${id}/tracks`);
         const data = await response.json();
 
-      // Convert all date strings in the response data to 'YYYY-MM-DD' format
+      // Convert all date strings and decimal fields in the response data to appropriate formats
       const updatedData = data.map(song => ({
         ...song,
-        release_date: song.release_date.split('T')[0] // Splits the ISO string and takes the first part ('YYYY-MM-DD')
+        release_date: song.release_date.split('T')[0], // Splits the ISO string and takes the first part ('YYYY-MM-DD')
+        tempo: parseFloat(song.tempo).toFixed(3), // Formats tempo to three decimal places
+        energy: parseFloat(song.energy).toFixed(3), // Formats energy to three decimal places
+        danceability: parseFloat(song.danceability).toFixed(3) // Formats danceability to three decimal places, if you want to keep consistency
       }));
 
         setSongs(updatedData); // Assuming the response contains an array of song details
