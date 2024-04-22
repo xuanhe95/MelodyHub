@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import AlbumService from '../services/albumService';
-import { MusicBrainzAPI } from "../utils/musicBrainz";
 import { Album } from "../entity/album";
 import { AlbumWithCover } from "../entity/albumWithCover";
 import { AlbumCoverAPI } from "../external/albumCoverAPI";

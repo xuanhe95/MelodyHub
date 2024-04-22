@@ -89,6 +89,32 @@ class ArtistController {
             res.status(500).json({ message: "Internal server error" });
         }
     }
+
+    async findArtistBySongId(req: Request, res: Response): Promise<void> {
+        const songId = req.params.id;
+        try {
+            const artists = await this.artistService.findArtistBySongId(songId);
+            if (artists.length) {
+                res.json(artists);
+            } else {
+                res.status(404).json({ message: `No artists found for song ID ${songId}` });
+            }
+        } catch (error) {
+            console.error("Error fetching artists by song ID:", error);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    }
+
+    async findArtistsByAlbumId(req: Request, res: Response): Promise<void> {
+        const albumId = req.params.id;
+        try {
+            const artists = await this.artistService.findArtistsByAlbumId(albumId);
+            res.json(artists);
+        } catch (error) {
+            console.error("Error fetching artists by album ID:", error);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    }
 }
 
 export default ArtistController;
