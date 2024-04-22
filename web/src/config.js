@@ -3,7 +3,8 @@ const config = {
   // like '/berry-material-react/react/default'
   basename: '/',
   defaultPath: '/dashboard/default',
-  fontFamily: `'Roboto', sans-serif`,
+  fontFamily: `'Poppins', sans-serif`, // 更改字体为 Poppins
+  // fontFamily: `'Roboto', sans-serif`,
   borderRadius: 12
 };
 

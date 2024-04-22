@@ -12,8 +12,11 @@ import PopupState, { bindPopper, bindToggle } from 'material-ui-popup-state';
 import Transitions from 'ui-component/extended/Transitions';
 
 // assets
-import { IconAdjustmentsHorizontal, IconSearch, IconX } from '@tabler/icons-react';
+// import { IconAdjustmentsHorizontal, IconSearch, IconX } from '@tabler/icons-react';
+import { IconSearch, IconX, IconDisc, IconMusic } from '@tabler/icons-react';
 import { shouldForwardProp } from '@mui/system';
+
+import { useNavigate } from 'react-router-dom';
 
 // styles
 const PopperStyle = styled(Popper, { shouldForwardProp })(({ theme }) => ({
@@ -76,7 +79,7 @@ const MobileSearch = ({ value, setValue, popupState }) => {
         <InputAdornment position="end">
           <ButtonBase sx={{ borderRadius: '12px' }}>
             <HeaderAvatarStyle variant="rounded">
-              <IconAdjustmentsHorizontal stroke={1.5} size="1.3rem" />
+              <IconDisc stroke={1.5} size="1.3rem" />
             </HeaderAvatarStyle>
           </ButtonBase>
           <Box sx={{ ml: 2 }}>
@@ -118,6 +121,34 @@ MobileSearch.propTypes = {
 const SearchSection = () => {
   const theme = useTheme();
   const [value, setValue] = useState('');
+
+  const [searchState, setSearchState] = useState("tracks");
+
+
+
+  const navigate = useNavigate(); // 使用 useNavigate 钩子
+
+  const handleSubmit = () => {
+    // 假设您想跳转到 '/search-results' 路由
+    console.log("value: " + value);
+    if (searchState === "albums") {
+      navigate('/search', { state: { searchQuery: { album: value } } }); // 传递搜索值作为路由状态
+    } else {
+      navigate('/search', { state: { searchQuery: { title: value } } }); // 传递搜索值作为路由状态
+    }
+  };
+
+  const handleAlbumClick = () => {
+    // 假设您想跳转到 '/search-results' 路由
+    console.log("changed");
+    if (searchState === "albums") {
+      setSearchState("tracks");
+    } else {
+      setSearchState("albums");
+    }
+  }
+
+
 
   return (
     <>
@@ -173,17 +204,33 @@ const SearchSection = () => {
             </InputAdornment>
           }
           endAdornment={
+
             <InputAdornment position="end">
-              <ButtonBase sx={{ borderRadius: '12px' }}>
-                <HeaderAvatarStyle variant="rounded">
-                  <IconAdjustmentsHorizontal stroke={1.5} size="1.3rem" />
-                </HeaderAvatarStyle>
-              </ButtonBase>
+              <Box display="flex" justifyContent="center" width="100%" gap={1}>
+                <ButtonBase sx={{ borderRadius: '12px' }} onClick={handleAlbumClick}>
+                  <HeaderAvatarStyle variant="rounded">
+                    {searchState === "albums" ? (
+                      <IconDisc stroke={1.5} size="1.3rem" />
+                    ) : (
+                      <IconMusic stroke={1.5} size="1.3rem" />
+                    )}
+                  </HeaderAvatarStyle>
+                </ButtonBase>
+
+                <ButtonBase sx={{ borderRadius: '12px' }} onClick={handleSubmit} >
+                  <HeaderAvatarStyle variant="rounded">
+                    <IconSearch stroke={1.5} size="1.3rem" />
+                  </HeaderAvatarStyle>
+                </ButtonBase>
+              </Box>
+
             </InputAdornment>
+
           }
           aria-describedby="search-helper-text"
           inputProps={{ 'aria-label': 'weight' }}
         />
+
       </Box>
     </>
   );

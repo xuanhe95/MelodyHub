@@ -7,7 +7,7 @@ const trackService = new TrackService(); // Pass the necessary data source or re
 const trackController = new TrackController(trackService);
 
 router.get('/tracks', (req, res) => trackController.getAllTracks(req, res));
-router.get('/tracks/:id', (req, res) => trackController.getTrackById(req, res));
+router.get('/tracks/id/:id', (req, res) => trackController.getTrackById(req, res));
 router.get('/tracks/title', (req, res) => trackController.getTracksByTitle(req, res));
 router.get('/tracks/search', (req, res) => trackController.searchTracks(req, res));
 router.get('/tracks/top/:country', (req, res) => trackController.getAllTimeTopTracksByCountry(req, res));

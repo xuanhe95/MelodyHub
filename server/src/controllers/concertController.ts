@@ -19,6 +19,18 @@ class ConcertController {
             res.status(500).json({ message: "Internal server error" });
         }
     }
+
+    async test(req: Request, res: Response): Promise<void> {
+        console.log('Testing...');
+        try {
+            const conserts = await this.concertService.test();
+            console.log('Conserts:', conserts);
+            res.json({ message: "Test successful" });
+        } catch (error) {
+            console.error("Error occurred while testing:", error);
+            res.status(500).json({ message: "Internal server error" });
+        }
+    }
 }
 
 export default ConcertController;

@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import config from '../../../config.json';
-import { IconArrowLeft } from '@tabler/icons-react';
+import ShuffleIcon from '@mui/icons-material/Shuffle';
 // material-ui
 import MainCard from 'ui-component/cards/MainCard';
 
 import { Typography, CardContent, Button, Table, TableHead, TableRow, TableCell, Box, Divider } from '@mui/material';
+
 
 
 // project imports
@@ -23,7 +24,7 @@ const RecommendedPage = () => {
   const navigate = useNavigate();
 
   const handleAlbumClick = async (album) => {
-    navigate(`/album/details/${album.album_id}`);
+    navigate(`/album/random/${album.album_id}`);
   };
 
   const jump = async () => {
@@ -51,7 +52,7 @@ const RecommendedPage = () => {
 
   return (
     <MainCard>
-      <Button variant="outlined" startIcon={<IconArrowLeft />} onClick={() => navigate(-1)}>Back</Button>
+      <Button variant="outlined" startIcon={<ShuffleIcon />} onClick={() => navigate(-1)}>Shuffle</Button>
       <CardContent>
         <Typography variant="h1" style={{ fontSize: '5rem' }}>
           {'Wait for a moment...'}

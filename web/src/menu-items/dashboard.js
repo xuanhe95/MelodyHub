@@ -21,7 +21,7 @@ const dashboard = {
   type: 'group',
   children: [
     {
-      id: 'default',
+      id: 'dashboard',
       title: 'Dashboard',
       type: 'item',
       url: '/dashboard/default',
@@ -29,7 +29,7 @@ const dashboard = {
       breadcrumbs: false
     },
     {
-      id: 'default',
+      id: 'home',
       title: 'Home',
       type: 'item',
       url: '/home',

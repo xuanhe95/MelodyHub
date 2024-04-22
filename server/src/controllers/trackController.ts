@@ -6,6 +6,7 @@ export class TrackController {
 
     constructor(trackService: TrackService) {
         this.trackService = trackService;
+        this.searchTracks = this.searchTracks.bind(this);
     }
 
     async getAllTracks(req: Request, res: Response): Promise<void> {
@@ -48,23 +49,36 @@ export class TrackController {
     async searchTracks(req: Request, res: Response): Promise<void> {
         try {
             // Extract query params
-            const { title, artist, album, start, end, tempo, danceability, energy, duration } = req.query;
 
+            const { page, limit, title, artist, album, start, end, tempo_low, 
+                tempo_high, danceability_low, danceability_high,
+                energy_low, energy_high, duration_low, duration_high} = req.query;
+
+            console.log(page, limit, title, danceability_high
+                , energy_low, energy_high, duration_low, duration_high);
+            
             // Call service method
-            const tracks = await this.trackService.searchTracks(
+            const response = await this.trackService.searchTracks(
+                page? parseInt(page as string, 10): 1,
+                limit? parseInt(limit as string, 10):24,
                 title as string,
                 artist as string,
                 album as string,
                 start as string, // Convert to Date in service if needed
                 end as string, // Convert to Date in service if needed
-                parseFloat(tempo as string),
-                parseFloat(danceability as string),
-                parseFloat(energy as string),
-                parseFloat(duration as string),
+                parseFloat(tempo_low as string), // Convert to number in service if needed
+                parseFloat(tempo_high as string), // Convert to number in service if needed
+                parseFloat(danceability_low as string), // Convert to number in service if needed
+                parseFloat(danceability_high as string), // Convert to number in service if needed
+                parseFloat(energy_low as string), // Convert to number in service if needed
+                parseFloat(energy_high as string), // Convert to number in service if needed
+                parseFloat(duration_low as string), // Convert to number in service if needed
+                parseFloat(duration_high as string) // Convert to number in service if needed
             );
 
-            res.json(tracks);
-        } catch (error) {
+            // Return response
+            res.json(response);
+        } catch (error) {   
             res.status(500).json({ message: "Internal server error", error });
         }
     }
