@@ -1,28 +1,45 @@
-import axios from 'axios';
 import { Concert } from '../entity/concert';
 
 class ConcertService {
-    // Function to fetch setlists for an artist by their Musicbrainz ID (mbid)
-    async fetchArtistSetlists(mbid: string, page: number = 1): Promise<Concert[]> {
+    async fetchArtistSetlists(mbid: string, page: number): Promise<{ concerts: Concert[], totalPages: number }> {
         try {
-            const response = await axios.get(`https://api.setlist.fm/1.0/artist/${mbid}/setlists`, {
-                params: { p: page },
-                headers: { Accept: 'application/json' }
+            const response = await fetch(`https://api.setlist.fm/rest/1.0/artist/${mbid}/setlists?p=${page}`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'x-api-key': '5ubATn-IrvFIN31uEeFe-bPZw7EKBTaxpQYs'
+                },
             });
 
-            // Process the response data and map to the Concert entity
-            const concerts: Concert[] = response.data.setlist.map((setlistItem: any) => {
-                // Create a new Concert entity for each setlist
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+    
+    
+            const data = await response.json();
+            const totalSetlists = data.total;
+            const totalPages = Math.ceil(totalSetlists / 20); // 20 setlists per page
+            const setlists = data.setlist;
+            //console.log(mbid);
+            //console.log(page);
+            //console.log(data);
+            const concerts: Concert[] = setlists.map((setlistItem: any) => {
                 const concert = new Concert();
-                concert.name = setlistItem.artist.name;
-                // TODO: add more attributes
+                concert.name = setlistItem.artist.name || "unkonwn";
+                concert.venue = setlistItem.venue.name;
+                concert.city = setlistItem.venue.city.name;
+                concert.state = setlistItem.venue.city.state;
+                concert.country = setlistItem.venue.city.country.name;
+                concert.date = setlistItem.eventDate;
+                //concert.tour = setlistItem.tour.name;
+                concert.url = setlistItem.url;
                 return concert;
             });
 
-            return concerts;
+            return { concerts, totalPages };
         } catch (error) {
             console.error('Error fetching setlists:', error);
-            throw error; // Rethrow or handle error as appropriate for your application
+            throw error;
         }
     }
 }
