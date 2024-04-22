@@ -35,7 +35,7 @@ import {
 import MainCard from 'ui-component/cards/MainCard';
 import Transitions from 'ui-component/extended/Transitions';
 // import UpgradePlanCard from './UpgradePlanCard';
-import User1 from 'assets/images/users/user-round.svg';
+// import User1 from 'assets/images/users/user-round.svg';
 
 // assets
 import { IconLogout, IconSettings, } from '@tabler/icons-react';
@@ -56,7 +56,7 @@ const ProfileSection = () => {
   const [open, setOpen] = useState(false);
 
 
-
+  const userInitial = username ? username[0].toUpperCase() : ''; // 使用用户名的首字母或默认显示 'U'
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -135,7 +135,7 @@ const ProfileSection = () => {
         }}
         icon={
           <Avatar
-            src={User1}
+            // src={ }
             sx={{
               ...theme.typography.mediumAvatar,
               margin: '8px 0 8px 8px !important',
@@ -145,7 +145,11 @@ const ProfileSection = () => {
             aria-controls={open ? 'menu-list-grow' : undefined}
             aria-haspopup="true"
             color="inherit"
-          />
+
+          >
+            {userInitial}
+          </Avatar>
+
         }
         label={<IconSettings stroke={1.5} size="1.5rem" color={theme.palette.primary.main} />}
         variant="outlined"
