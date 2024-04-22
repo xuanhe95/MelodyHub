@@ -34,7 +34,8 @@ async function fetchPlaylist(id) {
         'Content-Type': 'application/json'
       })
     };
-
+    console.log("id");
+    console.log(id);
     const response = await fetch(`http://${config.server_host}:${config.server_port}/api/playlists/${id}`, requestOptions);
 
     if (!response.ok) {
@@ -66,14 +67,11 @@ const PlaylistsPage = () => {
       <MainCard title="Playlists">
         <CardContent>
           <Typography variant="h1" style={{ fontSize: '5rem' }}>
-            Name Of the Playlist
+            Wait a moment...
           </Typography>
           <Box height={20} />
           <Typography variant="body2">
-            Lorem ipsum dolor sit amen, consenter nipissing eli, sed do elusion tempos incident ut laborers et doolie magna alissa. Ut enif
-            ad minim venice, quin nostrum exercitation illampu laborings nisi ut liquid ex ea commons construal. Duos aube grue dolor in
-            reprehended in voltage veil esse colum doolie eu fujian bulla parian. Exceptive sin ocean cuspidate non president, sunk in culpa
-            qui officiate descent molls anim id est labours.
+            Loading
           </Typography>
           <Box height={20} />
           <Divider variant="middle" />

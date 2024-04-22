@@ -33,6 +33,7 @@ export class PlaylistService {
                 'playlistSongs',
                 'playlistSongs.track', 
                 'playlistSongs.artist',
+                'playlistSongs.track.album', 
             ] // Include user and songs in the response
         });
     }

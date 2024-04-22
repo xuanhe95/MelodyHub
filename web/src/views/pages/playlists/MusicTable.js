@@ -14,6 +14,14 @@ const MusicTable = ({ playlist }) => {
   if (!playlist) {
     return <Typography variant="h3">Loading...</Typography>;
   }
+
+  playlist.map((music) => {
+    const date = new Date(music.track.release_date);
+    const year = date.getFullYear();
+    music.year = year;
+  });
+
+
   return (
     <Table>
       {/* 表头 */}
@@ -23,13 +31,13 @@ const MusicTable = ({ playlist }) => {
             <Typography variant="h3">Track</Typography>
           </TableCell>
           <TableCell colSpan={1}>
-            <Typography variant="h3">Artist</Typography>
-          </TableCell>
-          <TableCell colSpan={1}>
             <Typography variant="h3">Album</Typography>
           </TableCell>
+          <TableCell colSpan={1}>
+            <Typography variant="h3">Artist</Typography>
+          </TableCell>
           <TableCell>
-            <Typography variant="h3">Duration</Typography>
+            <Typography variant="h3">Year</Typography>
           </TableCell>
         </TableRow>
       </TableHead>
@@ -46,9 +54,12 @@ const MusicTable = ({ playlist }) => {
                 <Typography variant="body1">{music.track.title}</Typography>
               </Box>
             </TableCell>
+            <TableCell colSpan={1}>{music.track.album.name}</TableCell>
             <TableCell colSpan={1}>{music.artist.name}</TableCell>
-            <TableCell colSpan={1}>{music.id}</TableCell>
-            <TableCell>{music.duration}</TableCell>
+
+            <TableCell>
+
+              {music.year}</TableCell>
           </TableRow>
         ))}
       </TableBody>
