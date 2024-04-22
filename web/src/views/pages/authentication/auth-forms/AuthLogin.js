@@ -117,7 +117,7 @@ const FirebaseLogin = ({ ...others }) => {
         </Grid> */}
         <Grid item xs={12} container alignItems="center" justifyContent="center">
           <Box sx={{ mb: 2 }}>
-            <Typography variant="subtitle1">Sign in with Email address</Typography>
+            <Typography variant="subtitle1">Sign in with your Username</Typography>
           </Box>
         </Grid>
       </Grid>
@@ -180,7 +180,7 @@ const FirebaseLogin = ({ ...others }) => {
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit} {...others}>
             <FormControl fullWidth error={Boolean(touched.email && errors.email)} sx={{ ...theme.typography.customInput }}>
-              <InputLabel htmlFor="outlined-adornment-email-login">Email Address / Username</InputLabel>
+              <InputLabel htmlFor="outlined-adornment-email-login">Username</InputLabel>
               <OutlinedInput
                 id="outlined-adornment-email-login"
                 type="email"
