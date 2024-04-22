@@ -20,7 +20,16 @@ export class Concert {
     venue!: string;
 
     @Column()
-    location!: string;
+    city!: string;
+
+    @Column()
+    state!: string;
+
+    @Column()
+    country!: string;
+
+    @Column()
+    url!: string;
 
     @Column({ type: 'json' })
     set_list!: any; // 'set_list' can store a JSON object if your database supports it

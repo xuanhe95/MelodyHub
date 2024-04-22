@@ -6,7 +6,6 @@ const router = Router();
 const concertService = new ConcertService();
 const concertController = new ConcertController(concertService);
 
-// router.get('/artists/:mbid/setlists', (req, res) => concertController.getArtistSetlists(req, res));
-router.get('/atest', (req, res) => concertController.test(req, res));
+router.get('/artist/:mbid/setlists', (req, res) => concertController.getArtistSetlists(req, res));
 
 export default router;
