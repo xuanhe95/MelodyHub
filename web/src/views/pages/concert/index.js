@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CardContent, Grid, Typography, TextField, styled, IconButton, InputAdornment } from '@mui/material';
-import { ArrowCircleLeft,ArrowCircleRight , Search as SearchIcon } from '@mui/icons-material'; 
+import { ArrowBackIos, ArrowForwardIos, Search as SearchIcon } from '@mui/icons-material';
 import MainCard from 'ui-component/cards/MainCard';
 import config from '../../../config.json';
 
@@ -19,26 +19,36 @@ const ConcertPage = () => {
   const [artistName, setArtistName] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [searchTriggered, setSearchTriggered] = useState(false);
+
+  useEffect(() => {
+    if (searchTriggered) { // Only trigger search if search is explicitly triggered
+      if (artistName.trim() !== '') {
+        getMbid(1);
+      }
+      setSearchTriggered(false);
+    }
+  }, [artistName, searchTriggered]);
 
   const fetchConcert = async (mbid, page) => {
     try {
-      const response = await fetch(`http://${config.server_host}:${config.server_port}/api/artist/${mbid}/setlists?p=${page}`);     
+      const response = await fetch(`http://${config.server_host}:${config.server_port}/api/artist/${mbid}/setlists?p=${page}`);
       const data = await response.json();
 
-      console.log('Fetched mbid:', mbid);
-      console.log('Fetched page:', page);
-      console.log('Fetched concerts:', data);
-
-      const alldata = data.concerts.map(setlistItem => ({
-        date: setlistItem.date,
-        name: setlistItem.name,
-        venue: setlistItem.venue,
-        city: setlistItem.city,
-        state: setlistItem.state,
-        country: setlistItem.country,
-        //tour: setlistItem.tour,
-        setlist_link: setlistItem.url,
-      }));
+      const alldata = data.concerts.map(setlistItem => {
+        const [day, month, year] = setlistItem.date.split('-');
+        const formattedDate = `${year}-${month}-${day}`;
+        
+        return {
+          date: formattedDate,
+          name: setlistItem.name,
+          venue: setlistItem.venue,
+          city: setlistItem.city,
+          state: setlistItem.state,
+          country: setlistItem.country,
+          setlist_link: setlistItem.url,
+        };
+      });
       setConcerts(alldata);
       setTotalPages(data.totalPages);
     } catch (error) {
@@ -48,7 +58,6 @@ const ConcertPage = () => {
 
   const getMbid = async (page) => {
     try {
-      console.log('Page', page)
       const response = await fetch(`https://musicbrainz.org/ws/2/artist?query=${artistName}&fmt=json`);
       const data = await response.json();
       const mbid = data.artists[0].id;
@@ -60,36 +69,63 @@ const ConcertPage = () => {
 
   const handleSearch = () => {
     setCurrentPage(1);
-    getMbid(1);
+    setSearchTriggered(true);
   };
 
-  const handleKeyDown = (event) => {
-    if (event.key === 'Enter') {
-      setCurrentPage(1);
-      getMbid(currentPage);
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    getMbid(page);
+    scrollToTop();
+  };
+
+  const scrollToTop = () => {
+    document.documentElement.scrollTop = 0;
+  };
+
+  const renderPageNumbers = () => {
+    const pages = [];
+    const startPage = Math.max(1, currentPage - 1);
+    const endPage = Math.min(totalPages, currentPage + 1);
+
+    if (totalPages === 1) {
+      pages.push(
+        <IconButton key={1} onClick={() => handlePageChange(1)} disabled={currentPage === 1} sx={{ fontSize: 'large' }}>
+          {1}
+        </IconButton>
+      );
+    } else {
+      if (startPage > 1) {
+        pages.push(
+          <IconButton key={1} onClick={() => handlePageChange(1)} sx={{ fontSize: 'large' }}>
+            {1}
+          </IconButton>
+        );
+        if (startPage > 2) {
+          pages.push(<IconButton key="ellipsis1" disabled><Typography>...</Typography></IconButton>);
+        }
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(
+          <IconButton key={i} onClick={() => handlePageChange(i)} disabled={i === currentPage} sx={{ fontSize: 'large' }}>
+            {i}
+          </IconButton>
+        );
+      }
+
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) {
+          pages.push(<IconButton key="ellipsis2" disabled><Typography>...</Typography></IconButton>);
+        }
+        pages.push(
+          <IconButton key={totalPages} onClick={() => handlePageChange(totalPages)} sx={{ fontSize: 'large' }}>
+            {totalPages}
+          </IconButton>
+        );
+      }
     }
-  };
 
-  const handleNextPage = () => {
-    if (currentPage < totalPages) {
-      console.log('currentPage', currentPage)
-      setCurrentPage(currentPage + 1);
-      getMbid(currentPage + 1);
-      window.scrollTo(0, 0);
-    }
-  };
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-      getMbid(currentPage - 1);
-      window.scrollTo(0, 0);
-    }
-  };
-
-  const formatDate = (dateString) => {
-    const [day, month, year] = dateString.split('-');
-    return `${year}-${month}-${day}`;
+    return pages;
   };
 
   return (
@@ -101,13 +137,17 @@ const ConcertPage = () => {
               label="Enter Artist Name"
               value={artistName}
               onChange={(e) => setArtistName(e.target.value)}
-              onKeyDown={handleKeyDown}
               fullWidth
+              onKeyPress={(e) => {
+                if (e.key === 'Enter') {
+                  handleSearch();
+                }
+              }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton onClick={handleSearch} aria-label="search">
-                      <SearchIcon sx={{ fontSize: 20 }} />
+                      <SearchIcon />
                     </IconButton>
                   </InputAdornment>
                 ),
@@ -120,30 +160,34 @@ const ConcertPage = () => {
               <>
                 {concerts.map((concert, index) => (
                   <StyledCardContent key={index}>
-                    <Typography variant="subtitle1">Date: {formatDate(concert?.date)}</Typography>
-                    <Typography variant="subtitle1">Artist: {concert?.name}</Typography>
-                    <Typography variant="subtitle1">Venue: {concert?.venue}</Typography>
-                    <Typography variant="subtitle1">Location: {`${concert?.city}, ${concert?.state}, ${concert?.country}`}</Typography>
-                    <Typography variant="subtitle1">Setlist: <a href={concert?.setlist_link} target="_blank" rel="noopener noreferrer">{concert?.setlist_link}</a></Typography>
+                    <Typography variant="subtitle1">Date: {concert.date}</Typography>
+                    <Typography variant="subtitle1">Artist: {concert.name}</Typography>
+                    <Typography variant="subtitle1">Venue: {concert.venue}</Typography>
+                    <Typography variant="subtitle1">Location: {`${concert.city}, ${concert.state}, ${concert.country}`}</Typography>
+                    <Typography variant="subtitle1">Setlist: <a href={concert.setlist_link} target="_blank" rel="noopener noreferrer">{concert.setlist_link}</a></Typography>
                   </StyledCardContent>
                 ))}
               </>
             )}
-          </Grid>
-        </Grid>
-        <Grid container spacing={2} justifyContent="center">
-          <Grid item>
-            {currentPage > 1 && (
-              <IconButton onClick={handlePrevPage}>
-                <ArrowCircleLeft />
-              </IconButton>
-            )}
-          </Grid>
-          <Grid item>
-            {currentPage < totalPages && (
-              <IconButton onClick={handleNextPage}>
-                <ArrowCircleRight />
-              </IconButton>
+
+            {artistName && totalPages > 1 && ( 
+              <Grid container spacing={2} justifyContent="center">
+                <Grid item>
+                  <IconButton onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
+                    <ArrowBackIos />
+                  </IconButton>
+                </Grid>
+                <Grid item>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    {renderPageNumbers()}
+                  </div>
+                </Grid>
+                <Grid item>
+                  <IconButton onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>
+                    <ArrowForwardIos />
+                  </IconButton>
+                </Grid>
+              </Grid>
             )}
           </Grid>
         </Grid>
