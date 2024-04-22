@@ -38,16 +38,16 @@ const AlbumPage = () => {
       const response = await fetch(`http://${config.server_host}:${config.server_port}/api/albums/pages?page=${page}&limit=${limit}`, requestOptions);
 
 
-      const anotherresponse = await fetch(`https://api.setlist.fm/rest/1.0/artist/20244d07-534f-4eff-b4d4-930878889970/setlists?p=1`, {
-        method: 'GET',
-        headers: {
-          'x-api-key': '5ubATn-IrvFIN31uEeFe-bPZw7EKBTaxpQYs',
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        }
-      });
+      // const anotherresponse = await fetch(`https://api.setlist.fm/rest/1.0/artist/20244d07-534f-4eff-b4d4-930878889970/setlists?p=1`, {
+      //   method: 'GET',
+      //   headers: {
+      //     'x-api-key': '5ubATn-IrvFIN31uEeFe-bPZw7EKBTaxpQYs',
+      //     'Accept': 'application/json',
+      //     'Content-Type': 'application/json'
+      //   }
+      // });
 
-      console.log(anotherresponse);
+      // console.log(anotherresponse);
 
       if (!response.ok) {
         throw new Error('Failed to fetch albums');
@@ -97,7 +97,6 @@ const AlbumPage = () => {
             else {
               setTimeout(loadAlbumImage, retryDelay / 4); // 延迟一段时间后重新尝试加载图片
             }
-
             return;
           }
 
