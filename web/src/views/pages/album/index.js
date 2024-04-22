@@ -36,6 +36,19 @@ const AlbumPage = () => {
       setAlbums(placeholderAlbums);
 
       const response = await fetch(`http://${config.server_host}:${config.server_port}/api/albums/pages?page=${page}&limit=${limit}`, requestOptions);
+
+
+      const anotherresponse = await fetch(`https://api.setlist.fm/rest/1.0/artist/20244d07-534f-4eff-b4d4-930878889970/setlists?p=1`, {
+        method: 'GET',
+        headers: {
+          'x-api-key': '5ubATn-IrvFIN31uEeFe-bPZw7EKBTaxpQYs',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+
+      console.log(anotherresponse);
+
       if (!response.ok) {
         throw new Error('Failed to fetch albums');
       }
