@@ -9,7 +9,7 @@ import { AppBar, Box, CssBaseline, Toolbar, useMediaQuery } from '@mui/material'
 import Breadcrumbs from 'ui-component/extended/Breadcrumbs';
 import Header from './Header';
 import Sidebar from './Sidebar';
-import Customization from '../Customization';
+// import Customization from '../Customization';
 import navigation from 'menu-items';
 import { drawerWidth } from 'store/constant';
 import { SET_MENU } from 'store/actions';
@@ -26,13 +26,13 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' && pr
     'margin',
     open
       ? {
-          easing: theme.transitions.easing.easeOut,
-          duration: theme.transitions.duration.enteringScreen
-        }
+        easing: theme.transitions.easing.easeOut,
+        duration: theme.transitions.duration.enteringScreen
+      }
       : {
-          easing: theme.transitions.easing.sharp,
-          duration: theme.transitions.duration.leavingScreen
-        }
+        easing: theme.transitions.easing.sharp,
+        duration: theme.transitions.duration.leavingScreen
+      }
   ),
   [theme.breakpoints.up('md')]: {
     marginLeft: open ? 0 : -(drawerWidth - 20),
@@ -91,7 +91,7 @@ const MainLayout = () => {
         <Breadcrumbs separator={IconChevronRight} navigation={navigation} icon title rightAlign />
         <Outlet />
       </Main>
-      <Customization />
+      {/* <Customization /> */}
     </Box>
   );
 };
