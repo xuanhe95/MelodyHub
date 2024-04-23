@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Grid } from '@mui/material';
+import { Grid, CircularProgress } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import config from '../../../config.json';
 
 function DashboardPage() {
   const [artists, setArtists] = useState([]);
-
+  const [loading, setLoading] = useState(false); // 新增状态以跟踪数据加载情况
   useEffect(() => {
     async function fetchData() {
+      setLoading(true); // 开始加载数据
       const data = await fetchRisingStars();
-      if (data) {
-        setArtists(data || []);
-      }
+      setArtists(data || []);
+      setLoading(false); // 数据加载完成
     }
     fetchData();
   }, []);
@@ -44,6 +44,16 @@ function DashboardPage() {
       return [];
     }
   };
+
+  if (loading) {
+    return (
+      <MainCard title="Rising Stars">
+        <Grid container justifyContent="center" alignItems="center" style={{ height: '450px' }}>
+          <CircularProgress />
+        </Grid>
+      </MainCard>
+    );
+  }
 
   return (
     <MainCard title="Rising Stars">
