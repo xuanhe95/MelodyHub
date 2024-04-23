@@ -15,7 +15,7 @@ class ConcertService {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
     
-    
+
             const data = await response.json();
             const totalSetlists = data.total;
             const totalPages = Math.ceil(totalSetlists / 20); // 20 setlists per page

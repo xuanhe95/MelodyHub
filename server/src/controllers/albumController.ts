@@ -188,6 +188,7 @@ async getAllAlbumsWithPages(req: Request, res: Response): Promise<void> {
     async fetchAlbumImage(req: Request, res: Response): Promise<void> {
         const albumId: string = req.params.id;
         try {
+            // find album_name by album_name because the API needs album_name
             const album = await this.albumService.findAlbumById(albumId);
             if (album) {
                 const albumCover = await AlbumCoverAPI.getAlbumCover(album.name);
