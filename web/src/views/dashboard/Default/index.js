@@ -1,59 +1,67 @@
-import { useEffect, useState } from 'react';
-
-// material-ui
+import React, { useState, useEffect } from 'react';
 import { Grid } from '@mui/material';
+import MainCard from 'ui-component/cards/MainCard';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import config from '../../../config.json';
 
-// project imports
-import EarningCard from './EarningCard';
-import PopularCard from './PopularCard';
-import TotalOrderLineChartCard from './TotalOrderLineChartCard';
-import TotalIncomeDarkCard from './TotalIncomeDarkCard';
-import TotalIncomeLightCard from './TotalIncomeLightCard';
-import TotalGrowthBarChart from './TotalGrowthBarChart';
-import { gridSpacing } from 'store/constant';
+function DashboardPage() {
+  const [artists, setArtists] = useState([]);
 
-// ==============================|| DEFAULT DASHBOARD ||============================== //
-
-const Dashboard = () => {
-  const [isLoading, setLoading] = useState(true);
   useEffect(() => {
-    setLoading(false);
+    async function fetchData() {
+      const data = await fetchRisingStars();
+      if (data) {
+        setArtists(data || []);
+      }
+    }
+    fetchData();
   }, []);
 
-  return (
-    <Grid container spacing={gridSpacing}>
-      <Grid item xs={12}>
-        <Grid container spacing={gridSpacing}>
-          <Grid item lg={4} md={6} sm={6} xs={12}>
-            <EarningCard isLoading={isLoading} />
-          </Grid>
-          <Grid item lg={4} md={6} sm={6} xs={12}>
-            <TotalOrderLineChartCard isLoading={isLoading} />
-          </Grid>
-          <Grid item lg={4} md={12} sm={12} xs={12}>
-            <Grid container spacing={gridSpacing}>
-              <Grid item sm={6} xs={12} md={6} lg={12}>
-                <TotalIncomeDarkCard isLoading={isLoading} />
-              </Grid>
-              <Grid item sm={6} xs={12} md={6} lg={12}>
-                <TotalIncomeLightCard isLoading={isLoading} />
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid>
-      <Grid item xs={12}>
-        <Grid container spacing={gridSpacing}>
-          <Grid item xs={12} md={8}>
-            <TotalGrowthBarChart isLoading={isLoading} />
-          </Grid>
-          <Grid item xs={12} md={4}>
-            <PopularCard isLoading={isLoading} />
-          </Grid>
-        </Grid>
-      </Grid>
-    </Grid>
-  );
-};
+  const fetchRisingStars = async () => {
+    try {
+      const requestOptions = {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      };
+      const response = await fetch(`http://${config.server_host}:${config.server_port}/api/artists/rising-stars`, requestOptions);
+      const data = await response.json();
 
-export default Dashboard;
+      //console.log("rising star:", data);
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch rising stars data');
+      }
+
+      const artists = data.map((item) => ({
+        //id: item.artist_id,
+        name: item.artist,
+        Improvement_Score: item.ImprovementScore
+      }));
+
+      return artists;
+    } catch (error) {
+      console.error('Error fetching rising stars data:', error);
+      return [];
+    }
+  };
+
+  return (
+    <MainCard title="Rising Stars">
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <ResponsiveContainer width="100%" height={450}>
+            <BarChart data={artists} margin={{ top: 20, right: 50, left: 20, bottom: 110 }}>
+              <XAxis dataKey="name" angle={45} interval={0} textAnchor="start"></XAxis>
+              <YAxis />
+              <Tooltip />
+              <Legend verticalAlign="top" align="right" />
+              <Bar dataKey="Improvement_Score" fill="#8884d8" barSize={30} />
+            </BarChart>
+          </ResponsiveContainer>
+        </Grid>
+      </Grid>
+    </MainCard>
+  );
+}
+
+export default DashboardPage;
