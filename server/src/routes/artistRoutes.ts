@@ -6,6 +6,9 @@ import ArtistController from '../controllers/artistController';
 const router = Router();
 const artistService = new ArtistService(AppDataSource);
 const artistController = new ArtistController(artistService);
+
+router.get('/artists/rising-stars', (req, res) => artistController.findRisingStars(req, res));
+
 // Get details of an artist by name
 router.get('/artists/name/:name', (req, res) => artistController.findArtistByName(req, res));
 
