@@ -79,7 +79,7 @@ const MainRoutes = {
       element: <Search />
     },
     {
-      path: 'recommended',
+      path: 'shuffle',
       element: <Recommended />
     },
     {
