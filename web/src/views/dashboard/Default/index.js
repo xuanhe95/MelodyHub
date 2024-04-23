@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, CircularProgress } from '@mui/material';
+import { Grid, CircularProgress, Box, Typography } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import config from '../../../config.json';
@@ -48,7 +48,7 @@ function DashboardPage() {
   if (loading) {
     return (
       <MainCard title="Rising Stars">
-        <Grid container justifyContent="center" alignItems="center" style={{ height: '450px' }}>
+        <Grid container justifyContent="center" alignItems="center" style={{ height: '1000px' }}>
           <CircularProgress />
         </Grid>
       </MainCard>
@@ -57,9 +57,9 @@ function DashboardPage() {
 
   return (
     <MainCard title="Rising Stars">
-      <Grid container spacing={3}>
+      <Grid container spacing={3} style={{ height: '1000px' }}>
         <Grid item xs={12}>
-          <ResponsiveContainer width="100%" height={450}>
+          <ResponsiveContainer width="100%" height={800}>
             <BarChart data={artists} margin={{ top: 20, right: 50, left: 20, bottom: 110 }}>
               <XAxis dataKey="name" angle={45} interval={0} textAnchor="start"></XAxis>
               <YAxis />
@@ -68,6 +68,15 @@ function DashboardPage() {
               <Bar dataKey="Improvement_Score" fill="#8884d8" barSize={30} />
             </BarChart>
           </ResponsiveContainer>
+        </Grid>
+
+
+        <Grid item xs={12} style={{ height: '100px' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+            <Typography variant="h6" align="center" style={{ fontSize: '1rem', fontWeight: 100 }}>
+              Improvement Score is calculated based on artist&apos;s improvement of danceability of songs released after 2015.
+            </Typography>
+          </Box>
         </Grid>
       </Grid>
     </MainCard>
