@@ -1,5 +1,5 @@
 // material-ui
-import { TextField, Button, Typography, Paper, Grid, MenuItem, Slider, CardContent, Pagination, Card, CardMedia, Box } from '@mui/material';
+import { TextField, Button, Typography, Paper, Grid, MenuItem, Slider, CardContent, Card, CardMedia, Box } from '@mui/material';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -17,12 +17,13 @@ import config from '../../../config.json';
 const SearchPage = () => {
   const location = useLocation();
   const { searchQuery } = location.state || {};  // 使用解构来获取state，如果state不存在则默认为空对象
+  const [lastId, setLastId] = useState(null); // 添加此状态来管理游标
 
   const [tracks, setTracks] = useState([]);
   const [page, setPage] = useState(1);
   const [limit] = useState(12);
 
-  const [totalPages, setTotalPages] = useState(0);
+  // const [totalPages, setTotalPages] = useState(0);
   const defaultImageUrl = 'https://files.readme.io/f2e91bb-portalDocs-sonosApp-defaultArtAlone.png';
   // const loadingImageUrl = 'https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExczU2djFpdWNyZ3RheWVjankzdHc0M3RlMDYwNTc2MGRhanNpbXgzOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/JFTg9PBtHZz9hHRkBN/giphy.gif';
   const [searchParams, setSearchParams] = useState({
@@ -65,26 +66,57 @@ const SearchPage = () => {
     fetchTracks();
   };
 
+  // const fetchTracks = async () => {
+  //   const api_address = `http://${config.server_host}:${config.server_port}/api/tracks/search`;
+
+  //   // 创建 URLSearchParams 对象，并添加查询参数
+  //   const params = new URLSearchParams();
+
+  //   Object.entries(searchParams).forEach(([key, value]) => {
+  //     if (value != null) params.append(key, value); // 仅添加非空参数
+  //   });
+
+  //   params.append('page', String(page));
+  //   params.append('limit', String(limit));
+  //   console.log('Searching with params:', params);
+
+  //   // 将查询参数添加到 URL
+  //   const urlWithParams = `${api_address}?${params.toString()}`;
+  //   console.log('url', urlWithParams);
+  //   console.log('Searching with params:', searchParams);
+
+
+
+  //   try {
+  //     const response = await fetch(urlWithParams, {
+  //       method: 'GET',
+  //       headers: {
+  //         'Content-Type': 'application/json'
+  //       }
+  //     });
+
+  //     const data = await response.json();
+  //     setTracks(data.tracks);
+  //     setTotalPages(data.total);
+  //   } catch (error) {
+  //     console.error('Error fetching tracks:', error);
+  //   }
+  // }
+
   const fetchTracks = async () => {
     const api_address = `http://${config.server_host}:${config.server_port}/api/tracks/search`;
 
-    // 创建 URLSearchParams 对象，并添加查询参数
     const params = new URLSearchParams();
-
     Object.entries(searchParams).forEach(([key, value]) => {
-      if (value != null) params.append(key, value); // 仅添加非空参数
+      if (value != null) params.append(key, value); // 添加非空参数
     });
 
-    params.append('page', String(page));
-    params.append('limit', String(limit));
-    console.log('Searching with params:', params);
+    if (lastId) {
+      params.append('last_id', String(lastId)); // 使用游标
+    }
 
-    // 将查询参数添加到 URL
     const urlWithParams = `${api_address}?${params.toString()}`;
     console.log('url', urlWithParams);
-    console.log('Searching with params:', searchParams);
-
-
 
     try {
       const response = await fetch(urlWithParams, {
@@ -96,21 +128,24 @@ const SearchPage = () => {
 
       const data = await response.json();
       setTracks(data.tracks);
-      setTotalPages(data.total);
+      if (data.tracks.length > 0) {
+        setLastId(data.tracks[data.tracks.length - 1].id); // 设置新的游标为当前加载的最后一条记录的 ID
+      }
     } catch (error) {
       console.error('Error fetching tracks:', error);
     }
   }
+
 
   useEffect(() => {
     fetchTracks();
   }, [page, limit]);
 
 
-  const handlePageChange = (event, value) => {
-    console.log('Page changed:', value);
-    setPage(value);
-  };
+  // const handlePageChange = (event, value) => {
+  //   console.log('Page changed:', value);
+  //   setPage(value);
+  // };
 
   return (
     <MainCard>
@@ -238,13 +273,27 @@ const SearchPage = () => {
           <Typography>No tracks found.</Typography>
         )} */}
 
-        <Pagination
+        {/* <Pagination
           count={totalPages} // 总页数
           page={page} // 当前页码
           onChange={handlePageChange} // 页码改变时的处理函数
           color="primary" // 颜色主题
           sx={{ marginTop: 2, marginBottom: 2, display: 'flex', justifyContent: 'center' }} // 样式
-        />
+        /> */}
+        <Divider sx={{ my: 2 }} />
+
+
+        <Box display="flex" justifyContent="center" alignItems="center" width="100%">
+
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => fetchTracks()}
+            disabled={tracks.length === 0}
+          >
+            Load more
+          </Button>
+        </Box>
 
 
       </CardContent>

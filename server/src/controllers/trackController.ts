@@ -52,15 +52,14 @@ export class TrackController {
 
             const { page, limit, title, artist, album, start, end, tempo_low, 
                 tempo_high, danceability_low, danceability_high,
-                energy_low, energy_high, duration_low, duration_high} = req.query;
+                energy_low, energy_high, duration_low, duration_high, last_id} = req.query;
 
             console.log(page, limit, title, danceability_high
                 , energy_low, energy_high, duration_low, duration_high);
             
             // Call service method
             const response = await this.trackService.searchTracks(
-                page? parseInt(page as string, 10): 1,
-                limit? parseInt(limit as string, 10):24,
+                limit? parseInt(limit as string, 10):12,
                 title as string,
                 artist as string,
                 album as string,
@@ -73,7 +72,8 @@ export class TrackController {
                 parseFloat(energy_low as string), // Convert to number in service if needed
                 parseFloat(energy_high as string), // Convert to number in service if needed
                 parseFloat(duration_low as string), // Convert to number in service if needed
-                parseFloat(duration_high as string) // Convert to number in service if needed
+                parseFloat(duration_high as string), // Convert to number in service if needed
+                last_id as string
             );
 
             // Return response
