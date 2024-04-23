@@ -54,7 +54,7 @@ const RecommendedPage = () => {
     <MainCard>
       <Button variant="outlined" startIcon={<ShuffleIcon />} onClick={() => navigate(-1)}>Shuffle</Button>
       <CardContent>
-        <Typography variant="h1" style={{ fontSize: '5rem' }}>
+        <Typography variant="h5" style={{ fontSize: '5rem' }}>
           {'Wait for a moment...'}
         </Typography>
         <Box height={20} />
