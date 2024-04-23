@@ -20,7 +20,7 @@ const SearchPage = () => {
   const [lastId, setLastId] = useState(null); // 添加此状态来管理游标
 
   const [tracks, setTracks] = useState([]);
-  const [page, setPage] = useState(1);
+  // const [page, setPage] = useState(1);
   const [limit] = useState(12);
 
   // const [totalPages, setTotalPages] = useState(0);
@@ -62,9 +62,12 @@ const SearchPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setPage(1);
+    setLastId(null); // 在开始新搜索前清除游标
+    // setPage(1);
+    setTracks([]);   // 清空当前的轨迹列表
     fetchTracks();
   };
+
 
   // const fetchTracks = async () => {
   //   const api_address = `http://${config.server_host}:${config.server_port}/api/tracks/search`;
@@ -138,9 +141,11 @@ const SearchPage = () => {
 
 
   useEffect(() => {
-    fetchTracks();
-  }, [page, limit]);
-
+    // 只有在 lastId 明确设置为 null 之后才调用 fetchTracks
+    if (lastId === null) {
+      fetchTracks();
+    }
+  }, [lastId, limit]);  // 依赖于 lastId, searchParams 和 limit
 
   // const handlePageChange = (event, value) => {
   //   console.log('Page changed:', value);

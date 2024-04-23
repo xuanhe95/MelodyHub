@@ -76,19 +76,19 @@ async searchTracks(
           whereSongs += ` AND s.release_date <= ?`;
           params.push(endDate);
       }
-      if (tempo_low !== undefined && tempo_high !== undefined) {
+      if (tempo_low !== undefined && tempo_high !== undefined && (tempo_low > 0 || tempo_high < 250) ){
           whereSongs += ` AND s.tempo BETWEEN ? AND ?`;
           params.push(tempo_low, tempo_high);
       }
-      if (danceability_low !== undefined && danceability_high !== undefined) {
+      if (danceability_low !== undefined && danceability_high !== undefined && (danceability_low > 0 || danceability_high < 1)) {
           whereSongs += ` AND s.danceability BETWEEN ? AND ?`;
           params.push(danceability_low, danceability_high);
       }
-      if (energy_low !== undefined && energy_high !== undefined) {
+      if (energy_low !== undefined && energy_high !== undefined && (energy_low > 0 || energy_high < 1)){
           whereSongs += ` AND s.energy BETWEEN ? AND ?`;
           params.push(energy_low, energy_high);
       }
-      if (duration_low !== undefined && duration_high !== undefined) {
+      if (duration_low !== undefined && duration_high !== undefined && (duration_low > 0 || duration_high < 1)) {
           whereSongs += ` AND s.duration BETWEEN ? AND ?`;
           params.push(duration_low, duration_high);
       }
