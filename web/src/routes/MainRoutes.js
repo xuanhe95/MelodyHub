@@ -36,7 +36,7 @@ const MainRoutes = {
   children: [
     {
       path: '/',
-      element: <DashboardDefault />
+      element: <Home />
     },
     //{
     //  path: 'test',
@@ -45,6 +45,10 @@ const MainRoutes = {
     {
       path: 'concert',
       element: <Concert />
+    },
+    {
+      path: 'charts',
+      element: <DashboardDefault />
     },
     {
       path: 'home',

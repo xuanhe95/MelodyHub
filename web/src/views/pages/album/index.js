@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Grid, Card, CardActionArea, CardMedia, Typography, CardContent, Pagination } from '@mui/material';
+import { Grid, Card, CardActionArea, CardMedia, Typography, CardContent, Pagination, Divider, Box } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
 import config from '../../../config.json';
 
@@ -67,7 +67,7 @@ const AlbumPage = () => {
   };
 
 
-  const updateAlbumImages = async (inputAlbums, setAlbumState, maxRetries = 8, retryDelay = 1000) => {
+  const updateAlbumImages = async (inputAlbums, setAlbumState, maxRetries = 5, retryDelay = 200) => {
     // 首先设置所有图片为加载中的图片
     setAlbumState(inputAlbums.map(album => ({ ...album, imageUrl: loadingImageUrl })));
 
@@ -152,7 +152,9 @@ const AlbumPage = () => {
         <Typography variant="h1" style={{ fontSize: '2rem' }}>
           Albums
         </Typography>
-
+        <Box height={20} />
+        <Divider variant="middle" />
+        <Box height={20} />
         <Grid container spacing={2} >
           {albums.map((album) => (
             <Grid item xs={6} sm={4} md={3} lg={2} xl={2} key={String(album.album_id)}>

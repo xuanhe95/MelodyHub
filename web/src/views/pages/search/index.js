@@ -62,6 +62,13 @@ const SearchPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Check if the title or album fields have at least 6 characters
+    if (searchParams.title.length + searchParams.album.length < 7) {
+      alert("Please enter at least 7 characters in the title or album fields to search."); // Alert user or handle validation message
+      return; // Stop the function if the condition is not met
+    }
+
     setLastId(null); // 在开始新搜索前清除游标
     // setPage(1);
     setTracks([]);   // 清空当前的轨迹列表

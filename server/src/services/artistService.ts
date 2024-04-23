@@ -131,52 +131,91 @@ class ArtistService {
     }
 
     async findRisingStarsAmongArtists(): Promise<any> {
+
         const sql = `
-        WITH ArtistYears AS (
+        WITH ArtistMetrics AS (
             SELECT
               R.artist_id,
-              MIN(YEAR(S.release_date)) AS FirstYear,
-              MAX(YEAR(S.release_date)) AS LastYear
+              S.release_year AS Year,
+              AVG(S.danceability) AS AvgDanceability,
+              COUNT(DISTINCT S.id) AS SongCount
             FROM SONGS S
             JOIN RELEASE_BY R ON R.song_id = S.id
-            WHERE YEAR(S.release_date) BETWEEN YEAR(CURRENT_DATE) - 10 AND YEAR(CURRENT_DATE)
-            GROUP BY R.artist_id
-            HAVING COUNT(DISTINCT S.id) > 50
+            WHERE S.release_year > 2015
+            GROUP BY R.artist_id, S.release_year
           ),
-          YearlySongMetrics AS (
+          FilteredMetrics AS (
             SELECT
-              R.artist_id,
-              YEAR(S.release_date) AS Year,
-              AVG(S.danceability) AS AvgDanceability,
-              AVG(S.energy) AS AvgEnergy
-            FROM ArtistYears AY
-            JOIN RELEASE_BY R on AY.artist_id = R.artist_id
-            JOIN SONGS S ON S.id = R.song_id
-            WHERE YEAR(S.release_date) = AY.FirstYear or YEAR(S.release_date) = AY.LastYear
-            GROUP BY R.artist_id, YEAR(S.release_date)
+              artist_id,
+              MIN(Year) AS FirstYear,
+              MAX(Year) AS LastYear
+            FROM ArtistMetrics
+            WHERE SongCount > 20
+            GROUP BY artist_id
           ),
           RisingStars AS (
           SELECT
-            AY.artist_id,
-            YSMFirst.AvgDanceability AS FirstYearDanceability,
-            YSMLast.AvgDanceability AS LastYearDanceability,
-            YSMFirst.AvgEnergy AS FirstYearEnergy,
-            YSMLast.AvgEnergy AS LastYearEnergy,
-            (YSMLast.AvgDanceability - YSMFirst.AvgDanceability) +
-            (YSMLast.AvgEnergy - YSMFirst.AvgEnergy) AS ImprovementScore
-          FROM ArtistYears AY
-          JOIN YearlySongMetrics YSMFirst ON AY.artist_id = YSMFirst.artist_id AND AY.FirstYear = YSMFirst.Year
-          JOIN YearlySongMetrics YSMLast ON AY.artist_id = YSMLast.artist_id AND AY.LastYear = YSMLast.Year
-          WHERE AY.LastYear > AY.FirstYear
-          ORDER BY ImprovementScore DESC
-          LIMIT 10
+              FM.artist_id,
+              (AM2.AvgDanceability - AM1.AvgDanceability) AS ImprovementScore
+              FROM FilteredMetrics FM
+              JOIN ArtistMetrics AM1 ON FM.artist_id = AM1.artist_id AND FM.FirstYear = AM1.Year
+              JOIN ArtistMetrics AM2 ON FM.artist_id = AM2.artist_id AND FM.LastYear = AM2.Year
+              ORDER BY ImprovementScore DESC
+              LIMIT 10
           )
           SELECT
-           A.artist,
-           RS.*
+            A.artist,
+            RS.ImprovementScore
           FROM RisingStars RS
           JOIN ARTISTS A ON RS.artist_id = A.artist_id;
         `;
+
+        // const sql = `
+        // WITH ArtistYears AS (
+        //     SELECT
+        //       R.artist_id,
+        //       MIN(YEAR(S.release_date)) AS FirstYear,
+        //       MAX(YEAR(S.release_date)) AS LastYear
+        //     FROM SONGS S
+        //     JOIN RELEASE_BY R ON R.song_id = S.id
+        //     WHERE YEAR(S.release_date) BETWEEN YEAR(CURRENT_DATE) - 10 AND YEAR(CURRENT_DATE)
+        //     GROUP BY R.artist_id
+        //     HAVING COUNT(DISTINCT S.id) > 50
+        //   ),
+        //   YearlySongMetrics AS (
+        //     SELECT
+        //       R.artist_id,
+        //       YEAR(S.release_date) AS Year,
+        //       AVG(S.danceability) AS AvgDanceability,
+        //       AVG(S.energy) AS AvgEnergy
+        //     FROM ArtistYears AY
+        //     JOIN RELEASE_BY R on AY.artist_id = R.artist_id
+        //     JOIN SONGS S ON S.id = R.song_id
+        //     WHERE YEAR(S.release_date) = AY.FirstYear or YEAR(S.release_date) = AY.LastYear
+        //     GROUP BY R.artist_id, YEAR(S.release_date)
+        //   ),
+        //   RisingStars AS (
+        //   SELECT
+        //     AY.artist_id,
+        //     YSMFirst.AvgDanceability AS FirstYearDanceability,
+        //     YSMLast.AvgDanceability AS LastYearDanceability,
+        //     YSMFirst.AvgEnergy AS FirstYearEnergy,
+        //     YSMLast.AvgEnergy AS LastYearEnergy,
+        //     (YSMLast.AvgDanceability - YSMFirst.AvgDanceability) +
+        //     (YSMLast.AvgEnergy - YSMFirst.AvgEnergy) AS ImprovementScore
+        //   FROM ArtistYears AY
+        //   JOIN YearlySongMetrics YSMFirst ON AY.artist_id = YSMFirst.artist_id AND AY.FirstYear = YSMFirst.Year
+        //   JOIN YearlySongMetrics YSMLast ON AY.artist_id = YSMLast.artist_id AND AY.LastYear = YSMLast.Year
+        //   WHERE AY.LastYear > AY.FirstYear
+        //   ORDER BY ImprovementScore DESC
+        //   LIMIT 10
+        //   )
+        //   SELECT
+        //    A.artist,
+        //    RS.*
+        //   FROM RisingStars RS
+        //   JOIN ARTISTS A ON RS.artist_id = A.artist_id;
+        // `;
 
         return this.dataSource.query(sql);
     }

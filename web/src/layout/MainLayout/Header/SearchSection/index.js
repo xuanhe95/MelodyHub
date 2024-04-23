@@ -129,6 +129,10 @@ const SearchSection = () => {
   const navigate = useNavigate(); // 使用 useNavigate 钩子
 
   const handleSubmit = () => {
+    if (value.length < 8) {
+      alert("Please enter at least 8 characters");
+      return;
+    }
     // 假设您想跳转到 '/search-results' 路由
     console.log("value: " + value);
     if (searchState === "albums") {

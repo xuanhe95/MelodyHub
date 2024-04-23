@@ -21,14 +21,6 @@ const dashboard = {
   type: 'group',
   children: [
     {
-      id: 'dashboard',
-      title: 'Dashboard',
-      type: 'item',
-      url: '/dashboard/default',
-      icon: icons.IconDashboard,
-      breadcrumbs: false
-    },
-    {
       id: 'home',
       title: 'Home',
       type: 'item',
@@ -50,6 +42,14 @@ const dashboard = {
       type: 'item',
       url: '/concert',
       icon: icons.IconMicrophone2,
+      breadcrumbs: false
+    },
+    {
+      id: 'charts',
+      title: 'Charts',
+      type: 'item',
+      url: '/charts',
+      icon: icons.IconDashboard,
       breadcrumbs: false
     },
     {
