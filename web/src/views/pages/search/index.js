@@ -1,5 +1,5 @@
 // material-ui
-import { TextField, Button, Typography, Paper, Grid, MenuItem, Slider, CardContent, Card, CardMedia, Box } from '@mui/material';
+import { TextField, Button, Typography, Paper, Grid, MenuItem, Slider, CardContent, Card, CardMedia, Box, CircularProgress } from '@mui/material';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -18,6 +18,8 @@ const SearchPage = () => {
   const { searchQuery } = location.state || {};
   const [lastId, setLastId] = useState(null);
   const [tracks, setTracks] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
   const [limit] = useState(12);
 
   const defaultImageUrl = 'https://files.readme.io/f2e91bb-portalDocs-sonosApp-defaultArtAlone.png';
@@ -68,8 +70,18 @@ const SearchPage = () => {
 
     setLastId(null);
     setTracks([]);
-    fetchTracks();
   };
+
+
+
+  const handleLoadMore = async () => {
+    if (lastId) {
+      setIsLoading(true);
+      await fetchTracks(); // 仅当 lastId 存在时调用，用于分页
+      setIsLoading(false);
+    }
+  };
+
 
   const updateAlbumImages = async (inputAlbums, setAlbumState, maxRetries = 5, retryDelay = 200) => {
     setAlbumState(inputAlbums.map((album) => ({ ...album, imageUrl: loadingImageUrl })));
@@ -100,7 +112,7 @@ const SearchPage = () => {
             if (retries > 4) {
               setTimeout(loadAlbumImage, retryDelay);
             } else if (retries > 2) {
-              setTimeout(loadAlbumImage, retryDelay / 2); 
+              setTimeout(loadAlbumImage, retryDelay / 2);
             } else {
               setTimeout(loadAlbumImage, retryDelay / 4);
             }
@@ -130,7 +142,7 @@ const SearchPage = () => {
 
   const fetchTracks = async () => {
     const api_address = `http://${config.server_host}:${config.server_port}/api/tracks/search`;
-
+    // setIsLoading(true); // 开始加载数据时设置为 true
     const params = new URLSearchParams();
     Object.entries(searchParams).forEach(([key, value]) => {
       if (value != null) params.append(key, value);
@@ -163,12 +175,16 @@ const SearchPage = () => {
       }
     } catch (error) {
       console.error('Error fetching tracks:', error);
+    } finally {
+      // setIsLoading(false); // 数据加载完成后设置为 false
     }
   };
 
   useEffect(() => {
-    if (lastId === null) {
+    if (lastId === null && searchParams.title.length + searchParams.album.length >= 7) {
+      setIsLoading(true);
       fetchTracks();
+      setIsLoading(false);
     }
   }, [lastId, limit]);
 
@@ -247,31 +263,48 @@ const SearchPage = () => {
             </form>
           </Box>
         </Paper>
-        <Divider />
-        <Grid container spacing={2}>
-          {tracks.map((track) => (
-            <Grid item xs={6} sm={4} md={3} lg={2} xl={2} key={String(track.id)}>
-              <Card>
-                <CardMedia component="img" height="auto" image={track.imageUrl || defaultImageUrl} alt={track.name} />
-                <Typography variant="h5" component="div" style={{ padding: '8px' }}>
-                  {track.name}
-                </Typography>
-                <Typography variant="h6" component="div" style={{ padding: '8px', fontWeight: 'lighter' }}>
-                  {track.album}
-                </Typography>
-              </Card>
+        <Box height={20} />
+        <Divider variant="middle" />
+        <Box height={20} />
+        {isLoading ? (
+          <Box display="flex" justifyContent="center" alignItems="center" sx={{ height: 700 }}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <Box display="flex" justifyContent="center" sx={{ height: 700 }}>
+            <Grid container spacing={2} >
+              {tracks.map(track => (
+                <Grid item xs={6} sm={4} md={3} lg={2} xl={2} key={track.id}>
+                  <Card>
+                    <CardMedia
+                      component="img"
+                      height="auto"
+                      image={track.imageUrl || defaultImageUrl}
+                      alt={track.name}
+                    />
+                    <CardContent>
+                      <Typography gutterBottom variant="h5" component="div">
+                        {track.name}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {track.album}
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
             </Grid>
-          ))}
-        </Grid>
+          </Box>
+        )}
 
         <Divider sx={{ my: 2 }} />
         <Box display="flex" justifyContent="center" alignItems="center" width="100%">
-          <Button variant="contained" color="primary" onClick={() => fetchTracks()} disabled={tracks.length === 0}>
+          <Button variant="contained" color="primary" onClick={handleLoadMore} disabled={tracks.length === 0}>
             Load more
           </Button>
         </Box>
       </CardContent>
-    </MainCard>
+    </MainCard >
   );
 };
 
