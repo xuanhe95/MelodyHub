@@ -285,7 +285,46 @@ export class PlaylistService {
     //     // Save the updated user entity
     //     await this.dataSource.manager.save(user);
     // }
-    
+    /**
+     * Calculate the average attributes of tracks in a given playlist.
+     * @param {string} playlistId - The ID of the playlist.
+     * @returns {Promise<{averageTempo: number, averageDanceability: number, averageEnergy: number}>}
+     *   An object containing the average tempo, danceability, and energy of the tracks in the playlist.
+     */
+    async getAverageAttributesOfTracksInPlaylist(playlistId: string): Promise<{averageTempo: number, averageDanceability: number, averageEnergy: number}> {
+        // Fetch all tracks in the playlist along with their attributes.
+        const tracks = await this.dataSource.manager.find(PlaylistSong, {
+            where: { playlist: { playlist_id: playlistId } },
+            relations: ['track']
+        });
+
+        // If no tracks found, return averages as 0.
+        if (tracks.length === 0) {
+            return { averageTempo: 0, averageDanceability: 0, averageEnergy: 0 };
+        }
+
+        // Calculate the sum of each attribute.
+        const totalAttributes = tracks.reduce((acc, { track }) => {
+            acc.tempo += track.tempo;
+            acc.danceability += track.danceability;
+            acc.energy += track.energy;
+            return acc;
+        }, { tempo: 0, danceability: 0, energy: 0 });
+
+        // Calculate the averages.
+        const averageTempo = totalAttributes.tempo / tracks.length;
+        const averageDanceability = totalAttributes.danceability / tracks.length;
+        const averageEnergy = totalAttributes.energy / tracks.length;
+
+        //console.log(averageTempo, averageDanceability, averageEnergy);
+
+        // Return the averages.
+        return {
+            averageTempo,
+            averageDanceability,
+            averageEnergy
+        };
+    }
 }
 
 

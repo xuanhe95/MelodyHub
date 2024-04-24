@@ -6,6 +6,7 @@ import trackRoutes from "./trackRoutes";
 import playlistRoutes from "./playlistRoutes";
 import artistRoutes from "./artistRoutes";
 import concertRoutes from "./concertRoutes";
+import pokemonRoutes from './pokemonRoutes';
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use(trackRoutes);
 router.use(playlistRoutes);
 router.use(artistRoutes);
 router.use(concertRoutes);
+router.use(pokemonRoutes);
 
 export default router;
