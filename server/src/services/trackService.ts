@@ -102,7 +102,7 @@ async searchTracks(
       }
 
       // Complete SQL
-      let sql = `SELECT s.id, s.name, a.album 
+      let sql = `SELECT s.id, s.name, a.album, a.album_id
                  FROM SONGS s
                  JOIN ALBUMS a ON s.album_id = a.album_id
                  WHERE 1=1 ${whereSongs}
