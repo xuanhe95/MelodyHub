@@ -53,6 +53,11 @@ function DashboardPage() {
             Rising Stars
           </Typography>
           <Box height={20} />
+          <Typography variant="h6" align="center" style={{ fontSize: '1rem', fontWeight: 100 }}>
+                A rising star is an artist that has shown a significant increase in average danceability of songs since 2015, 
+                indicating a shift towards potentially more engaging or commercially viable music.
+            </Typography>
+          <Box height={20} />
           <Divider variant="middle" />
           <Box height={20} />
           <Grid container justifyContent="center" alignItems="center" style={{ height: '1000px' }}>
@@ -89,7 +94,8 @@ function DashboardPage() {
           <Grid item xs={12} style={{ height: '100px' }}>
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
               <Typography variant="h6" align="center" style={{ fontSize: '1rem', fontWeight: 100 }}>
-                Improvement Score is calculated based on artist&apos;s improvement of danceability of songs released after 2015.
+                A rising star is an artist that has shown a significant increase in average danceability of songs since 2015, 
+                indicating a shift towards potentially more engaging or commercially viable music.
               </Typography>
             </Box>
           </Grid>
