@@ -52,7 +52,7 @@ const RecommendedPage = () => {
 
   return (
     <MainCard>
-      <Button variant="outlined" startIcon={<ShuffleIcon />} onClick={() => navigate(-1)}>Shuffle</Button>
+      <Button variant="outlined" startIcon={<ShuffleIcon />} >Shuffle</Button>
       <CardContent>
         <Typography variant="h5" style={{ fontSize: '5rem' }}>
           {'Wait for a moment...'}
