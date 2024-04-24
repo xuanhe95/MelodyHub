@@ -13,19 +13,16 @@ import { Search } from '@mui/icons-material';
 
 import config from '../../../config.json';
 
-// ==============================|| SAMPLE PAGE ||============================== //
 const SearchPage = () => {
   const location = useLocation();
-  const { searchQuery } = location.state || {};  // 使用解构来获取state，如果state不存在则默认为空对象
-  const [lastId, setLastId] = useState(null); // 添加此状态来管理游标
-
+  const { searchQuery } = location.state || {};
+  const [lastId, setLastId] = useState(null);
   const [tracks, setTracks] = useState([]);
-  // const [page, setPage] = useState(1);
   const [limit] = useState(12);
 
-  // const [totalPages, setTotalPages] = useState(0);
   const defaultImageUrl = 'https://files.readme.io/f2e91bb-portalDocs-sonosApp-defaultArtAlone.png';
-  // const loadingImageUrl = 'https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExczU2djFpdWNyZ3RheWVjankzdHc0M3RlMDYwNTc2MGRhanNpbXgzOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/JFTg9PBtHZz9hHRkBN/giphy.gif';
+  const loadingImageUrl = 'https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExczU2djFpdWNyZ3RheWVjankzdHc0M3RlMDYwNTc2MGRhanNpbXgzOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/JFTg9PBtHZz9hHRkBN/giphy.gif';
+
   const [searchParams, setSearchParams] = useState({
     title: searchQuery?.title || '',
     artist: '',
@@ -42,22 +39,22 @@ const SearchPage = () => {
 
   const options = {
     title: [],
-    album: [],
+    album: []
   };
 
   const handleChange = (name, value) => {
-    setSearchParams(prev => ({ ...prev, [name]: value }));
+    setSearchParams((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter') {
-      e.preventDefault(); // 阻止表单默认提交事件
-      handleSubmit(e); // 调用搜索函数
+      e.preventDefault();
+      handleSubmit(e);
     }
   };
 
   const handleSliderChange = (type, newValue) => {
-    setSearchParams(prev => ({ ...prev, [type]: newValue }));
+    setSearchParams((prev) => ({ ...prev, [type]: newValue }));
   };
 
   const handleSubmit = async (e) => {
@@ -65,64 +62,82 @@ const SearchPage = () => {
 
     // Check if the title or album fields have at least 6 characters
     if (searchParams.title.length + searchParams.album.length < 7) {
-      alert("Please enter at least 7 characters in the title or album fields to search."); // Alert user or handle validation message
+      alert('Please enter at least 7 characters in the title or album fields to search.'); // Alert user or handle validation message
       return; // Stop the function if the condition is not met
     }
 
-    setLastId(null); // 在开始新搜索前清除游标
-    // setPage(1);
-    setTracks([]);   // 清空当前的轨迹列表
+    setLastId(null);
+    setTracks([]);
     fetchTracks();
   };
 
+  const updateAlbumImages = async (inputAlbums, setAlbumState, maxRetries = 5, retryDelay = 200) => {
+    setAlbumState(inputAlbums.map((album) => ({ ...album, imageUrl: loadingImageUrl })));
 
-  // const fetchTracks = async () => {
-  //   const api_address = `http://${config.server_host}:${config.server_port}/api/tracks/search`;
+    inputAlbums.forEach(async (album, index) => {
+      let retries = 0;
+      const loadAlbumImage = async () => {
+        try {
+          console.log('Fetching image for album:', album.id);
 
-  //   // 创建 URLSearchParams 对象，并添加查询参数
-  //   const params = new URLSearchParams();
+          if (
+            inputAlbums[index] &&
+            inputAlbums[index].imageUrl &&
+            inputAlbums[index].imageUrl !== loadingImageUrl &&
+            inputAlbums[index].imageUrl !== defaultImageUrl
+          ) {
+            console.log('Skipping album:', album.id, 'as it already has an image');
+            return;
+          }
 
-  //   Object.entries(searchParams).forEach(([key, value]) => {
-  //     if (value != null) params.append(key, value); // 仅添加非空参数
-  //   });
+          const imgResponse = await fetch(`http://${config.server_host}:${config.server_port}/api/albums/details/${album.id}/image`);
+          if (!imgResponse.ok) throw new Error(`Failed to fetch image for album: ${album.id}`);
+          const imgData = await imgResponse.json();
+          if (!imgData.imageUrl && retries < maxRetries) {
+            retries++;
+            console.log(`Retrying to fetch image for album: ${album.id}, attempt ${retries}`);
 
-  //   params.append('page', String(page));
-  //   params.append('limit', String(limit));
-  //   console.log('Searching with params:', params);
+            if (retries > 4) {
+              setTimeout(loadAlbumImage, retryDelay);
+            } else if (retries > 2) {
+              setTimeout(loadAlbumImage, retryDelay / 2); 
+            } else {
+              setTimeout(loadAlbumImage, retryDelay / 4);
+            }
+            return;
+          }
 
-  //   // 将查询参数添加到 URL
-  //   const urlWithParams = `${api_address}?${params.toString()}`;
-  //   console.log('url', urlWithParams);
-  //   console.log('Searching with params:', searchParams);
+          setAlbumState((prevAlbums) =>
+            prevAlbums.map((item) => (item.id === album.id ? { ...item, imageUrl: imgData.imageUrl || defaultImageUrl } : item))
+          );
+          console.log('set album image' + imgData.imageUrl || defaultImageUrl);
+        } catch (error) {
+          console.error('Failed to fetch image for album:', album.id, error);
+          if (retries < maxRetries) {
+            retries++;
+            console.log(`Retrying to fetch image for album: ${album.id}, attempt ${retries}`);
 
+            setTimeout(loadAlbumImage, retryDelay);
+          } else {
+            setAlbumState((prevAlbums) => prevAlbums.map((item) => (item.id === album.id ? { ...item, imageUrl: defaultImageUrl } : item)));
+          }
+        }
+      };
 
-
-  //   try {
-  //     const response = await fetch(urlWithParams, {
-  //       method: 'GET',
-  //       headers: {
-  //         'Content-Type': 'application/json'
-  //       }
-  //     });
-
-  //     const data = await response.json();
-  //     setTracks(data.tracks);
-  //     setTotalPages(data.total);
-  //   } catch (error) {
-  //     console.error('Error fetching tracks:', error);
-  //   }
-  // }
+      loadAlbumImage();
+    });
+  };
 
   const fetchTracks = async () => {
     const api_address = `http://${config.server_host}:${config.server_port}/api/tracks/search`;
 
     const params = new URLSearchParams();
     Object.entries(searchParams).forEach(([key, value]) => {
-      if (value != null) params.append(key, value); // 添加非空参数
+      if (value != null) params.append(key, value);
     });
 
     if (lastId) {
-      params.append('last_id', String(lastId)); // 使用游标
+      params.append('last_id', String(lastId));
     }
 
     const urlWithParams = `${api_address}?${params.toString()}`;
@@ -137,46 +152,38 @@ const SearchPage = () => {
       });
 
       const data = await response.json();
+      console.log('track data:', data);
       setTracks(data.tracks);
+
+      const tracksWithCorrectId = data.tracks.map((track) => ({ ...track, id: track.album_id }));
+      updateAlbumImages(tracksWithCorrectId, setTracks);
+
       if (data.tracks.length > 0) {
-        setLastId(data.tracks[data.tracks.length - 1].id); // 设置新的游标为当前加载的最后一条记录的 ID
+        setLastId(data.tracks[data.tracks.length - 1].id);
       }
     } catch (error) {
       console.error('Error fetching tracks:', error);
     }
-  }
-
+  };
 
   useEffect(() => {
-    // 只有在 lastId 明确设置为 null 之后才调用 fetchTracks
     if (lastId === null) {
       fetchTracks();
     }
-  }, [lastId, limit]);  // 依赖于 lastId, searchParams 和 limit
-
-  // const handlePageChange = (event, value) => {
-  //   console.log('Page changed:', value);
-  //   setPage(value);
-  // };
+  }, [lastId, limit]);
 
   return (
     <MainCard>
       <CardContent>
-
         <Paper style={{ padding: '20px', margin: '20px' }}>
           <Box>
-
-
             <form onSubmit={handleSubmit}>
-
               <Grid container spacing={2}>
-
                 <Box display="flex" justifyContent="center" width="100%" gap={2}>
                   <Button type="submit" variant="contained" color="primary" style={{ width: '120px', borderRadius: '15px' }}>
-                    <Search />  Search
+                    <Search /> Search
                   </Button>
                   {Object.entries(options).map(([key, values]) => (
-
                     <Grid item xs={12} sm={6} key={key} style={{ width: '30%' }}>
                       <TextField
                         fullWidth
@@ -185,7 +192,7 @@ const SearchPage = () => {
                         onChange={(e) => handleChange(key, e.target.value)}
                         onKeyDown={handleKeyDown}
                       >
-                        {values.map(option => (
+                        {values.map((option) => (
                           <MenuItem key={option} value={option}>
                             {option}
                           </MenuItem>
@@ -193,12 +200,12 @@ const SearchPage = () => {
                       </TextField>
                     </Grid>
                   ))}
-
                 </Box>
                 {['duration', 'danceability', 'energy'].map((param) => (
-                  <Grid item xs={12} sm={6} md={3} key={param}> <Box display="flex" justifyContent="center" width="100%">
-                    <Typography gutterBottom>{param.charAt(0).toUpperCase() + param.slice(1)}</Typography>
-                  </Box>
+                  <Grid item xs={12} sm={6} md={3} key={param}>
+                    <Box display="flex" justifyContent="center" width="100%">
+                      <Typography gutterBottom>{param.charAt(0).toUpperCase() + param.slice(1)}</Typography>
+                    </Box>
                     <Box display="flex" justifyContent="center" width="100%">
                       <Slider
                         style={{ width: '95%' }}
@@ -216,11 +223,10 @@ const SearchPage = () => {
                     </Box>
                   </Grid>
                 ))}
-                <Grid
-                  item xs={12} sm={6} md={3} key="tempo"> <Box display="flex" justifyContent="center" width="100%">
+                <Grid item xs={12} sm={6} md={3} key="tempo">
+                  <Box display="flex" justifyContent="center" width="100%">
                     <Typography gutterBottom>Tempo</Typography>
                   </Box>
-
                   <Box display="flex" justifyContent="center" width="100%">
                     <Slider
                       style={{ width: '95%' }}
@@ -237,81 +243,35 @@ const SearchPage = () => {
                     />
                   </Box>
                 </Grid>
-
               </Grid>
             </form>
           </Box>
         </Paper>
         <Divider />
-        {/* <SearchBar onSearch={(query) => console.log(query)} /> */}
-
-      </CardContent>
-      <CardContent>
-
-
-        <Grid container spacing={2} >
+        <Grid container spacing={2}>
           {tracks.map((track) => (
             <Grid item xs={6} sm={4} md={3} lg={2} xl={2} key={String(track.id)}>
               <Card>
-                {/* <CardActionArea onClick={() => handleAlbumClick(album)}> */}
                 <CardMedia component="img" height="auto" image={track.imageUrl || defaultImageUrl} alt={track.name} />
                 <Typography variant="h5" component="div" style={{ padding: '8px' }}>
                   {track.name}
                 </Typography>
                 <Typography variant="h6" component="div" style={{ padding: '8px', fontWeight: 'lighter' }}>
-                  {track.album}</Typography>
-                {/* </CardActionArea> */}
+                  {track.album}
+                </Typography>
               </Card>
             </Grid>
           ))}
         </Grid>
 
-        {/* 
-        {tracks &&
-          tracks.length > 0 ? (
-          <Grid container spacing={2}>
-            {tracks.map((track, index) => (
-              <Grid item xs={12} sm={6} md={3} key={index}>
-                <Paper elevation={2} style={{ padding: '20px' }}>
-                  <Typography variant="h5" gutterBottom>{track.title}</Typography>
-                  <Typography variant="body2">Artist: {track.artist}</Typography>
-                  <Typography variant="body2">Album: {track.album}</Typography>
-                  <Typography variant="body2">Duration: {track.duration}</Typography>
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
-        ) : (
-          <Typography>No tracks found.</Typography>
-        )} */}
-
-        {/* <Pagination
-          count={totalPages} // 总页数
-          page={page} // 当前页码
-          onChange={handlePageChange} // 页码改变时的处理函数
-          color="primary" // 颜色主题
-          sx={{ marginTop: 2, marginBottom: 2, display: 'flex', justifyContent: 'center' }} // 样式
-        /> */}
         <Divider sx={{ my: 2 }} />
-
-
         <Box display="flex" justifyContent="center" alignItems="center" width="100%">
-
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => fetchTracks()}
-            disabled={tracks.length === 0}
-          >
+          <Button variant="contained" color="primary" onClick={() => fetchTracks()} disabled={tracks.length === 0}>
             Load more
           </Button>
         </Box>
-
-
       </CardContent>
-
-
-    </MainCard >
+    </MainCard>
   );
 };
 
