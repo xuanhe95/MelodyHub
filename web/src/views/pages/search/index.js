@@ -67,9 +67,11 @@ const SearchPage = () => {
       alert('Please enter at least 7 characters in the title or album fields to search.'); // Alert user or handle validation message
       return; // Stop the function if the condition is not met
     }
-
+    setLastId(1);
     setLastId(null);
     setTracks([]);
+    console.log('searchParams:', searchParams);
+
   };
 
 
