@@ -53,10 +53,10 @@ const dashboard = {
       breadcrumbs: false
     },
     {
-      id: 'shuffle',
-      title: 'Shuffle',
+      id: 'Surprise me',
+      title: 'Surprise me',
       type: 'item',
-      url: '/shuffle',
+      url: '/Surprise me',
       icon: icons.IconMusicQuestion,
       breadcrumbs: false
     },
