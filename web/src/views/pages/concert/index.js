@@ -139,7 +139,7 @@ const ConcertPage = () => {
 
 	return (
 		<MainCard title="" sx={{ maxWidth: 2100, marginRight: 'auto', width: '100%' }}>
-			<CardContent>
+			<CardContent style={{ minHeight: 1000 }}>
 				<Typography variant="h1" style={{ fontSize: '2rem' }}>
 					Search Concerts
 				</Typography>

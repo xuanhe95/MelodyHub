@@ -55,7 +55,7 @@ function DashboardPage() {
 
           <Divider variant="middle" />
           <Box height={20} />
-          <Grid container justifyContent="center" alignItems="center" style={{ height: '1000px' }}>
+          <Grid container justifyContent="center" alignItems="center" style={{ height: '900px' }}>
             <CircularProgress />
           </Grid>
           <Box height={20} />
@@ -78,7 +78,7 @@ function DashboardPage() {
         <Box height={20} />
         <Divider variant="middle" />
         <Box height={20} />
-        <Grid container spacing={3} style={{ height: '1000px' }}>
+        <Grid container spacing={3} style={{ height: '900px' }}>
           <Grid item xs={12}>
             <ResponsiveContainer width="100%" height={800}>
               <BarChart data={artists} margin={{ top: 20, right: 50, left: 20, bottom: 110 }}>
