@@ -57,10 +57,23 @@ export class PlaylistService {
         //     throw new Error(`User with ID ${userId} not found`);
         // }
         console.log(userId);
-        return this.playlistRepository.find({
-            where: { user: { id: userId } },
-            relations: ['playlistSongs', 'playlistSongs.track'],
-        });
+
+        const sql = `
+        SELECT *
+        FROM playlists p
+        JOIN PLAYLIST_SONGS ps ON p.playlist_id = ps.playlist_id
+        JOIN SONGS s ON ps.song_id = s.id
+        WHERE p.user = ?
+    
+        `;
+
+        return this.dataSource.query(sql, [userId]);
+
+
+        // return this.playlistRepository.find({
+        //     where: { user: { id: userId } },
+        //     relations: ['playlistSongs', 'playlistSongs.track'],
+        // });
         
     }
     
