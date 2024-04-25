@@ -65,9 +65,13 @@ export class PokemonService {
                 pokemonData = pokemon[0];
             }    
             // Format the Pokémon image URL
-            const formattedNumber = pokemonData.pokemon_number.toString().padStart(4, '0');
+            const formattedNumber = pokemonData.pokemon_number.toString().padStart(3, '0');
             const formattedName = pokemonData.pokemon_name.replace(/ /g, '');
-            const imageUrl = `https://bulbapedia.bulbagarden.net/wiki/File:${formattedNumber}${formattedName}.png`;
+            //https://archives.bulbagarden.net/media/upload/3/37/0479Rotom.png
+            //https://bulbapedia.bulbagarden.net/wiki/File:0479Rotom.png
+
+            const imageUrl = `https://www.pokemon.com/static-assets/content-assets/cms2/img/pokedex/full/${formattedNumber}.png`;
+            //const imageUrl = `https://bulbapedia.bulbagarden.net/wiki/File:${formattedNumber}${formattedName}.png`;
             //https://bulbapedia.bulbagarden.net/wiki/File:0068Machamp.png
             // Return the Pokémon data along with the image URL
             return {
