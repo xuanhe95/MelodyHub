@@ -56,6 +56,8 @@ async searchTracks(
   try {
       let whereSongs = '';
       let params: (string | number | Date)[] = [];
+      duration_low = 0;
+      duration_high = 1;
 
       // Filters for SONGS table
       if (title) {

@@ -1,5 +1,5 @@
 // material-ui
-import { Typography, CardContent, Button, Box, Divider } from '@mui/material';
+import { Typography, CardContent, Button, Box, Divider, CircularProgress } from '@mui/material';
 import CatchingPokemonIcon from '@mui/icons-material/CatchingPokemon';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -108,22 +108,19 @@ const PlaylistsPage = () => {
   if (!playlist) {
     return (
       <MainCard title="Loading Playlist...">
-        <CardContent>
-          <Typography variant="h1" style={{ fontSize: '5rem' }}>
-            Wait a moment...
-          </Typography>
+        <CardContent style={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'center', minHeight: '900px' }}>
           <Box height={20} />
-          <Typography variant="body2">
-            Loading
-          </Typography>
-          <Box height={20} />
-          <Divider variant="middle" />
-          <Box height={20} />
-          <MusicTable />
+          <Box style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
+            <CircularProgress size={60} />
+            <Typography variant="h6" style={{ fontSize: '1.5rem', marginTop: '20px' }}>
+              Loading playlist...
+            </Typography>
+          </Box>
         </CardContent>
       </MainCard>
     );
-  } else {
+  }
+  else {
     console.log(playlist);
     return (
       <MainCard title="Playlists">

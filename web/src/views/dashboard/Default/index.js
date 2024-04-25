@@ -52,6 +52,7 @@ function DashboardPage() {
           <Typography variant="h1" style={{ fontSize: '2rem' }}>
             Rising Stars
           </Typography>
+          <Box height={20} />
           <Divider variant="middle" />
           <Box height={20} />
           <Grid container justifyContent="center" alignItems="center" style={{ height: '900px' }}>
