@@ -13,6 +13,8 @@ import { useParams } from 'react-router-dom';
 import config from '../../../config.json';
 
 
+// const defaultImg = "https://www.svgrepo.com/show/315521/pokemon.svg"
+
 async function fetchPlaylist(id) {
   try {
     const tokenObj = JSON.parse(localStorage.getItem('token'));
@@ -53,16 +55,16 @@ const PlaylistsPage = () => {
   //const [showPokemonButton, setShowPokemonButton] = useState(true);  // State to manage button visibility
 
   useEffect(() => {
-    // 重置 Pokémon 状态以隐藏之前显示的 Pokémon
+    // reset pokemon state when playlist changes
     setPokemon(null);
 
     const fetchPlaylistData = async () => {
       const playlistData = await fetchPlaylist(id);
       setPlaylist(playlistData);
-      // 获取 Playlist 之后立即获取 Pokémon 数据
-      if (playlistData) {
-        fetchPokemon(); // 调用 fetchPokemon 函数
-      }
+      // // 获取 Playlist 之后立即获取 Pokémon 数据
+      // if (playlistData) {
+      //   fetchPokemon(); // 调用 fetchPokemon 函数
+      // }
     };
     fetchPlaylistData();
   }, [id]);  // id 更改时重新执行
