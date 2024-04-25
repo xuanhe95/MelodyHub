@@ -55,7 +55,7 @@ const PlaylistsPage = () => {
   useEffect(() => {
     // Reset the Pokemon state to hide any previously shown Pokemon
     setPokemon(null);
-    
+
     const fetchPlaylistData = async () => {
       const playlistData = await fetchPlaylist(id);
       setPlaylist(playlistData);
@@ -124,22 +124,22 @@ const PlaylistsPage = () => {
     return (
       <MainCard title= "Playlists">
         <CardContent>
-          <Typography variant="h1" style={{ fontSize: '5rem' }}>
+          <Typography variant="h2" style={{ fontSize: '4rem' }}>
             {playlist.name}
           </Typography>
-          <Box height={20} />
+          <Box height={10} />
           <Typography variant="body2">{playlist.year}</Typography>
-          <Box height={20} />
+          <Box height={10} />
           <Divider variant="middle" />
-          <Box height={20} />
+          <Box height={10} />
           <MusicTable playlist={playlist.playlistSongs} />
-          <Box height={20} />
+          <Box height={10} />
           <Button variant="contained" onClick={fetchPokemon}>
               Show Pokémon
           </Button>
           {pokemon && (
             <Box>
-              <img src={pokemon.image_url} alt="Pokémon" style={{ width: '4rm', height: '4rm' }} />
+              <img src={pokemon.image_url} alt="Pokémon" style={{ width: '4rm', height: '3rm' }} />
             </Box>
           )}
           
