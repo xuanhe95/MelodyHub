@@ -44,6 +44,20 @@ class AlbumService {
     async getAllAlbumsWithPages(page: number, limit: number): Promise<Album[] | null> {
         try {
             console.log('page:', page, 'limit:', limit);
+
+            // const sql = `
+            // SELECT * FROM ALBUMS
+            // LIMIT ? OFFSET ?;
+            // `;
+
+            // const result = await AppDataSource.query(sql, [limit, (page - 1) * limit]);
+            // console.log('result:', result);
+
+            // return result;
+
+
+
+
             const albumRepository = AppDataSource.getRepository(Album);
             return await albumRepository.find({
                 // select: {

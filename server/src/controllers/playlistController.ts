@@ -27,6 +27,7 @@ export class PlaylistController {
         try {
             const playlist = await this.playlistService.findPlaylistById(playlistId);
             if (playlist) {
+                
                 res.json(playlist);
             } else {
                 res.status(404).json({ message: "Playlist not found" });

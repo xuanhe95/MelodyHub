@@ -58,22 +58,31 @@ export class PlaylistService {
         // }
         console.log(userId);
 
-        const sql = `
-        SELECT *
-        FROM playlists p
-        JOIN PLAYLIST_SONGS ps ON p.playlist_id = ps.playlist_id
-        JOIN SONGS s ON ps.song_id = s.id
-        WHERE p.user = ?
+        // const sql = `
+        // SELECT
+        // p.playlist_id,
+        // p.year AS playlist_year,
+        // p.name AS playlist_name,
+        // t.id AS track_id,
+        // t.name AS track_name
+        // FROM playlists p
+        // JOIN PLAYLIST_SONGS ps ON p.playlist_id = ps.playlist_id
+        // JOIN SONGS t ON ps.song_id = t.id
+        // WHERE p.user = ?
     
-        `;
+        // `;
 
-        return this.dataSource.query(sql, [userId]);
+        // const list = await this.dataSource.query(sql, [userId]);
+        // console.log(list);
+        // return list;
 
+        const list =  await this.playlistRepository.find({
+            where: { user: { id: userId } },
+            relations: ['playlistSongs', 'playlistSongs.track'],
+        });
 
-        // return this.playlistRepository.find({
-        //     where: { user: { id: userId } },
-        //     relations: ['playlistSongs', 'playlistSongs.track'],
-        // });
+        console.log(list);
+        return list;
         
     }
     

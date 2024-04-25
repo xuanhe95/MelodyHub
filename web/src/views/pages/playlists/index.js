@@ -1,6 +1,6 @@
 // material-ui
 import { Typography, CardContent, Button, Box, Divider } from '@mui/material';
-
+import CatchingPokemonIcon from '@mui/icons-material/CatchingPokemon';
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
 
@@ -53,15 +53,19 @@ const PlaylistsPage = () => {
   //const [showPokemonButton, setShowPokemonButton] = useState(true);  // State to manage button visibility
 
   useEffect(() => {
-    // Reset the Pokemon state to hide any previously shown Pokemon
+    // 重置 Pokémon 状态以隐藏之前显示的 Pokémon
     setPokemon(null);
 
     const fetchPlaylistData = async () => {
       const playlistData = await fetchPlaylist(id);
       setPlaylist(playlistData);
+      // 获取 Playlist 之后立即获取 Pokémon 数据
+      if (playlistData) {
+        fetchPokemon(); // 调用 fetchPokemon 函数
+      }
     };
     fetchPlaylistData();
-  }, [id]);
+  }, [id]);  // id 更改时重新执行
 
   const fetchPokemon = async () => {
     try {
@@ -82,12 +86,12 @@ const PlaylistsPage = () => {
       };
       // /pokemon/:playlistId
       const response = await fetch(`http://${config.server_host}:${config.server_port}/api/pokemon/${id}`, requestOptions)
-      
+
       if (!response.ok) {
         throw new Error('Failed to fetch Pokemon: ${response.statusText}');
       }
       const data = await response.json();
-      console.log("Fetched Pokémon Data:", data);  
+      console.log("Fetched Pokémon Data:", data);
       setPokemon(data);
       //setShowPokemonButton(false); 
 
@@ -122,27 +126,48 @@ const PlaylistsPage = () => {
   } else {
     console.log(playlist);
     return (
-      <MainCard title= "Playlists">
+      <MainCard title="Playlists">
         <CardContent>
-          <Typography variant="h2" style={{ fontSize: '4rem' }}>
+
+          {/* <Typography variant="h2" style={{ fontSize: '4rem' }}>
             {playlist.name}
-          </Typography>
-          <Box height={10} />
-          <Typography variant="body2">{playlist.year}</Typography>
-          <Box height={10} />
-          <Divider variant="middle" />
-          <Box height={10} />
-          <MusicTable playlist={playlist.playlistSongs} />
-          <Box height={10} />
-          <Button variant="contained" onClick={fetchPokemon}>
-              Show Pokémon
-          </Button>
-          {pokemon && (
-            <Box>
-              <img src={pokemon.image_url} alt="Pokémon" style={{ width: '4rm', height: '3rm' }} />
+          </Typography> */}
+          <div className="container" style={{ display: 'flex', alignItems: 'flex-start' }}>
+            <Box flexGrow={1} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'flex-start' }}>
+              <Typography variant="h2" style={{ fontSize: '4rem' }}>
+                {playlist.name}
+              </Typography>
             </Box>
-          )}
-          
+            <Box>
+              {pokemon ? (
+                <Box style={{ width: '25rem', height: '25rem' }}>
+                  <img src={pokemon.image_url} alt="Pokémon" style={{ width: '25rem', height: '25rem' }} />
+                </Box>
+              ) : (
+                <Box style={{ width: '25rem', height: '25rem', backgroundColor: '#ffffff' }}> {/* 占位符的背景色可以根据需要调整 */}
+                </Box>
+              )}
+              <Box style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <Button variant="contained" onClick={fetchPokemon}>
+                  <CatchingPokemonIcon />&nbsp;Get new Pokémon!
+                </Button>
+              </Box>
+            </Box>
+          </div>
+
+          <Box style={{ clear: 'both' }}> {/* 使用 clear:both 清除浮动影响 */}
+
+            <Typography variant="body2">{playlist.year}</Typography>
+
+            <Box height={10} />
+            <Divider variant="middle" />
+            <Box height={10} />
+
+            <Box height={10} />
+
+            <MusicTable playlist={playlist.playlistSongs} />
+            <Box height={10} />
+          </Box>
         </CardContent>
       </MainCard>
     );
