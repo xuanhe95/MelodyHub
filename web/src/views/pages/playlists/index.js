@@ -13,8 +13,7 @@ import { useParams } from 'react-router-dom';
 import config from '../../../config.json';
 
 
-// const defaultImg = "https://www.svgrepo.com/show/315521/pokemon.svg"
-
+const defaultImg = "https://th.bing.com/th/id/R.f72528eb55f0dc1ac9e1bdf48b03d0f3?rik=NJGOijjpUROlRg&riu=http%3a%2f%2fwww.ssbwiki.com%2fimages%2f1%2f1c%2fPokemonSymbol(preBrawl).svg&ehk=3nGfK63BmcszAur%2f%2bq8EYMsHW0uj3zReHU3drCYvG%2bo%3d&risl=&pid=ImgRaw&r=0"
 async function fetchPlaylist(id) {
   try {
     const tokenObj = JSON.parse(localStorage.getItem('token'));
@@ -61,6 +60,7 @@ const PlaylistsPage = () => {
     const fetchPlaylistData = async () => {
       const playlistData = await fetchPlaylist(id);
       setPlaylist(playlistData);
+      setPokemon({ image_url: defaultImg });
       // // 获取 Playlist 之后立即获取 Pokémon 数据
       // if (playlistData) {
       //   fetchPokemon(); // 调用 fetchPokemon 函数
