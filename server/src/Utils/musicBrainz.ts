@@ -2,13 +2,6 @@ import axios from 'axios';
 
 
 class MusicBrainzAPI{
-/**
- * 获取 MusicBrainz 上的专辑 ID
- * @param songName 歌曲名
- * @param albumName 专辑名
- * @param strictMode 是否为严格模式
- * @returns 专辑 ID
- */
 static async getMusicBrainzAlbumId(songName: string, albumName: string, strictMode?: boolean): Promise<string | null> {
     try {
         if(!strictMode) {
@@ -17,25 +10,21 @@ static async getMusicBrainzAlbumId(songName: string, albumName: string, strictMo
         // MusicBrainz API endpoint
         let query = `recording:"${encodeURIComponent(songName)}"`;
         if (strictMode) {
-            // 严格模式下，搜索结果必须严格包含专辑名
+            
             query += ` AND release:"${encodeURIComponent(albumName)}"`;
         } else {
-            // 非严格模式下，专辑名模糊匹配
+            
             query += ` AND release:${encodeURIComponent(albumName)})`;
         }
         // MusicBrainz API endpoint
         const url = `https://musicbrainz.org/ws/2/recording?query=${query}&limit=1&fmt=json`;
         
         
-        // 发送 GET 请求
         const response = await axios.get(url);
 
-        // 检查响应状态码
         if (response.status === 200) {
             const data = response.data;
-            // 检查是否有搜索结果
             if (data.recordings && data.recordings.length > 0) {
-                // 返回第一个搜索结果的专辑 ID 
                 const recording = data.recordings[0];
                 if(recording.releases && recording.releases.length > 0) {
                     console.log(recording.releases[0].id);
@@ -55,13 +44,6 @@ static async getMusicBrainzAlbumId(songName: string, albumName: string, strictMo
     return null;
 }
 
-/**
- * 获取专辑封面图片 URL
- * @param mbid 专辑 ID
- * @param imageId 图片 ID
- * @param size 图片尺寸
- * @returns 专辑封面图片 URL
- */
 static async getMusicBrainzSongId(songName: string, albumName: string, strictMode?: boolean): Promise<string | null> {
     try {
         if(!strictMode) {
@@ -146,7 +128,7 @@ static getCover(songName: string, albumName: string, size?: 250 | 500 | 1200): P
 const musicBrainzId = "76df3287-6cda-33eb-8e9a-044b5e15ffdd";
 const size = 250; // 或者 500 或 1200
 
-const imageUrl =MusicBrainzAPI.getAlbumCoverImageUrl(musicBrainzId, undefined, size); // 不传入 imageId，默认为封面图片
+const imageUrl =MusicBrainzAPI.getAlbumCoverImageUrl(musicBrainzId, undefined, size); 
 console.log("专辑封面图片 URL:", imageUrl);
 
 // 调用函数并传入歌曲名和专辑名

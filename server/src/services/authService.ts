@@ -18,7 +18,7 @@ class AuthService {
     async loginUser(username: string, password: string): Promise<string | null> {
         const user = await this.userRepository
             .createQueryBuilder("user")
-            .addSelect("user.password") // 显式地选择password字段
+            .addSelect("user.password")
             .where("user.username = :username", { username })
             .getOne();
         console.log('User:', user);

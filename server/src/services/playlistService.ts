@@ -52,30 +52,6 @@ export class PlaylistService {
      * @returns 
      */
     async findPlaylistsByUser(userId: number): Promise<Playlist[]> {
-        // const user = await this.userService.getUserById(userId);
-        // if (!user) {
-        //     throw new Error(`User with ID ${userId} not found`);
-        // }
-        console.log(userId);
-
-        // const sql = `
-        // SELECT
-        // p.playlist_id,
-        // p.year AS playlist_year,
-        // p.name AS playlist_name,
-        // t.id AS track_id,
-        // t.name AS track_name
-        // FROM playlists p
-        // JOIN PLAYLIST_SONGS ps ON p.playlist_id = ps.playlist_id
-        // JOIN SONGS t ON ps.song_id = t.id
-        // WHERE p.user = ?
-    
-        // `;
-
-        // const list = await this.dataSource.query(sql, [userId]);
-        // console.log(list);
-        // return list;
-
         const list =  await this.playlistRepository.find({
             where: { user: { id: userId } },
             relations: ['playlistSongs', 'playlistSongs.track'],
@@ -253,7 +229,6 @@ export class PlaylistService {
         } catch (error) {
             await queryRunner.rollbackTransaction();
             console.error('Transaction failed:', error);
-            // 在这里可以抛出错误或返回错误信息，以便可以在调用该函数的地方处理
             throw error;
         } finally {
             await queryRunner.release();
@@ -286,27 +261,6 @@ export class PlaylistService {
         return artists;
     }
 
-
-
-    // async addPlaylistToUser(userId: number, playlistId: string): Promise<void> {
-    //     // Retrieve the user entity
-    //     const user = await this.userService.getUserById(userId);
-    //     if (!user) {
-    //         throw new Error(`User with ID ${userId} not found`);
-    //     }
-
-    //     // Retrieve the playlist entity
-    //     const playlist = await this.findPlaylistById(playlistId);
-    //     if (!playlist) {
-    //         throw new Error(`Playlist with ID ${playlistId} not found`);
-    //     }
-
-    //     // Add the playlist to the user's playlists
-    //     user.playlists.push(playlist);
-
-    //     // Save the updated user entity
-    //     await this.dataSource.manager.save(user);
-    // }
     /**
      * Calculate the average attributes of tracks in a given playlist.
      * @param {string} playlistId - The ID of the playlist.

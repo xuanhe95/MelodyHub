@@ -13,7 +13,7 @@ import { SongRanking } from './entity/songRanking';
 import { TopSongByCountry } from './entity/TopSongByCountry';
 
 export const AppDataSource = new DataSource({
-    type: 'mysql', // the type of your database
+    type: 'mysql',
     host: config.rds_host,
     port: config.rds_port,
     username: config.rds_user,

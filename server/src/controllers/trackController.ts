@@ -63,16 +63,16 @@ export class TrackController {
                 title as string,
                 artist as string,
                 album as string,
-                start as string, // Convert to Date in service if needed
-                end as string, // Convert to Date in service if needed
-                parseFloat(tempo_low as string), // Convert to number in service if needed
-                parseFloat(tempo_high as string), // Convert to number in service if needed
-                parseFloat(danceability_low as string), // Convert to number in service if needed
-                parseFloat(danceability_high as string), // Convert to number in service if needed
-                parseFloat(energy_low as string), // Convert to number in service if needed
-                parseFloat(energy_high as string), // Convert to number in service if needed
-                parseFloat(duration_low as string), // Convert to number in service if needed
-                parseFloat(duration_high as string), // Convert to number in service if needed
+                start as string,
+                end as string, 
+                parseFloat(tempo_low as string), 
+                parseFloat(tempo_high as string),
+                parseFloat(danceability_low as string), 
+                parseFloat(danceability_high as string),
+                parseFloat(energy_low as string), 
+                parseFloat(energy_high as string), 
+                parseFloat(duration_low as string), 
+                parseFloat(duration_high as string),
                 last_id as string
             );
 

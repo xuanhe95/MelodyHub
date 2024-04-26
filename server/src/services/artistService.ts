@@ -170,53 +170,6 @@ class ArtistService {
           JOIN ARTISTS A ON RS.artist_id = A.artist_id;
         `;
 
-        // const sql = `
-        // WITH ArtistYears AS (
-        //     SELECT
-        //       R.artist_id,
-        //       MIN(YEAR(S.release_date)) AS FirstYear,
-        //       MAX(YEAR(S.release_date)) AS LastYear
-        //     FROM SONGS S
-        //     JOIN RELEASE_BY R ON R.song_id = S.id
-        //     WHERE YEAR(S.release_date) BETWEEN YEAR(CURRENT_DATE) - 10 AND YEAR(CURRENT_DATE)
-        //     GROUP BY R.artist_id
-        //     HAVING COUNT(DISTINCT S.id) > 50
-        //   ),
-        //   YearlySongMetrics AS (
-        //     SELECT
-        //       R.artist_id,
-        //       YEAR(S.release_date) AS Year,
-        //       AVG(S.danceability) AS AvgDanceability,
-        //       AVG(S.energy) AS AvgEnergy
-        //     FROM ArtistYears AY
-        //     JOIN RELEASE_BY R on AY.artist_id = R.artist_id
-        //     JOIN SONGS S ON S.id = R.song_id
-        //     WHERE YEAR(S.release_date) = AY.FirstYear or YEAR(S.release_date) = AY.LastYear
-        //     GROUP BY R.artist_id, YEAR(S.release_date)
-        //   ),
-        //   RisingStars AS (
-        //   SELECT
-        //     AY.artist_id,
-        //     YSMFirst.AvgDanceability AS FirstYearDanceability,
-        //     YSMLast.AvgDanceability AS LastYearDanceability,
-        //     YSMFirst.AvgEnergy AS FirstYearEnergy,
-        //     YSMLast.AvgEnergy AS LastYearEnergy,
-        //     (YSMLast.AvgDanceability - YSMFirst.AvgDanceability) +
-        //     (YSMLast.AvgEnergy - YSMFirst.AvgEnergy) AS ImprovementScore
-        //   FROM ArtistYears AY
-        //   JOIN YearlySongMetrics YSMFirst ON AY.artist_id = YSMFirst.artist_id AND AY.FirstYear = YSMFirst.Year
-        //   JOIN YearlySongMetrics YSMLast ON AY.artist_id = YSMLast.artist_id AND AY.LastYear = YSMLast.Year
-        //   WHERE AY.LastYear > AY.FirstYear
-        //   ORDER BY ImprovementScore DESC
-        //   LIMIT 10
-        //   )
-        //   SELECT
-        //    A.artist,
-        //    RS.*
-        //   FROM RisingStars RS
-        //   JOIN ARTISTS A ON RS.artist_id = A.artist_id;
-        // `;
-
         return this.dataSource.query(sql);
     }
 
