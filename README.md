@@ -14,7 +14,7 @@ cd server
 ```
 npm install
 ```
-4. run it, it succeeded terminal will show "Backend Server running at http://localhost:8080/"
+4. run it, if succeeded terminal will show "Backend Server running at http://localhost:8080/"
 ```
 npm start
 ```
@@ -30,8 +30,16 @@ cd web
 ```
 npm install
 ```
-3. run it, it succeeded terminal will direct to http://localhost:3000/home
+3. run it, if succeeded will be directed to http://localhost:3000/home
 ```
 npm start
 ```
 4. ctrl+c to stop
+
+# Dependencies
+
+Dependencies can be found in packages.json in both folders.
+
+# Data Cleaning 
+
+Python scripts used for data cleaning is in **data-clean** directory
