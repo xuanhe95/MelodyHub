@@ -18,7 +18,7 @@ import {
   InputLabel,
   OutlinedInput,
   // TextField,
-  Typography,
+  Typography
   // useMediaQuery
 } from '@mui/material';
 

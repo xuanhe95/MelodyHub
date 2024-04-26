@@ -21,7 +21,6 @@ const MusicTable = ({ playlist }) => {
     music.year = year;
   });
 
-
   return (
     <Table>
       {/* 表头 */}
@@ -57,9 +56,7 @@ const MusicTable = ({ playlist }) => {
             <TableCell colSpan={1}>{music.track.album.name}</TableCell>
             <TableCell colSpan={1}>{music.artist.name}</TableCell>
 
-            <TableCell>
-
-              {music.year}</TableCell>
+            <TableCell>{music.year}</TableCell>
           </TableRow>
         ))}
       </TableBody>

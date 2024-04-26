@@ -1,5 +1,18 @@
 // material-ui
-import { TextField, Button, Typography, Paper, Grid, MenuItem, Slider, CardContent, Card, CardMedia, Box, CircularProgress } from '@mui/material';
+import {
+  TextField,
+  Button,
+  Typography,
+  Paper,
+  Grid,
+  MenuItem,
+  Slider,
+  CardContent,
+  Card,
+  CardMedia,
+  Box,
+  CircularProgress
+} from '@mui/material';
 
 // project imports
 import MainCard from 'ui-component/cards/MainCard';
@@ -23,7 +36,8 @@ const SearchPage = () => {
   const [limit] = useState(12);
 
   const defaultImageUrl = 'https://files.readme.io/f2e91bb-portalDocs-sonosApp-defaultArtAlone.png';
-  const loadingImageUrl = 'https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExczU2djFpdWNyZ3RheWVjankzdHc0M3RlMDYwNTc2MGRhanNpbXgzOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/JFTg9PBtHZz9hHRkBN/giphy.gif';
+  const loadingImageUrl =
+    'https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExczU2djFpdWNyZ3RheWVjankzdHc0M3RlMDYwNTc2MGRhanNpbXgzOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/JFTg9PBtHZz9hHRkBN/giphy.gif';
 
   const [searchParams, setSearchParams] = useState({
     title: searchQuery?.title || '',
@@ -74,8 +88,6 @@ const SearchPage = () => {
     fetchTracks();
   };
 
-
-
   const handleLoadMore = async () => {
     if (lastId) {
       setIsLoading(true);
@@ -83,7 +95,6 @@ const SearchPage = () => {
       setIsLoading(false);
     }
   };
-
 
   const updateAlbumImages = async (inputAlbums, setAlbumState, maxRetries = 5, retryDelay = 200) => {
     setAlbumState(inputAlbums.map((album) => ({ ...album, imageUrl: loadingImageUrl })));
@@ -274,16 +285,11 @@ const SearchPage = () => {
           </Box>
         ) : (
           <Box display="flex" justifyContent="center" sx={{ height: 700 }}>
-            <Grid container spacing={2} >
-              {tracks.map(track => (
+            <Grid container spacing={2}>
+              {tracks.map((track) => (
                 <Grid item xs={6} sm={4} md={3} lg={2} xl={2} key={track.id}>
                   <Card>
-                    <CardMedia
-                      component="img"
-                      height="auto"
-                      image={track.imageUrl || defaultImageUrl}
-                      alt={track.name}
-                    />
+                    <CardMedia component="img" height="auto" image={track.imageUrl || defaultImageUrl} alt={track.name} />
                     <CardContent>
                       <Typography gutterBottom variant="h5" component="div">
                         {track.name}
@@ -306,7 +312,7 @@ const SearchPage = () => {
           </Button>
         </Box>
       </CardContent>
-    </MainCard >
+    </MainCard>
   );
 };
 

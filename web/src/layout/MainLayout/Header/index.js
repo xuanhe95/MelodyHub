@@ -59,10 +59,9 @@ const Header = ({ handleLeftDrawerToggle }) => {
       <SearchSection />
       <Box sx={{ flexGrow: 1 }} />
       <Box sx={{ flexGrow: 1 }} />
-      
-      
+
       {/* notification & profile */}
-       {/* <NotificationSection /> This line has been commented out to remove the notification icon */}
+      {/* <NotificationSection /> This line has been commented out to remove the notification icon */}
       <ProfileSection />
     </>
   );

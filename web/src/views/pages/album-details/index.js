@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import {IconArrowLeft} from '@tabler/icons-react';
-import { Typography, CardContent, Button, Table, TableHead, TableBody, TableRow, TableCell, CircularProgress} from '@mui/material';
+import { IconArrowLeft } from '@tabler/icons-react';
+import { Typography, CardContent, Button, Table, TableHead, TableBody, TableRow, TableCell, CircularProgress } from '@mui/material';
 import { IconUser } from '@tabler/icons-react';
 import { Divider, Box } from '@mui/material';
 import MainCard from 'ui-component/cards/MainCard';
@@ -25,14 +25,14 @@ const AlbumDetailsPage = () => {
         const response = await fetch(`http://${config.server_host}:${config.server_port}/api/albums/details/${id}/tracks`);
         const data = await response.json();
 
-      // Convert all date strings and decimal fields in the response data to appropriate formats
-      const updatedData = data.map(song => ({
-        ...song,
-        release_date: song.release_date.split('T')[0], // Splits the ISO string and takes the first part ('YYYY-MM-DD')
-        tempo: parseFloat(song.tempo).toFixed(3), // Formats tempo to three decimal places
-        energy: parseFloat(song.energy).toFixed(3), // Formats energy to three decimal places
-        danceability: parseFloat(song.danceability).toFixed(3) // Formats danceability to three decimal places, if you want to keep consistency
-      }));
+        // Convert all date strings and decimal fields in the response data to appropriate formats
+        const updatedData = data.map((song) => ({
+          ...song,
+          release_date: song.release_date.split('T')[0], // Splits the ISO string and takes the first part ('YYYY-MM-DD')
+          tempo: parseFloat(song.tempo).toFixed(3), // Formats tempo to three decimal places
+          energy: parseFloat(song.energy).toFixed(3), // Formats energy to three decimal places
+          danceability: parseFloat(song.danceability).toFixed(3) // Formats danceability to three decimal places, if you want to keep consistency
+        }));
 
         setSongs(updatedData); // Assuming the response contains an array of song details
       } catch (error) {
@@ -54,7 +54,7 @@ const AlbumDetailsPage = () => {
     };
 
     const fetchArtists = async () => {
-      setArtistsFetchingDone(false)
+      setArtistsFetchingDone(false);
       try {
         const response = await fetch(`http://${config.server_host}:${config.server_port}/api/artists/byalbum/${id}`);
         const data = await response.json();
@@ -63,7 +63,7 @@ const AlbumDetailsPage = () => {
       } catch (error) {
         console.error('Failed to fetch artists:', error);
       }
-      setArtistsFetchingDone(true)
+      setArtistsFetchingDone(true);
     };
 
     fetchAlbum();
@@ -71,10 +71,11 @@ const AlbumDetailsPage = () => {
     fetchSongs();
   }, [id]); // Dependency array ensures this effect runs whenever the `id` changes
 
-
   return (
     <MainCard>
-      <Button variant="outlined" startIcon={<IconArrowLeft />} onClick={() => navigate(-1)}>Back</Button>
+      <Button variant="outlined" startIcon={<IconArrowLeft />} onClick={() => navigate(-1)}>
+        Back
+      </Button>
       <CardContent>
         <Typography variant="h5" style={{ fontSize: '5rem' }}>
           {album.name}
@@ -82,13 +83,13 @@ const AlbumDetailsPage = () => {
         <Box height={20} />
         {artistsFetchingDone ? (
           <Typography variant="subtitle1" color="text.secondary" style={{ fontSize: '2rem' }}>
-            <IconUser size={"1.6rem"} style={{ marginRight: '0.3rem' }} />
-            {artists.length > 0 ? artists[0].artist : "Unknown Artist"}
+            <IconUser size={'1.6rem'} style={{ marginRight: '0.3rem' }} />
+            {artists.length > 0 ? artists[0].artist : 'Unknown Artist'}
           </Typography>
-          ) : (
+        ) : (
           <Typography variant="subtitle1" color="text.secondary" style={{ fontSize: '2rem' }}>
-            <IconUser size={"1.6rem"} style={{ marginRight: '0.3rem' }} />
-            <CircularProgress size={"1.6rem"} />
+            <IconUser size={'1.6rem'} style={{ marginRight: '0.3rem' }} />
+            <CircularProgress size={'1.6rem'} />
           </Typography>
         )}
         <Box height={20} />
@@ -127,19 +128,18 @@ const AlbumDetailsPage = () => {
                   <TableCell>{music.danceability}</TableCell>
                 </TableRow>
               ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={5} style={{ textAlign: 'center' }}>
-                    <CircularProgress />
-                  </TableCell>
-                </TableRow>
+            ) : (
+              <TableRow>
+                <TableCell colSpan={5} style={{ textAlign: 'center' }}>
+                  <CircularProgress />
+                </TableCell>
+              </TableRow>
             )}
           </TableBody>
         </Table>
-
       </CardContent>
     </MainCard>
   );
-  };
+};
 
 export default AlbumDetailsPage;

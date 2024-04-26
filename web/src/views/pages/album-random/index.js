@@ -28,7 +28,7 @@ const AlbumRandomPage = () => {
         const data = await response.json();
 
         // Convert all date strings and decimal fields in the response data to appropriate formats
-        const updatedData = data.map(song => ({
+        const updatedData = data.map((song) => ({
           ...song,
           release_date: song.release_date.split('T')[0], // Splits the ISO string and takes the first part ('YYYY-MM-DD')
           tempo: parseFloat(song.tempo).toFixed(3), // Formats tempo to three decimal places
@@ -56,7 +56,7 @@ const AlbumRandomPage = () => {
     };
 
     const fetchArtists = async () => {
-      setArtistsFetchingDone(false)
+      setArtistsFetchingDone(false);
       try {
         const response = await fetch(`http://${config.server_host}:${config.server_port}/api/artists/byalbum/${id}`);
         const data = await response.json();
@@ -65,7 +65,7 @@ const AlbumRandomPage = () => {
       } catch (error) {
         console.error('Failed to fetch artists:', error);
       }
-      setArtistsFetchingDone(true)
+      setArtistsFetchingDone(true);
     };
 
     fetchAlbum();
@@ -73,10 +73,11 @@ const AlbumRandomPage = () => {
     fetchSongs();
   }, [id]); // Dependency array ensures this effect runs whenever the `id` changes
 
-
   return (
     <MainCard>
-      <Button variant="outlined" startIcon={<ShuffleIcon />} onClick={() => navigate(-1)}>Shuffle</Button>
+      <Button variant="outlined" startIcon={<ShuffleIcon />} onClick={() => navigate(-1)}>
+        Shuffle
+      </Button>
       <CardContent>
         <Typography variant="h5" style={{ fontSize: '5rem' }}>
           {album.name}
@@ -84,13 +85,13 @@ const AlbumRandomPage = () => {
         <Box height={20} />
         {artistsFetchingDone ? (
           <Typography variant="subtitle1" color="text.secondary" style={{ fontSize: '2rem' }}>
-            <IconUser size={"1.6rem"} style={{ marginRight: '0.3rem' }} />
-            {artists.length > 0 ? artists[0].artist : "Unknown Artist"}
+            <IconUser size={'1.6rem'} style={{ marginRight: '0.3rem' }} />
+            {artists.length > 0 ? artists[0].artist : 'Unknown Artist'}
           </Typography>
         ) : (
           <Typography variant="subtitle1" color="text.secondary" style={{ fontSize: '2rem' }}>
-            <IconUser size={"1.6rem"} style={{ marginRight: '0.3rem' }} />
-            <CircularProgress size={"1.6rem"} />
+            <IconUser size={'1.6rem'} style={{ marginRight: '0.3rem' }} />
+            <CircularProgress size={'1.6rem'} />
           </Typography>
         )}
         <Box height={20} />
@@ -138,7 +139,6 @@ const AlbumRandomPage = () => {
             )}
           </TableBody>
         </Table>
-
       </CardContent>
     </MainCard>
   );

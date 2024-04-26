@@ -38,12 +38,11 @@ import Transitions from 'ui-component/extended/Transitions';
 // import User1 from 'assets/images/users/user-round.svg';
 
 // assets
-import { IconLogout, IconSettings, } from '@tabler/icons-react';
+import { IconLogout, IconSettings } from '@tabler/icons-react';
 
 // ==============================|| PROFILE MENU ||============================== //
 
 const ProfileSection = () => {
-
   const [username, setUsername] = useState('');
   const theme = useTheme();
   const customization = useSelector((state) => state.customization);
@@ -54,7 +53,6 @@ const ProfileSection = () => {
   // const [notification, setNotification] = useState(false);
   // const [selectedIndex, setSelectedIndex] = useState(-1);
   const [open, setOpen] = useState(false);
-
 
   const userInitial = username ? username[0].toUpperCase() : ''; // 使用用户名的首字母或默认显示 'U'
 
@@ -69,7 +67,6 @@ const ProfileSection = () => {
       }
     }
   }, []);
-
 
   /**
    * anchorRef is used on different componets and specifying one type leads to other components throwing an error
@@ -145,11 +142,9 @@ const ProfileSection = () => {
             aria-controls={open ? 'menu-list-grow' : undefined}
             aria-haspopup="true"
             color="inherit"
-
           >
             {userInitial}
           </Avatar>
-
         }
         label={<IconSettings stroke={1.5} size="1.5rem" color={theme.palette.primary.main} />}
         variant="outlined"

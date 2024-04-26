@@ -122,20 +122,18 @@ const SearchSection = () => {
   const theme = useTheme();
   const [value, setValue] = useState('');
 
-  const [searchState, setSearchState] = useState("tracks");
-
-
+  const [searchState, setSearchState] = useState('tracks');
 
   const navigate = useNavigate(); // 使用 useNavigate 钩子
 
   const handleSubmit = () => {
     if (value.length < 8) {
-      alert("Please enter at least 8 characters");
+      alert('Please enter at least 8 characters');
       return;
     }
     // 假设您想跳转到 '/search-results' 路由
-    console.log("value: " + value);
-    if (searchState === "albums") {
+    console.log('value: ' + value);
+    if (searchState === 'albums') {
       navigate('/search', { state: { searchQuery: { album: value } } }); // 传递搜索值作为路由状态
     } else {
       navigate('/search', { state: { searchQuery: { title: value } } }); // 传递搜索值作为路由状态
@@ -144,15 +142,13 @@ const SearchSection = () => {
 
   const handleAlbumClick = () => {
     // 假设您想跳转到 '/search-results' 路由
-    console.log("changed");
-    if (searchState === "albums") {
-      setSearchState("tracks");
+    console.log('changed');
+    if (searchState === 'albums') {
+      setSearchState('tracks');
     } else {
-      setSearchState("albums");
+      setSearchState('albums');
     }
-  }
-
-
+  };
 
   return (
     <>
@@ -208,33 +204,25 @@ const SearchSection = () => {
             </InputAdornment>
           }
           endAdornment={
-
             <InputAdornment position="end">
               <Box display="flex" justifyContent="center" width="100%" gap={1}>
                 <ButtonBase sx={{ borderRadius: '12px' }} onClick={handleAlbumClick}>
                   <HeaderAvatarStyle variant="rounded">
-                    {searchState === "albums" ? (
-                      <IconDisc stroke={1.5} size="1.3rem" />
-                    ) : (
-                      <IconMusic stroke={1.5} size="1.3rem" />
-                    )}
+                    {searchState === 'albums' ? <IconDisc stroke={1.5} size="1.3rem" /> : <IconMusic stroke={1.5} size="1.3rem" />}
                   </HeaderAvatarStyle>
                 </ButtonBase>
 
-                <ButtonBase sx={{ borderRadius: '12px' }} onClick={handleSubmit} >
+                <ButtonBase sx={{ borderRadius: '12px' }} onClick={handleSubmit}>
                   <HeaderAvatarStyle variant="rounded">
                     <IconSearch stroke={1.5} size="1.3rem" />
                   </HeaderAvatarStyle>
                 </ButtonBase>
               </Box>
-
             </InputAdornment>
-
           }
           aria-describedby="search-helper-text"
           inputProps={{ 'aria-label': 'weight' }}
         />
-
       </Box>
     </>
   );

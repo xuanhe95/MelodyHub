@@ -11,9 +11,9 @@ const SearchBar = ({ onSearch }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log("searchQuery: " + searchQuery);
+    console.log('searchQuery: ' + searchQuery);
     if (searchQuery.length < 8) {
-      alert("Please enter at least 8 characters");
+      alert('Please enter at least 8 characters');
       return;
     }
     onSearch(searchQuery);

@@ -17,7 +17,8 @@ const AlbumPage = () => {
   // const [tracks, setTracks] = useState([]);
 
   const defaultImageUrl = 'https://files.readme.io/f2e91bb-portalDocs-sonosApp-defaultArtAlone.png';
-  const loadingImageUrl = 'https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExczU2djFpdWNyZ3RheWVjankzdHc0M3RlMDYwNTc2MGRhanNpbXgzOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/JFTg9PBtHZz9hHRkBN/giphy.gif';
+  const loadingImageUrl =
+    'https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExczU2djFpdWNyZ3RheWVjankzdHc0M3RlMDYwNTc2MGRhanNpbXgzOSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/JFTg9PBtHZz9hHRkBN/giphy.gif';
 
   const fetchAlbums = async () => {
     try {
@@ -25,7 +26,6 @@ const AlbumPage = () => {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
       };
-
 
       const placeholderAlbums = Array.from({ length: 18 }).map((_, index) => ({
         album_id: `placeholder-${index}`,
@@ -35,8 +35,10 @@ const AlbumPage = () => {
 
       setAlbums(placeholderAlbums);
 
-      const response = await fetch(`http://${config.server_host}:${config.server_port}/api/albums/pages?page=${page}&limit=${limit}`, requestOptions);
-
+      const response = await fetch(
+        `http://${config.server_host}:${config.server_port}/api/albums/pages?page=${page}&limit=${limit}`,
+        requestOptions
+      );
 
       // const anotherresponse = await fetch(`https://api.setlist.fm/rest/1.0/artist/20244d07-534f-4eff-b4d4-930878889970/setlists?p=1`, {
       //   method: 'GET',
@@ -63,13 +65,11 @@ const AlbumPage = () => {
       // setLoading(false);
       console.error('Failed to fetch albums:', error);
     }
-
   };
-
 
   const updateAlbumImages = async (inputAlbums, setAlbumState, maxRetries = 5, retryDelay = 200) => {
     // 首先设置所有图片为加载中的图片
-    setAlbumState(inputAlbums.map(album => ({ ...album, imageUrl: loadingImageUrl })));
+    setAlbumState(inputAlbums.map((album) => ({ ...album, imageUrl: loadingImageUrl })));
 
     inputAlbums.forEach(async (album, index) => {
       let retries = 0;
@@ -77,7 +77,12 @@ const AlbumPage = () => {
         try {
           console.log('Fetching image for album:', album.id);
 
-          if (albums[index] && albums[index].imageUrl && albums[index].imageUrl !== loadingImageUrl && albums[index].imageUrl !== defaultImageUrl) {
+          if (
+            albums[index] &&
+            albums[index].imageUrl &&
+            albums[index].imageUrl !== loadingImageUrl &&
+            albums[index].imageUrl !== defaultImageUrl
+          ) {
             console.log('Skipping album:', album.id, 'as it already has an image');
             return;
           }
@@ -93,18 +98,16 @@ const AlbumPage = () => {
               setTimeout(loadAlbumImage, retryDelay); // 延迟一段时间后重新尝试加载图片
             } else if (retries > 2) {
               setTimeout(loadAlbumImage, retryDelay / 2); // 延迟一段时间后重新尝试加载图片
-            }
-            else {
+            } else {
               setTimeout(loadAlbumImage, retryDelay / 4); // 延迟一段时间后重新尝试加载图片
             }
             return;
           }
 
-
-          setAlbumState(prevAlbums => prevAlbums.map(item =>
-            item.id === album.id ? { ...item, imageUrl: imgData.imageUrl || defaultImageUrl } : item
-          ));
-          console.log("set album image" + imgData.imageUrl || defaultImageUrl);
+          setAlbumState((prevAlbums) =>
+            prevAlbums.map((item) => (item.id === album.id ? { ...item, imageUrl: imgData.imageUrl || defaultImageUrl } : item))
+          );
+          console.log('set album image' + imgData.imageUrl || defaultImageUrl);
         } catch (error) {
           console.error('Failed to fetch image for album:', album.id, error);
           if (retries < maxRetries) {
@@ -113,9 +116,7 @@ const AlbumPage = () => {
             //loadAlbumImage(); // 重新尝试加载图片
             setTimeout(loadAlbumImage, retryDelay); // 延迟一段时间后重新尝试加载图片
           } else {
-            setAlbumState(prevAlbums => prevAlbums.map(item =>
-              item.id === album.id ? { ...item, imageUrl: defaultImageUrl } : item
-            ));
+            setAlbumState((prevAlbums) => prevAlbums.map((item) => (item.id === album.id ? { ...item, imageUrl: defaultImageUrl } : item)));
           }
         }
       };
@@ -132,15 +133,13 @@ const AlbumPage = () => {
   const handlePageChange = (event, value) => {
     setAlbums([]);
     console.log(value);
-    console.log("albums" + albums.length);
+    console.log('albums' + albums.length);
     setPage(value);
   };
-
 
   useEffect(() => {
     fetchAlbums();
   }, [page, limit]);
-
 
   const handleAlbumClick = async (album) => {
     navigate(`/album/details/${album.id}`);
@@ -155,7 +154,7 @@ const AlbumPage = () => {
         <Box height={20} />
         <Divider variant="middle" />
         <Box height={20} />
-        <Grid container spacing={2} >
+        <Grid container spacing={2}>
           {albums.map((album) => (
             <Grid item xs={6} sm={4} md={3} lg={2} xl={2} key={String(album.album_id)}>
               <Card>
@@ -178,13 +177,10 @@ const AlbumPage = () => {
           sx={{ marginTop: 2, marginBottom: 2, display: 'flex', justifyContent: 'center' }} // 样式
         />
 
-
-
         {/* {loading && <p>Loading...</p>} */}
         {error && <p>Error: {error}</p>}
-
       </CardContent>
-    </MainCard >
+    </MainCard>
   );
 };
 export default AlbumPage;

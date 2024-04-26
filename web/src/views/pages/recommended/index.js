@@ -7,8 +7,6 @@ import MainCard from 'ui-component/cards/MainCard';
 
 import { Typography, CardContent, Button, Table, TableHead, TableRow, TableCell, Box, Divider } from '@mui/material';
 
-
-
 // project imports
 // import MainCard from 'ui-component/cards/MainCard';
 
@@ -49,18 +47,17 @@ const RecommendedPage = () => {
     jump();
   }, []); // 注意第二个参数是一个空数组，表示该副作用只会在组件挂载时执行一次
 
-
   return (
     <MainCard>
-      <Button variant="outlined" startIcon={<ShuffleIcon />} >Shuffle</Button>
+      <Button variant="outlined" startIcon={<ShuffleIcon />}>
+        Shuffle
+      </Button>
       <CardContent>
         <Typography variant="h5" style={{ fontSize: '5rem' }}>
           {'Wait for a moment...'}
         </Typography>
         <Box height={20} />
-        <Typography variant="body2">
-          Artist Name Here
-        </Typography>
+        <Typography variant="body2">Artist Name Here</Typography>
         <Box height={20} />
         <Divider variant="middle" />
         <Box height={20} />
@@ -106,7 +103,6 @@ const RecommendedPage = () => {
             )}
           </TableBody> */}
         </Table>
-
       </CardContent>
     </MainCard>
   );

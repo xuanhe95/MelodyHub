@@ -62,7 +62,6 @@ const AllAlbumsPage = () => {
     <MainCard>
       <CardContent>
         <div>
-
           <Grid container spacing={2} sx={{ maxWidth: 2100, marginRight: 'auto', width: '100%' }}>
             {albums.map((album) => (
               <Grid item xs={6} sm={4} md={3} lg={2} xl={2} key={String(album.album_id)}>
@@ -78,9 +77,11 @@ const AllAlbumsPage = () => {
                       <Typography variant="h5">Tracks:</Typography>
                       {tracks.length > 0 ? (
                         <ul>
-                          {tracks.filter(track => track !== undefined).map((track) => (
-                            <li key={track.id}>{track.title}</li>
-                          ))}
+                          {tracks
+                            .filter((track) => track !== undefined)
+                            .map((track) => (
+                              <li key={track.id}>{track.title}</li>
+                            ))}
                         </ul>
                       ) : (
                         <p>No tracks available</p>
@@ -93,7 +94,7 @@ const AllAlbumsPage = () => {
           </Grid>
           {loading && <p>Loading...</p>}
           {error && <p>Error: {error}</p>}
-        </div >
+        </div>
       </CardContent>
     </MainCard>
   );

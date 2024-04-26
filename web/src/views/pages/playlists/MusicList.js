@@ -10,13 +10,12 @@ const musicList = [
 
 const MusicList = () => {
   musicList.map((music) => {
-    console.log("music");
+    console.log('music');
     console.log(music);
     console.log(music.title);
     console.log(music.artist);
     console.log(music.album);
-  }
-  );
+  });
   return (
     <List>
       {/* 表头 */}
@@ -40,7 +39,6 @@ const MusicList = () => {
               primary={music.title}
               secondary={
                 <Typography component="span" variant="body2" color="textPrimary">
-
                   {music.artist} — {music.album.name} — {music.danceability}
                 </Typography>
               }
